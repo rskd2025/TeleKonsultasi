@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 // ✅ Halaman
@@ -13,22 +13,26 @@ import Login from './pages/Login';
 import HistoryPasien from './pages/HistoryPasien';
 import InputPemeriksaan from './pages/InputPemeriksaan';
 import Feedback from './pages/Feedback';
+import SignupModal from './pages/SignupModal'; // ⬅️ Tambahkan ini
 
 // ✅ Komponen layout
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 
+
 // ✅ Notifikasi
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// ✅ Layout responsif dan scroll
 function LayoutWrapper() {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user'));
   const hideHeaderFooter = ['/login', '/unauthorized'].includes(location.pathname);
   const isLoggedIn = !!user;
+
+  // ⬇️ State untuk Signup Modal
+  const [showSignup, setShowSignup] = useState(false);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -36,7 +40,7 @@ function LayoutWrapper() {
 
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '1rem' }}>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Login onSignupClick={() => setShowSignup(true)} />} /> {/* ✅ Kirim prop */}
           <Route
             path="/unauthorized"
             element={
@@ -127,7 +131,7 @@ function LayoutWrapper() {
             }
           />
           <Route
-            path="/feedback-konsul"
+            path="/feedback"
             element={
               <ProtectedRoute requiredModules={['Feedback Konsul']}>
                 <Feedback />
@@ -138,6 +142,11 @@ function LayoutWrapper() {
       </div>
 
       {isLoggedIn && !hideHeaderFooter && <Footer />}
+
+      {/* ✅ SignupModal hanya ditampilkan di halaman login */}
+      {location.pathname === '/login' && (
+        <SignupModal show={showSignup} onHide={() => setShowSignup(false)} />
+      )}
 
       <ToastContainer
         position="top-right"
@@ -154,7 +163,6 @@ function LayoutWrapper() {
   );
 }
 
-// ✅ Entry point aplikasi
 function App() {
   return (
     <Router>

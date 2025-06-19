@@ -1,4 +1,3 @@
-// src/pages/Feedback.js
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -9,8 +8,10 @@ import {
   Table,
   Spinner,
 } from 'react-bootstrap';
-import axios from 'axios';
-import { saveAs } from 'file-saver';
+import api from '../api';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const Feedback = ({ userRole = 'admin' }) => {
   const [data, setData] = useState([]);
@@ -23,11 +24,14 @@ const Feedback = ({ userRole = 'admin' }) => {
     const fetchFeedback = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('/api/feedback');
-        setData(res.data);
-        setFilteredData(res.data);
+        const res = await api.get('/api/feedback');
+        const hasil = Array.isArray(res.data) ? res.data : [];
+        setData(hasil);
+        setFilteredData(hasil);
       } catch (err) {
         console.error('Gagal mengambil data feedback:', err);
+        setData([]);
+        setFilteredData([]);
       } finally {
         setLoading(false);
       }
@@ -52,23 +56,46 @@ const Feedback = ({ userRole = 'admin' }) => {
   }, [search, tanggal, data]);
 
   const exportToExcel = () => {
-    // Placeholder
-    alert('Export Excel tidak diimplementasikan.');
-  };
-
-  const exportToWord = () => {
-    // Placeholder
-    alert('Export Word tidak diimplementasikan.');
+    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Feedback');
+    XLSX.writeFile(workbook, 'feedback_konsul.xlsx');
   };
 
   const exportToPDF = () => {
-    // Placeholder
-    alert('Export PDF tidak diimplementasikan.');
-  };
+    const doc = new jsPDF();
+    doc.text('Feedback Konsul Pasien', 14, 10);
 
-  const exportToImage = () => {
-    // Placeholder
-    alert('Export JPG tidak diimplementasikan.');
+    const tableColumn = [
+      'Nama',
+      'Umur',
+      'Faskes Asal',
+      'Tujuan Konsul',
+      'Tanggal',
+      'Diagnosa',
+      'Anamnesis',
+      'Jawaban Konsul',
+    ];
+
+    const tableRows = filteredData.map((item) => [
+      item.nama_lengkap,
+      item.umur,
+      item.faskes_asal || '-',
+      item.tujuan_konsul || '-',
+      item.tanggal,
+      item.diagnosa || '-',
+      item.anamnesis || '-',
+      item.jawaban_konsul || '-',
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: { fontSize: 8 },
+    });
+
+    doc.save('feedback_konsul.pdf');
   };
 
   return (
@@ -96,16 +123,10 @@ const Feedback = ({ userRole = 'admin' }) => {
         <Col xs={12} md={4}>
           <div className="d-flex flex-wrap gap-2">
             <Button size="sm" variant="success" onClick={exportToExcel}>
-              Excel
-            </Button>
-            <Button size="sm" variant="primary" onClick={exportToWord}>
-              Word
+              Export Excel
             </Button>
             <Button size="sm" variant="danger" onClick={exportToPDF}>
-              PDF
-            </Button>
-            <Button size="sm" variant="warning" onClick={exportToImage}>
-              JPG
+              Export PDF
             </Button>
           </div>
         </Col>
@@ -140,18 +161,26 @@ const Feedback = ({ userRole = 'admin' }) => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.nama_lengkap}</td>
-                  <td>{item.umur}</td>
-                  <td>{item.faskes_asal}</td>
-                  <td>{item.tujuan_konsul}</td>
-                  <td>{item.tanggal}</td>
-                  <td>{item.diagnosa}</td>
-                  <td>{item.anamnesis}</td>
-                  <td>{item.jawaban_konsul || '-'}</td>
+              {Array.isArray(filteredData) && filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.nama_lengkap}</td>
+                    <td>{item.umur}</td>
+                    <td>{item.faskes_asal || '-'}</td>
+                    <td>{item.tujuan_konsul || '-'}</td>
+                    <td>{item.tanggal}</td>
+                    <td>{item.diagnosa || '-'}</td>
+                    <td>{item.anamnesis || '-'}</td>
+                    <td>{item.jawaban_konsul || '-'}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center text-muted">
+                    Tidak ada data ditampilkan
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </Table>
         </div>
