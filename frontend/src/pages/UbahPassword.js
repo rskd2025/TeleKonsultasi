@@ -1,8 +1,7 @@
-// src/pages/UbahPassword.js
 import React, { useState } from 'react';
 import { Button, Form, Container, Card, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import api from 'api'; // ✅ koneksi aman untuk vercel↔ngrok
+import api from 'api';
 import { toast } from 'react-toastify';
 
 const UbahPassword = () => {
@@ -50,10 +49,14 @@ const UbahPassword = () => {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center mt-5">
-      <Card style={{ width: '100%', maxWidth: '400px' }}>
+    <Container
+      fluid
+      className="d-flex justify-content-center align-items-center py-4"
+      style={{ minHeight: '100vh', overflowY: 'auto' }}
+    >
+      <Card style={{ width: '100%', maxWidth: '420px' }} className="p-2 shadow-sm">
         <Card.Body>
-          <h4 className="text-center mb-4">Ubah Password</h4>
+          <h5 className="text-center mb-4">Ubah Password</h5>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formPasswordLama">
               <Form.Label>Password Lama</Form.Label>
@@ -94,7 +97,7 @@ const UbahPassword = () => {
               />
             </Form.Group>
 
-            <div className="d-flex justify-content-between">
+            <div className="d-grid gap-2 mb-2">
               <Button variant="primary" type="submit" size="sm" disabled={loading}>
                 {loading ? (
                   <>
@@ -114,7 +117,13 @@ const UbahPassword = () => {
               >
                 Batal
               </Button>
-              <Button variant="success" type="button" size="sm" onClick={() => navigate(-1)} disabled={loading}>
+              <Button
+                variant="success"
+                type="button"
+                size="sm"
+                onClick={() => navigate(-1)}
+                disabled={loading}
+              >
                 Kembali
               </Button>
             </div>

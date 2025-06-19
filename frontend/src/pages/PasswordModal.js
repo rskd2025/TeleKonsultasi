@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import api from 'api';
+import api from '../api'; // pastikan path ini sesuai struktur project kamu
 
 const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId = null }) => {
   const [username, setUsername] = useState('');
@@ -58,7 +58,6 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
         password,
         role,
       });
-
       toast.success('✅ Password berhasil disimpan');
       handleClose();
     } catch (error) {
@@ -70,7 +69,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered scrollable size="md">
       <Modal.Header closeButton style={{ backgroundColor: '#2196f3', color: 'white' }}>
         <Modal.Title style={{ fontSize: '1rem' }}>
           🔒 Atur Password - {namaLengkap}
@@ -78,7 +77,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
       </Modal.Header>
       <Modal.Body style={{ fontSize: '0.9rem' }}>
         <Form>
-          <Form.Group className="mb-2">
+          <Form.Group className="mb-3">
             <Form.Label>Username</Form.Label>
             <Form.Control
               type="text"
@@ -86,10 +85,11 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={loading}
+              size="sm"
             />
           </Form.Group>
 
-          <Form.Group className="mb-2">
+          <Form.Group className="mb-3">
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
@@ -97,10 +97,11 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
+              size="sm"
             />
           </Form.Group>
 
-          <Form.Group className="mb-2">
+          <Form.Group className="mb-3">
             <Form.Label>Ulangi Password</Form.Label>
             <Form.Control
               type="password"
@@ -108,15 +109,17 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={loading}
+              size="sm"
             />
           </Form.Group>
 
-          <Form.Group className="mb-2">
+          <Form.Group className="mb-3">
             <Form.Label>Role</Form.Label>
             <Form.Select
               value={role}
               onChange={(e) => setRole(e.target.value)}
               disabled={loading}
+              size="sm"
             >
               <option value="">Pilih Role</option>
               <option value="Administrator">Administrator</option>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
-import api from 'api';
+import api from '../api'; // ✅ pastikan path benar jika sebelumnya error
 
 const ModalFeedback = ({ show, onHide, pasien, onSuccess, userName }) => {
   const [jawaban, setJawaban] = useState('');
@@ -37,31 +37,52 @@ const ModalFeedback = ({ show, onHide, pasien, onSuccess, userName }) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered size="lg">
-      <Modal.Header closeButton>
-        <Modal.Title>Form Feedback Konsul</Modal.Title>
+    <Modal show={show} onHide={onHide} centered size="lg" scrollable>
+      <Modal.Header closeButton style={{ backgroundColor: '#007bff', color: 'white' }}>
+        <Modal.Title style={{ fontSize: '1rem' }}>
+          📋 Form Feedback Konsul
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>
-        {sukses && <Alert variant="success">✅ Feedback berhasil disimpan.</Alert>}
+
+      <Modal.Body style={{ fontSize: '0.85rem' }}>
+        {sukses && (
+          <Alert variant="success" className="text-center py-2">
+            ✅ Feedback berhasil disimpan.
+          </Alert>
+        )}
         <Form>
           <Row>
-            <Col md={6}>
+            <Col xs={12} md={6}>
               <Form.Group className="mb-2">
                 <Form.Label>Nama Pasien</Form.Label>
                 <Form.Control size="sm" value={pasien.nama_pasien} disabled />
               </Form.Group>
               <Form.Group className="mb-2">
                 <Form.Label>Diagnosa</Form.Label>
-                <Form.Control size="sm" as="textarea" rows={2} value={pasien.diagnosa} disabled />
+                <Form.Control
+                  size="sm"
+                  as="textarea"
+                  rows={2}
+                  value={pasien.diagnosa}
+                  disabled
+                />
               </Form.Group>
             </Col>
-            <Col md={6}>
+
+            <Col xs={12} md={6}>
               <Form.Group className="mb-2">
                 <Form.Label>Anamnesis</Form.Label>
-                <Form.Control size="sm" as="textarea" rows={4} value={pasien.anamnesis} disabled />
+                <Form.Control
+                  size="sm"
+                  as="textarea"
+                  rows={4}
+                  value={pasien.anamnesis}
+                  disabled
+                />
               </Form.Group>
             </Col>
           </Row>
+
           <Form.Group>
             <Form.Label>Jawaban Konsul ({userName})</Form.Label>
             <Form.Control
@@ -75,6 +96,7 @@ const ModalFeedback = ({ show, onHide, pasien, onSuccess, userName }) => {
           </Form.Group>
         </Form>
       </Modal.Body>
+
       <Modal.Footer>
         <Button variant="secondary" size="sm" onClick={onHide}>
           Batal

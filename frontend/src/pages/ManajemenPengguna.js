@@ -14,7 +14,7 @@ import {
   Tooltip,
   Pagination,
 } from 'react-bootstrap';
-import api from 'api';
+import api from '../api'; // ✅ pastikan path sesuai struktur project
 import { FaCog } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -36,7 +36,7 @@ const ManajemenPengguna = () => {
   const fetchPengguna = async () => {
     setLoading(true);
     try {
-      const res = await api.get('/api/pengguna'); // ✅ gunakan path relatif
+      const res = await api.get('/api/pengguna');
       setPengguna(res.data);
     } catch (err) {
       toast.error('❌ Gagal mengambil data pengguna');
@@ -46,15 +46,14 @@ const ManajemenPengguna = () => {
   };
 
   const handleKembali = () => navigate(-1);
-
   const handleAkses = (user) => {
     setSelectedUser(user);
     setShowAksesModal(true);
   };
 
   const filteredPengguna = pengguna.filter((p) =>
-    (typeof p.nama_lengkap === 'string' && p.nama_lengkap.toLowerCase().includes(cari.toLowerCase())) ||
-    (typeof p.nip === 'string' && p.nip.includes(cari))
+    (p.nama_lengkap || '').toLowerCase().includes(cari.toLowerCase()) ||
+    (p.nip || '').includes(cari)
   );
 
   const indexOfLast = currentPage * itemsPerPage;
@@ -68,35 +67,34 @@ const ManajemenPengguna = () => {
       style={{
         minHeight: '100vh',
         background: 'linear-gradient(to right, #6a11cb, #2575fc)',
-        padding: '2rem',
+        padding: '1rem',
         fontSize: '0.85rem',
+        overflowY: 'auto',
       }}
     >
       <ToastContainer position="top-center" />
-      <Card
-        className="shadow-lg border-0"
-        style={{ borderRadius: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
-      >
+
+      <Card className="shadow-lg border-0" style={{ borderRadius: '1rem', background: '#fff' }}>
         <Card.Body>
-          <Row className="align-items-center mb-3">
-            <Col md={4}>
-              <Button variant="secondary" size="sm" onClick={handleKembali}>
+          <Row className="align-items-center mb-3 flex-column flex-md-row">
+            <Col xs={12} md={4} className="mb-2 mb-md-0">
+              <Button variant="secondary" size="sm" onClick={handleKembali} className="w-100 w-md-auto">
                 ← Kembali
               </Button>
             </Col>
-            <Col md={8} className="d-flex justify-content-end">
+            <Col xs={12} md={8}>
               <Form.Control
                 type="text"
                 size="sm"
                 placeholder="Cari Nama / NIP"
                 value={cari}
                 onChange={(e) => setCari(e.target.value)}
-                style={{ maxWidth: '240px' }}
+                className="w-100"
               />
             </Col>
           </Row>
 
-          <h5 className="mb-3">Manajemen Pengguna</h5>
+          <h5 className="mb-3 text-center text-md-start">Manajemen Pengguna</h5>
 
           {loading ? (
             <div className="text-center my-4">
@@ -105,61 +103,64 @@ const ManajemenPengguna = () => {
             </div>
           ) : (
             <>
-              <Table bordered hover responsive size="sm" className="align-middle text-center">
-                <thead className="table-light">
-                  <tr>
-                    <th style={{ fontSize: '0.75rem' }}>No</th>
-                    <th style={{ fontSize: '0.75rem' }}>NIP</th>
-                    <th style={{ fontSize: '0.75rem' }}>Nama Lengkap</th>
-                    <th style={{ fontSize: '0.75rem' }}>Tempat / Tgl. Lahir</th>
-                    <th style={{ fontSize: '0.75rem' }}>Jenis Kelamin</th>
-                    <th style={{ fontSize: '0.75rem' }}>Alamat</th>
-                    <th style={{ fontSize: '0.75rem' }}>Profesi</th>
-                    <th style={{ fontSize: '0.75rem' }}>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentItems.map((p, i) => (
-                    <tr key={p.id}>
-                      <td>{indexOfFirst + i + 1}</td>
-                      <td>{p.nip}</td>
-                      <td>{p.nama_lengkap || '-'}</td>
-                      <td>
-                        {p.tempat_lahir},{' '}
-                        <OverlayTrigger placement="top" overlay={<Tooltip>{p.tanggal_lahir}</Tooltip>}>
-                          <span>
-                            {p.tanggal_lahir
-                              ? new Date(p.tanggal_lahir).toLocaleDateString('id-ID', {
-                                  day: '2-digit',
-                                  month: 'long',
-                                  year: 'numeric',
-                                })
-                              : '-'}
-                          </span>
-                        </OverlayTrigger>
-                      </td>
-                      <td>{p.jenis_kelamin || '-'}</td>
-                      <td>{p.alamat_lengkap || '-'}</td>
-                      <td>{p.jenis_profesi || '-'}</td>
-                      <td>
-                        <FaCog
-                          className="text-primary"
-                          style={{ cursor: 'pointer' }}
-                          title="Atur Hak Akses"
-                          onClick={() => handleAkses(p)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                  {currentItems.length === 0 && (
+              <div className="table-responsive">
+                <Table bordered hover size="sm" className="text-center align-middle">
+                  <thead className="table-light">
                     <tr>
-                      <td colSpan="8" className="text-center">
-                        Tidak ada data pengguna.
-                      </td>
+                      <th>No</th>
+                      <th>NIP</th>
+                      <th>Nama Lengkap</th>
+                      <th>Tempat / Tgl. Lahir</th>
+                      <th>Jenis Kelamin</th>
+                      <th>Alamat</th>
+                      <th>Profesi</th>
+                      <th>Aksi</th>
                     </tr>
-                  )}
-                </tbody>
-              </Table>
+                  </thead>
+                  <tbody>
+                    {currentItems.map((p, i) => (
+                      <tr key={p.id}>
+                        <td>{indexOfFirst + i + 1}</td>
+                        <td>{p.nip}</td>
+                        <td>{p.nama_lengkap || '-'}</td>
+                        <td>
+                          {p.tempat_lahir},{' '}
+                          <OverlayTrigger
+                            placement="top"
+                            overlay={<Tooltip>{p.tanggal_lahir}</Tooltip>}
+                          >
+                            <span>
+                              {p.tanggal_lahir
+                                ? new Date(p.tanggal_lahir).toLocaleDateString('id-ID', {
+                                    day: '2-digit',
+                                    month: 'long',
+                                    year: 'numeric',
+                                  })
+                                : '-'}
+                            </span>
+                          </OverlayTrigger>
+                        </td>
+                        <td>{p.jenis_kelamin || '-'}</td>
+                        <td>{p.alamat_lengkap || '-'}</td>
+                        <td>{p.jenis_profesi || '-'}</td>
+                        <td>
+                          <FaCog
+                            className="text-primary"
+                            style={{ cursor: 'pointer' }}
+                            title="Atur Hak Akses"
+                            onClick={() => handleAkses(p)}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                    {currentItems.length === 0 && (
+                      <tr>
+                        <td colSpan="8">Tidak ada data pengguna.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
+              </div>
 
               {totalPages > 1 && (
                 <Pagination className="justify-content-center mt-3">

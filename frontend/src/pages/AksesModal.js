@@ -9,7 +9,7 @@ import {
   ListGroup,
   Card,
 } from 'react-bootstrap';
-import api from '../api'; // ✅ Perbaikan path import
+import api from '../api';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -51,7 +51,7 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
     if (!user) return;
     setSaving(true);
     try {
-      await api.put(`/api/users/${user.id}`, { // ✅ Perbaikan endpoint
+      await api.put(`/api/users/${user.id}`, {
         groupAkses: selectedGroups,
         modulAkses: selectedModules,
       });
@@ -69,16 +69,16 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
   return (
     <>
       <ToastContainer position="top-center" />
-      <Modal show={isOpen} onHide={onClose} size="lg" centered>
+      <Modal show={isOpen} onHide={onClose} size="lg" centered scrollable>
         <Modal.Header closeButton style={{ backgroundColor: '#007bff', color: 'white' }}>
           <Modal.Title style={{ fontSize: '1rem' }}>
             🔒 Akses Pengguna: <strong>{user?.nama_lengkap}</strong>
           </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body style={{ fontSize: '0.85rem' }}>
+        <Modal.Body style={{ fontSize: '0.85rem', maxHeight: '70vh', overflowY: 'auto' }}>
           <Row>
-            <Col md={4}>
+            <Col xs={12} md={4} className="mb-3">
               <Card>
                 <Card.Header className="bg-light">
                   <strong>Grup Akses</strong>
@@ -98,7 +98,7 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
               </Card>
             </Col>
 
-            <Col md={8}>
+            <Col xs={12} md={8}>
               <Card>
                 <Card.Header className="bg-light">
                   <strong>Modul Akses</strong>

@@ -1,6 +1,5 @@
-// src/pages/UbahPasswordModal.js
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Spinner, Container } from 'react-bootstrap';
 import api from 'api';
 
 const UbahPasswordModal = ({ show, onHide }) => {
@@ -11,9 +10,11 @@ const UbahPasswordModal = ({ show, onHide }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setPassword('');
-    setConfirmPassword('');
-    setMessage('');
+    if (show) {
+      setPassword('');
+      setConfirmPassword('');
+      setMessage('');
+    }
   }, [show]);
 
   const handleSave = async () => {
@@ -40,58 +41,82 @@ const UbahPasswordModal = ({ show, onHide }) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      scrollable
+      size="sm"
+    >
       <Modal.Header closeButton>
-        <Modal.Title>Ubah Password</Modal.Title>
+        <Modal.Title style={{ fontSize: '1rem' }}>Ubah Password</Modal.Title>
       </Modal.Header>
+
       <Modal.Body>
-        <Form>
-          <Form.Group className="mb-3">
-            <Form.Label>Username</Form.Label>
-            <Form.Control type="text" value={user?.username || ''} readOnly />
-          </Form.Group>
+        <Container fluid>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                value={user?.username || ''}
+                readOnly
+                size="sm"
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Password Baru</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Masukkan password baru"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Password Baru</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Masukkan password baru"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                size="sm"
+                disabled={loading}
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Konfirmasi Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Ulangi password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={loading}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Konfirmasi Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Ulangi password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                size="sm"
+                disabled={loading}
+              />
+            </Form.Group>
 
-          {message && (
-            <div
-              className="text-center"
-              style={{
-                color: message.includes('berhasil') ? 'green' : 'red',
-                fontSize: '0.85rem',
-              }}
-            >
-              {message}
-            </div>
-          )}
-        </Form>
+            {message && (
+              <div
+                className="text-center"
+                style={{
+                  color: message.includes('berhasil') ? 'green' : 'red',
+                  fontSize: '0.85rem',
+                }}
+              >
+                {message}
+              </div>
+            )}
+          </Form>
+        </Container>
       </Modal.Body>
+
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide} disabled={loading}>
+        <Button variant="secondary" size="sm" onClick={onHide} disabled={loading}>
           Kembali
         </Button>
-        <Button variant="primary" onClick={handleSave} disabled={loading}>
-          {loading ? 'Menyimpan...' : 'Simpan'}
+        <Button variant="primary" size="sm" onClick={handleSave} disabled={loading}>
+          {loading ? (
+            <>
+              <Spinner size="sm" animation="border" className="me-2" />
+              Menyimpan...
+            </>
+          ) : (
+            'Simpan'
+          )}
         </Button>
       </Modal.Footer>
     </Modal>

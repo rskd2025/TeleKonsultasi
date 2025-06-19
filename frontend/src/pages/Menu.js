@@ -20,9 +20,10 @@ const Menu = () => {
         alignItems: 'center',
         justifyContent: 'center',
         padding: '40px 20px',
+        overflowY: 'auto', // ✅ agar bisa scroll di layar kecil
       }}
     >
-      <Container>
+      <Container fluid>
         <Card
           className="mx-auto shadow-lg"
           style={{
@@ -46,6 +47,7 @@ const Menu = () => {
                   style={{
                     borderRadius: '12px',
                     backgroundColor: '#f8f9fa',
+                    width: '100%',
                   }}
                 >
                   {item.label}
@@ -56,7 +58,7 @@ const Menu = () => {
                 variant="outline-dark"
                 size="lg"
                 onClick={() => navigate(-1)}
-                style={{ borderRadius: '12px' }}
+                style={{ borderRadius: '12px', width: '100%' }}
               >
                 Kembali
               </Button>

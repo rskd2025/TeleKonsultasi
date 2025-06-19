@@ -7,7 +7,7 @@ import {
   Button,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import api from 'api'; // tetap bisa, jika alias api disiapkan di vite.config atau jsconfig.json
+import api from 'api';
 
 const HistoryPasien = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const HistoryPasien = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await api.get('/api/pemeriksaan/riwayat'); // ✅ baseURL sudah didefinisikan di api.js
+        const res = await api.get('/api/pemeriksaan/riwayat');
         setData(res.data);
       } catch (err) {
         console.error('❌ Gagal mengambil riwayat:', err);
@@ -50,19 +50,11 @@ const HistoryPasien = () => {
   };
 
   return (
-    <Container className="mt-4" style={{
-      background: 'linear-gradient(to right, #e8daef, #f4ecf7)',
-      padding: '20px',
-      borderRadius: '12px',
-      boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-    }}>
+    <Container fluid className="mt-4 mb-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4 style={{
-          color: '#5B2C6F',
-          fontWeight: '600',
-        }}>
+        <h5 className="fw-bold text-dark">
           📝 Riwayat Pemeriksaan Pasien
-        </h4>
+        </h5>
         <Button variant="outline-secondary" size="sm" onClick={() => navigate(-1)}>
           ⬅ Kembali
         </Button>
@@ -73,17 +65,28 @@ const HistoryPasien = () => {
           <Spinner animation="border" variant="secondary" size="sm" />
         </div>
       ) : (
-        <div style={{
-          overflowX: 'auto',
-          borderRadius: '8px',
-          backgroundColor: '#fff',
-          padding: '10px',
-        }}>
-          <Table hover responsive size="sm" className="mb-0">
-            <thead style={{
-              background: 'linear-gradient(to right, #BB8FCE, #D2B4DE)',
-              color: '#fff',
-            }}>
+        <div
+          style={{
+            overflowX: 'auto',
+            background: '#fff',
+            padding: '10px',
+            borderRadius: '10px',
+            boxShadow: '0 0 5px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Table
+            hover
+            responsive
+            size="sm"
+            className="mb-0 text-nowrap align-middle"
+            style={{ fontSize: '0.85rem', minWidth: '900px' }}
+          >
+            <thead
+              style={{
+                background: 'linear-gradient(to right, #BB8FCE, #D2B4DE)',
+                color: '#fff',
+              }}
+            >
               <tr>
                 <th>#</th>
                 <th>Nama</th>
@@ -106,7 +109,7 @@ const HistoryPasien = () => {
                 </tr>
               ) : (
                 data.map((item, index) => (
-                  <tr key={item.id} style={{ transition: 'background 0.2s' }}>
+                  <tr key={item.id}>
                     <td>{index + 1}</td>
                     <td>{item.nama_lengkap}</td>
                     <td>{item.jenis_kelamin}</td>

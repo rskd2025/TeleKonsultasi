@@ -25,7 +25,7 @@ const Dashboard = () => {
 
   const tombolNavigasi = [
     { label: 'Menu', to: '/menu' },
-    { label: 'Ubah Password', to: '#' }, // handled by modal
+    { label: 'Ubah Password', to: '#' },
     { label: 'Daftar Pasien', to: '/daftar-pasien' },
     { label: 'Feedback Konsul', to: '/feedback' },
     { label: 'Kunjungan Pasien', to: '/kunjungan-pasien' },
@@ -40,6 +40,7 @@ const Dashboard = () => {
         color: 'white',
         paddingTop: '50px',
         paddingBottom: '50px',
+        overflowX: 'hidden',
       }}
     >
       <Container>
@@ -47,16 +48,18 @@ const Dashboard = () => {
           <img
             src={logo}
             alt="Logo Pemprov Maluku"
-            style={{ width: '80px', height: '80px', marginRight: '15px' }}
+            style={{ width: '70px', height: '70px', marginRight: '10px' }}
           />
           <div>
             <h2 className="mb-1 fw-bold">Selamat Datang</h2>
-            <h5>Telekonsultasi Kesehatan Mental<br />RSKD Provinsi Maluku</h5>
+            <h5 style={{ fontSize: '1rem' }}>
+              Telekonsultasi Kesehatan Mental<br />RSKD Provinsi Maluku
+            </h5>
           </div>
         </div>
 
-        <Row className="mb-4 g-4">
-          <Col xs={12} sm={6} md={6}>
+        <Row className="mb-4 g-3">
+          <Col xs={12} sm={6}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
                 <Card.Title>Total Pasien</Card.Title>
@@ -64,7 +67,7 @@ const Dashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={12} sm={6} md={6}>
+          <Col xs={12} sm={6}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
                 <Card.Title>Total Faskes</Card.Title>
@@ -74,11 +77,11 @@ const Dashboard = () => {
           </Col>
         </Row>
 
-        <Row className="justify-content-center g-3">
+        <Row className="justify-content-center g-3 mb-5">
           {tombolNavigasi
             .filter((btn) => fiturAkses.includes(btn.label))
             .map(({ label, to }, idx) => (
-              <Col key={idx} xs={12} sm={6} md={2}>
+              <Col key={idx} xs={12} sm={6} md={4} lg={2}>
                 {label === 'Ubah Password' ? (
                   <Button
                     variant="light"
@@ -105,8 +108,8 @@ const Dashboard = () => {
             ))}
         </Row>
 
-        <div className="mt-5 text-center">
-          <h5 className="mb-3">Statistik Pasien per Bulan</h5>
+        <div className="mt-4 text-center">
+          <h5 className="mb-3">📊 Statistik Pasien per Bulan</h5>
           <div
             style={{
               height: '200px',
@@ -118,6 +121,8 @@ const Dashboard = () => {
               justifyContent: 'center',
               color: '#eee',
               fontStyle: 'italic',
+              overflowX: 'auto',
+              padding: '1rem',
             }}
           >
             Statistik pasien dinonaktifkan sementara

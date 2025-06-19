@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api'; // Pastikan file ini mengatur baseURL dengan benar
+import api from '../api';
 import { Button, Form, Card } from 'react-bootstrap';
 import './Login.css';
 
@@ -38,73 +38,73 @@ function Login() {
 
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', 'loggedin');
-
       navigate('/dashboard');
     } catch (error) {
-      if (error.response?.data) {
-        const msg = error.response.data.message || error.response.data.error || 'Login gagal';
-
-        if (/username/i.test(msg)) {
-          setUserError(msg);
-        } else if (/password/i.test(msg)) {
-          setPassError(msg);
-        } else {
-          setGeneralError(msg);
-        }
-      } else {
-        setGeneralError('❌ Tidak dapat terhubung ke server.');
-      }
+      const msg = error.response?.data?.message || error.response?.data?.error || 'Login gagal';
+      if (/username/i.test(msg)) setUserError(msg);
+      else if (/password/i.test(msg)) setPassError(msg);
+      else setGeneralError(msg);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-frame">
-        <div className="login-content">
-          <Card className="login-card">
-            <Card.Body>
-              <Form onSubmit={handleLogin}>
-                <Form.Group className="mb-3" controlId="formUsername">
-                  <Form.Label>Username</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Masukkan username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    isInvalid={!!userError}
-                    autoFocus
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {userError}
-                  </Form.Control.Feedback>
-                </Form.Group>
+    <div
+      className="login-container"
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        padding: '1rem',
+        background: 'linear-gradient(to right, #F4ECF7, #D2B4DE)',
+        overflowY: 'auto',
+      }}
+    >
+      <Card className="shadow login-card" style={{ width: '100%', maxWidth: '400px' }}>
+        <Card.Body>
+          <h5 className="text-center mb-3">🔐 Login Pengguna</h5>
+          <Form onSubmit={handleLogin}>
+            <Form.Group className="mb-3" controlId="formUsername">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Masukkan username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                isInvalid={!!userError}
+                autoFocus
+              />
+              <Form.Control.Feedback type="invalid">
+                {userError}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formPassword">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Masukkan password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    isInvalid={!!passError}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {passError}
-                  </Form.Control.Feedback>
-                </Form.Group>
+            <Form.Group className="mb-3" controlId="formPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Masukkan password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                isInvalid={!!passError}
+              />
+              <Form.Control.Feedback type="invalid">
+                {passError}
+              </Form.Control.Feedback>
+            </Form.Group>
 
-                {generalError && (
-                  <div className="text-danger mb-3">{generalError}</div>
-                )}
+            {generalError && (
+              <div className="text-danger mb-3">{generalError}</div>
+            )}
 
-                <Button variant="primary" type="submit" className="login-btn">
-                  🔐 Login
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </div>
-      </div>
+            <div className="d-grid">
+              <Button variant="primary" type="submit">
+                🔐 Login
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+      </Card>
     </div>
   );
 }
