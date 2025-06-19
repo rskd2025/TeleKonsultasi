@@ -1,7 +1,99 @@
-// ... import tetap sama
+// src/pages/Faskes.js
+import React, { useEffect, useState } from 'react';
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Table,
+  Modal,
+  Card,
+  Alert,
+} from 'react-bootstrap';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Faskes = () => {
-  // ... state dan useEffect tetap sama
+  const navigate = useNavigate();
+  const [faskes, setFaskes] = useState([]);
+  const [filteredFaskes, setFilteredFaskes] = useState([]);
+  const [search, setSearch] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({
+    nama: '',
+    kode: '',
+    jenis: '',
+    kabupaten: '',
+    provinsi: '',
+    id: '',
+  });
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const fetchFaskes = async () => {
+    try {
+      const res = await axios.get('/api/faskes');
+      setFaskes(res.data);
+      setFilteredFaskes(res.data);
+    } catch (err) {
+      console.error('Gagal mengambil data faskes:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchFaskes();
+  }, []);
+
+  useEffect(() => {
+    const lower = search.toLowerCase();
+    const filtered = faskes.filter(
+      (item) =>
+        item.nama?.toLowerCase().includes(lower) ||
+        item.kode?.toLowerCase().includes(lower) ||
+        item.kabupaten?.toLowerCase().includes(lower)
+    );
+    setFilteredFaskes(filtered);
+  }, [search, faskes]);
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleEdit = (item) => {
+    setFormData(item);
+    setEditMode(true);
+    setShowModal(true);
+  };
+
+  const handleHapus = async (id) => {
+    if (!window.confirm('Yakin hapus data ini?')) return;
+    try {
+      await axios.delete(`/api/faskes/${id}`);
+      fetchFaskes();
+    } catch (err) {
+      console.error('Gagal menghapus faskes:', err);
+    }
+  };
+
+  const handleSimpan = async () => {
+    try {
+      if (editMode) {
+        await axios.put(`/api/faskes/${formData.id}`, formData);
+      } else {
+        await axios.post('/api/faskes', formData);
+      }
+      setShowSuccess(true);
+      fetchFaskes();
+      setTimeout(() => {
+        setShowModal(false);
+        setShowSuccess(false);
+        setEditMode(false);
+      }, 1000);
+    } catch (err) {
+      console.error('Gagal menyimpan data:', err);
+    }
+  };
 
   return (
     <Container fluid className="mt-4 mb-4">
@@ -85,7 +177,6 @@ const Faskes = () => {
         </Card.Body>
       </Card>
 
-      {/* Modal Tambah/Edit */}
       <Modal show={showModal} onHide={() => { setShowModal(false); setEditMode(false); }} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: '1rem' }}>

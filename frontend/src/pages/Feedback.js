@@ -1,7 +1,75 @@
-// ... (import tetap sama)
+// src/pages/Feedback.js
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Table,
+  Spinner,
+} from 'react-bootstrap';
+import axios from 'axios';
+import { saveAs } from 'file-saver';
 
 const Feedback = ({ userRole = 'admin' }) => {
-  // ... (state dan useEffect tetap sama)
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [search, setSearch] = useState('');
+  const [tanggal, setTanggal] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get('/api/feedback');
+        setData(res.data);
+        setFilteredData(res.data);
+      } catch (err) {
+        console.error('Gagal mengambil data feedback:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFeedback();
+  }, []);
+
+  useEffect(() => {
+    let filtered = data;
+
+    if (search) {
+      filtered = filtered.filter((item) =>
+        item.nama_lengkap?.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    if (tanggal) {
+      filtered = filtered.filter((item) => item.tanggal === tanggal);
+    }
+
+    setFilteredData(filtered);
+  }, [search, tanggal, data]);
+
+  const exportToExcel = () => {
+    // Placeholder
+    alert('Export Excel tidak diimplementasikan.');
+  };
+
+  const exportToWord = () => {
+    // Placeholder
+    alert('Export Word tidak diimplementasikan.');
+  };
+
+  const exportToPDF = () => {
+    // Placeholder
+    alert('Export PDF tidak diimplementasikan.');
+  };
+
+  const exportToImage = () => {
+    // Placeholder
+    alert('Export JPG tidak diimplementasikan.');
+  };
 
   return (
     <Container fluid className="mt-4 mb-5">
@@ -27,10 +95,18 @@ const Feedback = ({ userRole = 'admin' }) => {
         </Col>
         <Col xs={12} md={4}>
           <div className="d-flex flex-wrap gap-2">
-            <Button size="sm" variant="success" onClick={exportToExcel}>Excel</Button>
-            <Button size="sm" variant="primary" onClick={exportToWord}>Word</Button>
-            <Button size="sm" variant="danger" onClick={exportToPDF}>PDF</Button>
-            <Button size="sm" variant="warning" onClick={exportToImage}>JPG</Button>
+            <Button size="sm" variant="success" onClick={exportToExcel}>
+              Excel
+            </Button>
+            <Button size="sm" variant="primary" onClick={exportToWord}>
+              Word
+            </Button>
+            <Button size="sm" variant="danger" onClick={exportToPDF}>
+              PDF
+            </Button>
+            <Button size="sm" variant="warning" onClick={exportToImage}>
+              JPG
+            </Button>
           </div>
         </Col>
       </Row>
@@ -41,7 +117,16 @@ const Feedback = ({ userRole = 'admin' }) => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <Table striped bordered hover size="sm" id="feedback-table" className="text-nowrap" style={{ fontSize: '0.85rem', minWidth: '900px' }}>
+          <Table
+            striped
+            bordered
+            hover
+            size="sm"
+            id="feedback-table"
+            className="text-nowrap"
+            style={{ fontSize: '0.85rem', minWidth: '900px' }}
+            responsive
+          >
             <thead className="text-center">
               <tr>
                 <th>Nama</th>
