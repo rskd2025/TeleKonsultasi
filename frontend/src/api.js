@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: 'https://7865-36-83-222-191.ngrok-free.app', // sesuai ngrok aktif
 });
 
 export default api;
