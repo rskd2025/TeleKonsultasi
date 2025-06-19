@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from 'api';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
@@ -24,7 +24,7 @@ const InputPemeriksaan = () => {
 
     const fetchPasien = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/pasien/${pasienId}`);
+        const res = await api.get(`/api/pasien/${pasienId}`);
         setPasien(res.data);
       } catch (err) {
         console.error('❌ Gagal mengambil data pasien:', err);
@@ -44,7 +44,7 @@ const InputPemeriksaan = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/pemeriksaan', {
+      await api.post('/api/pemeriksaan', {
         ...form,
         pasien_id: pasienId,
       });

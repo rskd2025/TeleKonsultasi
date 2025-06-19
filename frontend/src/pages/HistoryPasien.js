@@ -7,7 +7,7 @@ import {
   Button,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from 'api'; // tetap bisa, jika alias api disiapkan di vite.config atau jsconfig.json
 
 const HistoryPasien = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ const HistoryPasien = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/pemeriksaan/riwayat');
+        const res = await api.get('/api/pemeriksaan/riwayat'); // ✅ baseURL sudah didefinisikan di api.js
         setData(res.data);
       } catch (err) {
         console.error('❌ Gagal mengambil riwayat:', err);

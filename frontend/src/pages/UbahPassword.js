@@ -1,13 +1,52 @@
-import React from 'react';
-import { Button, Form, Container, Card } from 'react-bootstrap';
+// src/pages/UbahPassword.js
+import React, { useState } from 'react';
+import { Button, Form, Container, Card, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import api from 'api'; // ✅ koneksi aman untuk vercel↔ngrok
+import { toast } from 'react-toastify';
 
 const UbahPassword = () => {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
 
-  const handleSubmit = (e) => {
+  const [lama, setLama] = useState('');
+  const [baru, setBaru] = useState('');
+  const [konfirmasi, setKonfirmasi] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // logika ubah password di sini
+
+    if (!lama || !baru || !konfirmasi) {
+      toast.warn('⚠️ Semua kolom harus diisi');
+      return;
+    }
+
+    if (baru.length < 6) {
+      toast.warn('❌ Password baru minimal 6 karakter');
+      return;
+    }
+
+    if (baru !== konfirmasi) {
+      toast.error('❌ Konfirmasi password tidak cocok');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await api.put(`/api/users/password/${user.id}`, {
+        oldPassword: lama,
+        newPassword: baru,
+      });
+
+      toast.success('✅ Password berhasil diubah');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.error || '❌ Gagal mengubah password');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -18,27 +57,64 @@ const UbahPassword = () => {
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formPasswordLama">
               <Form.Label>Password Lama</Form.Label>
-              <Form.Control type="password" size="sm" placeholder="Masukkan password lama" required />
+              <Form.Control
+                type="password"
+                size="sm"
+                placeholder="Masukkan password lama"
+                value={lama}
+                onChange={(e) => setLama(e.target.value)}
+                required
+                disabled={loading}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formPasswordBaru">
               <Form.Label>Password Baru</Form.Label>
-              <Form.Control type="password" size="sm" placeholder="Masukkan password baru" required />
+              <Form.Control
+                type="password"
+                size="sm"
+                placeholder="Masukkan password baru"
+                value={baru}
+                onChange={(e) => setBaru(e.target.value)}
+                required
+                disabled={loading}
+              />
             </Form.Group>
 
             <Form.Group className="mb-4" controlId="formVerifikasiPasswordBaru">
               <Form.Label>Verifikasi Password Baru</Form.Label>
-              <Form.Control type="password" size="sm" placeholder="Verifikasi password baru" required />
+              <Form.Control
+                type="password"
+                size="sm"
+                placeholder="Verifikasi password baru"
+                value={konfirmasi}
+                onChange={(e) => setKonfirmasi(e.target.value)}
+                required
+                disabled={loading}
+              />
             </Form.Group>
 
             <div className="d-flex justify-content-between">
-              <Button variant="primary" type="submit" size="sm">
-                Simpan
+              <Button variant="primary" type="submit" size="sm" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-1" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  'Simpan'
+                )}
               </Button>
-              <Button variant="secondary" type="button" size="sm" onClick={() => navigate('/dashboard')}>
+              <Button
+                variant="secondary"
+                type="button"
+                size="sm"
+                onClick={() => navigate('/dashboard')}
+                disabled={loading}
+              >
                 Batal
               </Button>
-              <Button variant="success" type="button" size="sm" onClick={() => navigate(-1)}>
+              <Button variant="success" type="button" size="sm" onClick={() => navigate(-1)} disabled={loading}>
                 Kembali
               </Button>
             </div>

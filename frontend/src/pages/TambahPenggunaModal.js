@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Button, Form, Row, Col, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import api from 'api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -30,7 +30,6 @@ const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
 
   useEffect(() => {
     if (editingData) {
-      // Mapping ulang field dari editingData
       setFormData({
         nip: editingData.nip || '',
         gelar_depan: editingData.gelar_depan || '',
@@ -72,18 +71,9 @@ const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
   };
 
   const validateForm = () => {
-    if (!formData.nip) {
-      toast.warn('⚠️ NIP wajib diisi');
-      return false;
-    }
-    if (!formData.nama_depan) {
-      toast.warn('⚠️ Nama Depan wajib diisi');
-      return false;
-    }
-    if (!formData.jenis_kelamin) {
-      toast.warn('⚠️ Jenis Kelamin wajib diisi');
-      return false;
-    }
+    if (!formData.nip) return toast.warn('⚠️ NIP wajib diisi') && false;
+    if (!formData.nama_depan) return toast.warn('⚠️ Nama Depan wajib diisi') && false;
+    if (!formData.jenis_kelamin) return toast.warn('⚠️ Jenis Kelamin wajib diisi') && false;
     return true;
   };
 
@@ -107,10 +97,10 @@ const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
 
     try {
       if (isEditMode) {
-        await axios.put(`http://localhost:5000/api/pengguna/${editingData.id}`, dataToSend);
+        await api.put(`/api/pengguna/${editingData.id}`, dataToSend); // ✅ pakai api
         toast.success('✅ Data berhasil diperbarui');
       } else {
-        await axios.post('http://localhost:5000/api/pengguna', dataToSend);
+        await api.post('/api/pengguna', dataToSend); // ✅ pakai api
         toast.success('✅ Data berhasil ditambahkan');
       }
 
@@ -147,42 +137,36 @@ const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
                 <Form.Control type="text" name="nip" ref={nipRef} value={formData.nip} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Gelar Depan</Form.Label>
                 <Form.Control type="text" name="gelar_depan" value={formData.gelar_depan} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Nama Depan *</Form.Label>
                 <Form.Control type="text" name="nama_depan" value={formData.nama_depan} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Gelar Belakang</Form.Label>
                 <Form.Control type="text" name="gelar_belakang" value={formData.gelar_belakang} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Tempat Lahir</Form.Label>
                 <Form.Control type="text" name="tempat_lahir" value={formData.tempat_lahir} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Tanggal Lahir</Form.Label>
                 <Form.Control type="date" name="tanggal_lahir" value={formData.tanggal_lahir} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Jenis Kelamin *</Form.Label>
@@ -193,14 +177,12 @@ const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
                 </Form.Control>
               </Form.Group>
             </Col>
-
             <Col md={8}>
               <Form.Group className="mb-2">
                 <Form.Label>Alamat Lengkap</Form.Label>
                 <Form.Control as="textarea" rows={2} name="alamat_lengkap" value={formData.alamat_lengkap} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Agama</Form.Label>
@@ -212,14 +194,12 @@ const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
                 </Form.Control>
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Jenis Profesi</Form.Label>
                 <Form.Control type="text" name="jenis_profesi" value={formData.jenis_profesi} onChange={handleChange} />
               </Form.Group>
             </Col>
-
             <Col md={4}>
               <Form.Group className="mb-2">
                 <Form.Label>Status</Form.Label>

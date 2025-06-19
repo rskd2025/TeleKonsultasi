@@ -1,31 +1,34 @@
-// ModalFeedback.js
 import React, { useState } from 'react';
 import { Modal, Button, Form, Row, Col, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import api from 'api';
 
 const ModalFeedback = ({ show, onHide, pasien, onSuccess, userName }) => {
   const [jawaban, setJawaban] = useState('');
   const [sukses, setSukses] = useState(false);
 
   const handleSimpan = async () => {
-    if (!jawaban.trim()) return alert('Harap isi jawaban konsul.');
+    if (!jawaban.trim()) {
+      alert('Harap isi jawaban konsul.');
+      return;
+    }
+
     try {
-      await axios.post('/api/feedback', {
+      await api.post('/api/feedback', {
         pasien_id: pasien.id,
         nama_pasien: pasien.nama_pasien,
         diagnosa: pasien.diagnosa,
         anamnesis: pasien.anamnesis,
         jawaban,
-        konsultan: userName
+        konsultan: userName,
       });
 
-      await axios.delete(`/api/pemeriksaan/${pasien.id}`); // pindahkan dari kunjungan
+      await api.delete(`/api/pemeriksaan/${pasien.id}`); // pindahkan dari daftar kunjungan
       setSukses(true);
       setTimeout(() => {
-        onSuccess();
-        onHide();
-        setSukses(false);
-        setJawaban('');
+        onSuccess();       // refresh data
+        onHide();          // tutup modal
+        setSukses(false);  // reset pesan sukses
+        setJawaban('');    // kosongkan field
       }, 1000);
     } catch (err) {
       console.error('Gagal simpan feedback:', err);

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api'; // Pastikan file ini mengatur baseURL dengan benar
 import { Button, Form, Card } from 'react-bootstrap';
 import './Login.css';
 
@@ -14,7 +14,6 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     setUserError('');
     setPassError('');
     setGeneralError('');
@@ -29,37 +28,31 @@ function Login() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', {
-        username,
-        password,
-      });
-
+      const response = await api.post('/api/users/login', { username, password });
       const { user } = response.data;
 
-      // ✅ Validasi data hak akses
       if (!user || !user.role) {
         setGeneralError('Login gagal. Data pengguna tidak valid.');
         return;
       }
 
-      // ✅ Simpan user & token
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', 'loggedin'); // Bisa dipakai untuk cek login
+      localStorage.setItem('token', 'loggedin');
 
-      navigate('/dashboard'); // Arahkan ke dashboard setelah login
+      navigate('/dashboard');
     } catch (error) {
-      if (error.response && error.response.data) {
+      if (error.response?.data) {
         const msg = error.response.data.message || error.response.data.error || 'Login gagal';
 
-        if (msg.toLowerCase().includes('username')) {
+        if (/username/i.test(msg)) {
           setUserError(msg);
-        } else if (msg.toLowerCase().includes('password')) {
+        } else if (/password/i.test(msg)) {
           setPassError(msg);
         } else {
           setGeneralError(msg);
         }
       } else {
-        setGeneralError('Tidak dapat terhubung ke server');
+        setGeneralError('❌ Tidak dapat terhubung ke server.');
       }
     }
   };
@@ -105,7 +98,7 @@ function Login() {
                 )}
 
                 <Button variant="primary" type="submit" className="login-btn">
-                  Login
+                  🔐 Login
                 </Button>
               </Form>
             </Card.Body>

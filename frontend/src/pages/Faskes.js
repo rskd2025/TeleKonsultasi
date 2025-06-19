@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api'; // ✅ Perbaiki path import
 import {
   Container,
   Card,
@@ -49,7 +49,7 @@ const Faskes = () => {
 
   const fetchFaskes = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/faskes');
+      const res = await api.get('/api/faskes'); // ✅ Ganti URL absolut
       setDataFaskes(res.data);
     } catch (err) {
       console.error('Gagal mengambil data:', err);
@@ -70,9 +70,9 @@ const Faskes = () => {
 
     try {
       if (editMode) {
-        await axios.put(`/api/faskes/${id}`, formData);
+        await api.put(`/api/faskes/${id}`, formData);
       } else {
-        await axios.post('/api/faskes', formData);
+        await api.post('/api/faskes', formData);
       }
       fetchFaskes();
       setShowSuccess(true);
@@ -98,7 +98,7 @@ const Faskes = () => {
   const handleHapus = async (id) => {
     if (window.confirm('Yakin ingin menghapus data ini?')) {
       try {
-        await axios.delete(`/api/faskes/${id}`);
+        await api.delete(`/api/faskes/${id}`);
         fetchFaskes();
       } catch (err) {
         console.error('Gagal menghapus:', err);

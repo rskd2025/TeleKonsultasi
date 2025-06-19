@@ -1,6 +1,7 @@
+// src/pages/UbahPasswordModal.js
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
+import api from 'api';
 
 const UbahPasswordModal = ({ show, onHide }) => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -17,24 +18,23 @@ const UbahPasswordModal = ({ show, onHide }) => {
 
   const handleSave = async () => {
     if (!password || !confirmPassword) {
-      setMessage('Semua kolom harus diisi');
+      setMessage('⚠️ Semua kolom harus diisi');
       return;
     }
 
     if (password !== confirmPassword) {
-      setMessage('Password dan konfirmasi tidak cocok');
+      setMessage('❌ Password dan konfirmasi tidak cocok');
       return;
     }
 
     try {
       setLoading(true);
-      await axios.put(`http://localhost:5000/api/users/password/${user.id}`, {
-        password,
-      });
-      setMessage('Password berhasil diubah');
-      setLoading(false);
+      await api.put(`/api/users/password/${user.id}`, { password });
+      setMessage('✅ Password berhasil diubah');
     } catch (error) {
-      setMessage('Gagal mengubah password');
+      console.error(error);
+      setMessage('❌ Gagal mengubah password');
+    } finally {
       setLoading(false);
     }
   };
@@ -58,6 +58,7 @@ const UbahPasswordModal = ({ show, onHide }) => {
               placeholder="Masukkan password baru"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
           </Form.Group>
 
@@ -68,14 +69,25 @@ const UbahPasswordModal = ({ show, onHide }) => {
               placeholder="Ulangi password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={loading}
             />
           </Form.Group>
 
-          {message && <div className="text-danger">{message}</div>}
+          {message && (
+            <div
+              className="text-center"
+              style={{
+                color: message.includes('berhasil') ? 'green' : 'red',
+                fontSize: '0.85rem',
+              }}
+            >
+              {message}
+            </div>
+          )}
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={onHide} disabled={loading}>
           Kembali
         </Button>
         <Button variant="primary" onClick={handleSave} disabled={loading}>

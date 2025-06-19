@@ -1,3 +1,4 @@
+// Tetap gunakan ini
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TambahPenggunaModal from './TambahPenggunaModal';
@@ -17,14 +18,13 @@ import {
   Pagination,
   Badge,
 } from 'react-bootstrap';
-import axios from 'axios';
+import api from 'api';
 import { FaEdit, FaTrash, FaKey } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Pengguna = () => {
   const navigate = useNavigate();
-
   const [status, setStatus] = useState('');
   const [cari, setCari] = useState('');
   const [pengguna, setPengguna] = useState([]);
@@ -48,7 +48,7 @@ const Pengguna = () => {
   const fetchPengguna = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/pengguna');
+      const res = await api.get('/api/pengguna'); // ✅ GANTI DI SINI
       const mapped = res.data.map((item) => ({
         ...item,
         namaLengkap: item.nama_lengkap,
@@ -80,7 +80,7 @@ const Pengguna = () => {
     if (!confirmDeleteId) return;
     setDeletingId(confirmDeleteId);
     try {
-      await axios.delete(`http://localhost:5000/api/pengguna/${confirmDeleteId}`);
+      await api.delete(`/api/pengguna/${confirmDeleteId}`); // ✅ GANTI DI SINI
       toast.success('✅ Pengguna berhasil dihapus');
       fetchPengguna();
     } catch {
@@ -100,10 +100,10 @@ const Pengguna = () => {
   const submitPassword = async (password, jenisPengguna) => {
     if (!password) return;
     try {
-      await axios.put(`http://localhost:5000/api/pengguna/${selectedUser.id}/password`, {
+      await api.put(`/api/pengguna/${selectedUser.id}/password`, {
         password,
         jenisPengguna,
-      });
+      }); // ✅ GANTI DI SINI
       toast.success('✅ Password berhasil diperbarui');
     } catch {
       toast.error('❌ Gagal memperbarui password');
@@ -132,52 +132,22 @@ const Pengguna = () => {
   const totalPages = Math.ceil(filteredPengguna.length / itemsPerPage);
 
   return (
-    <Container
-      fluid
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(to right, #6a11cb, #2575fc)',
-        padding: '2rem',
-        fontSize: '0.85rem',
-      }}
-    >
+    <Container fluid style={{ minHeight: '100vh', background: 'linear-gradient(to right, #6a11cb, #2575fc)', padding: '2rem', fontSize: '0.85rem' }}>
       <ToastContainer position="top-center" />
-      <Card
-        className="shadow-lg border-0"
-        style={{
-          borderRadius: '1rem',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        }}
-      >
+      <Card className="shadow-lg border-0" style={{ borderRadius: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
         <Card.Body>
           <Row className="align-items-center mb-3">
             <Col md={4}>
-              <Button variant="secondary" size="sm" onClick={handleKembali}>
-                ← Kembali
-              </Button>
+              <Button variant="secondary" size="sm" onClick={handleKembali}>← Kembali</Button>
             </Col>
             <Col md={8} className="d-flex justify-content-end gap-2">
-              <Form.Select
-                size="sm"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                style={{ maxWidth: '140px' }}
-              >
+              <Form.Select size="sm" value={status} onChange={(e) => setStatus(e.target.value)} style={{ maxWidth: '140px' }}>
                 <option value="">Semua Status</option>
                 <option value="Aktif">Aktif</option>
                 <option value="Tidak Aktif">Tidak Aktif</option>
               </Form.Select>
-              <Form.Control
-                type="text"
-                size="sm"
-                placeholder="Cari Nama / NIP"
-                value={cari}
-                onChange={(e) => setCari(e.target.value)}
-                style={{ maxWidth: '240px' }}
-              />
-              <Button size="sm" variant="success" onClick={() => setShowTambahPenggunaModal(true)}>
-                + Tambah
-              </Button>
+              <Form.Control type="text" size="sm" placeholder="Cari Nama / NIP" value={cari} onChange={(e) => setCari(e.target.value)} style={{ maxWidth: '240px' }} />
+              <Button size="sm" variant="success" onClick={() => setShowTambahPenggunaModal(true)}>+ Tambah</Button>
             </Col>
           </Row>
 
@@ -193,15 +163,15 @@ const Pengguna = () => {
               <Table bordered hover responsive size="sm" className="align-middle text-center">
                 <thead className="table-light">
                   <tr>
-                    <th style={{ fontSize: '0.75rem' }}>No</th>
-                    <th style={{ fontSize: '0.75rem' }}>NIP</th>
-                    <th style={{ fontSize: '0.75rem' }}>Nama Lengkap</th>
-                    <th style={{ fontSize: '0.75rem' }}>Tempat / Tgl. Lahir</th>
-                    <th style={{ fontSize: '0.75rem' }}>Jenis Kelamin</th>
-                    <th style={{ fontSize: '0.75rem' }}>Alamat</th>
-                    <th style={{ fontSize: '0.75rem' }}>Profesi</th>
-                    <th style={{ fontSize: '0.75rem' }}>Status</th>
-                    <th style={{ fontSize: '0.75rem' }}>Aksi</th>
+                    <th>No</th>
+                    <th>NIP</th>
+                    <th>Nama Lengkap</th>
+                    <th>Tempat / Tgl. Lahir</th>
+                    <th>Jenis Kelamin</th>
+                    <th>Alamat</th>
+                    <th>Profesi</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -233,40 +203,21 @@ const Pengguna = () => {
                         </Badge>
                       </td>
                       <td>
-                        <FaEdit
-                          className="me-2 text-primary"
-                          style={{ cursor: 'pointer' }}
-                          title="Edit"
-                          onClick={() => handleEdit(p)}
-                        />
+                        <FaEdit className="me-2 text-primary" style={{ cursor: 'pointer' }} title="Edit" onClick={() => handleEdit(p)} />
                         {deletingId === p.id ? (
                           <Spinner animation="border" size="sm" variant="danger" />
                         ) : (
-                          <FaTrash
-                            className="me-2 text-danger"
-                            style={{ cursor: 'pointer' }}
-                            title="Hapus"
-                            onClick={() => {
-                              setConfirmDeleteId(p.id);
-                              setShowConfirmModal(true);
-                            }}
-                          />
+                          <FaTrash className="me-2 text-danger" style={{ cursor: 'pointer' }} title="Hapus" onClick={() => {
+                            setConfirmDeleteId(p.id);
+                            setShowConfirmModal(true);
+                          }} />
                         )}
-                        <FaKey
-                          className="text-warning"
-                          style={{ cursor: 'pointer' }}
-                          title="Atur Password"
-                          onClick={() => handleSetPassword(p)}
-                        />
+                        <FaKey className="text-warning" style={{ cursor: 'pointer' }} title="Atur Password" onClick={() => handleSetPassword(p)} />
                       </td>
                     </tr>
                   ))}
                   {currentItems.length === 0 && (
-                    <tr>
-                      <td colSpan="9" className="text-center">
-                        Tidak ada data pengguna.
-                      </td>
-                    </tr>
+                    <tr><td colSpan="9" className="text-center">Tidak ada data pengguna.</td></tr>
                   )}
                 </tbody>
               </Table>
@@ -274,11 +225,7 @@ const Pengguna = () => {
               {totalPages > 1 && (
                 <Pagination className="justify-content-center mt-3">
                   {[...Array(totalPages).keys()].map((num) => (
-                    <Pagination.Item
-                      key={num + 1}
-                      active={num + 1 === currentPage}
-                      onClick={() => setCurrentPage(num + 1)}
-                    >
+                    <Pagination.Item key={num + 1} active={num + 1 === currentPage} onClick={() => setCurrentPage(num + 1)}>
                       {num + 1}
                     </Pagination.Item>
                   ))}
@@ -310,9 +257,7 @@ const Pengguna = () => {
         </Modal.Header>
         <Modal.Body>Apakah Anda yakin ingin menghapus pengguna ini?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>
-            Batal
-          </Button>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>Batal</Button>
           <Button variant="danger" onClick={handleHapus} disabled={!!deletingId}>
             {deletingId ? 'Menghapus...' : 'Hapus'}
           </Button>

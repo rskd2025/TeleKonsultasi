@@ -1,4 +1,3 @@
-// src/pages/ManajemenPengguna.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AksesModal from './AksesModal';
@@ -15,7 +14,7 @@ import {
   Tooltip,
   Pagination,
 } from 'react-bootstrap';
-import axios from 'axios';
+import api from 'api';
 import { FaCog } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -37,7 +36,7 @@ const ManajemenPengguna = () => {
   const fetchPengguna = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/pengguna');
+      const res = await api.get('/api/pengguna'); // ✅ gunakan path relatif
       setPengguna(res.data);
     } catch (err) {
       toast.error('❌ Gagal mengambil data pengguna');
@@ -53,12 +52,10 @@ const ManajemenPengguna = () => {
     setShowAksesModal(true);
   };
 
-  const filteredPengguna = pengguna.filter((p) => {
-    return (
-      (typeof p.nama_lengkap === 'string' && p.nama_lengkap.toLowerCase().includes(cari.toLowerCase())) ||
-      (typeof p.nip === 'string' && p.nip.includes(cari))
-    );
-  });
+  const filteredPengguna = pengguna.filter((p) =>
+    (typeof p.nama_lengkap === 'string' && p.nama_lengkap.toLowerCase().includes(cari.toLowerCase())) ||
+    (typeof p.nip === 'string' && p.nip.includes(cari))
+  );
 
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
@@ -128,7 +125,7 @@ const ManajemenPengguna = () => {
                       <td>{p.nip}</td>
                       <td>{p.nama_lengkap || '-'}</td>
                       <td>
-                        {p.tempat_lahir},
+                        {p.tempat_lahir},{' '}
                         <OverlayTrigger placement="top" overlay={<Tooltip>{p.tanggal_lahir}</Tooltip>}>
                           <span>
                             {p.tanggal_lahir

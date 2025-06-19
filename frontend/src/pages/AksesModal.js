@@ -9,7 +9,7 @@ import {
   ListGroup,
   Card,
 } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api'; // ✅ Perbaikan path import
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -51,7 +51,7 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
     if (!user) return;
     setSaving(true);
     try {
-      await axios.put(`http://localhost:5000/api/users/${user.id}`, {
+      await api.put(`/api/users/${user.id}`, { // ✅ Perbaikan endpoint
         groupAkses: selectedGroups,
         modulAkses: selectedModules,
       });

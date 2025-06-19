@@ -1,4 +1,3 @@
-// src/pages/KunjunganPasien.js
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -11,7 +10,7 @@ import {
   Badge,
   Modal,
 } from 'react-bootstrap';
-import axios from 'axios';
+import api from 'api';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -28,7 +27,7 @@ const KunjunganPasien = () => {
   const fetchKunjungan = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/pemeriksaan/kunjungan');
+      const res = await api.get('/api/pemeriksaan/kunjungan');
       setData(res.data);
       setFilteredData(res.data);
     } catch (err) {
@@ -63,7 +62,7 @@ const KunjunganPasien = () => {
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/pemeriksaan/${selectedPasien.id}/terima`, {
+      await api.put(`/api/pemeriksaan/${selectedPasien.id}/terima`, {
         jawaban_konsul: jawabanKonsul,
       });
       toast.success('✅ Pasien diterima.');
@@ -77,7 +76,7 @@ const KunjunganPasien = () => {
 
   const handleBatal = async (kunjungan) => {
     try {
-      await axios.put(`http://localhost:5000/api/pemeriksaan/${kunjungan.id}/status`, {
+      await api.put(`/api/pemeriksaan/${kunjungan.id}/status`, {
         status: 'batal',
       });
       toast.info(`🚫 Kunjungan ${kunjungan.nama_lengkap} dibatalkan.`);

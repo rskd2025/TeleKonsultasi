@@ -1,4 +1,3 @@
-// src/pages/Feedback.js
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -9,7 +8,7 @@ import {
   Spinner,
   Table,
 } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api'; // ✅ gunakan path relatif
 import { toast } from 'react-toastify';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
@@ -26,7 +25,7 @@ const Feedback = ({ userRole = 'admin' }) => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/pemeriksaan/riwayat');
+      const res = await api.get('/api/pemeriksaan/riwayat'); // ✅ sudah pakai baseURL
       setData(res.data);
       setFilteredData(res.data);
     } catch (err) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from 'api';
 
 const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId = null }) => {
   const [username, setUsername] = useState('');
@@ -53,7 +53,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
 
     try {
       setLoading(true);
-      await axios.put(`http://localhost:5000/api/pengguna/${penggunaId}/password`, {
+      await api.put(`/api/pengguna/${penggunaId}/password`, {
         username: username.trim(),
         password,
         role,
