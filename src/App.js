@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { IdleTimerProvider } from 'react-idle-timer';
@@ -21,7 +22,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import Loader from './components/Loader';
-import { useLoading } from './components/LoadingContext'; // ✅ pastikan path ini benar
+import { useLoading } from './components/LoadingContext';
 
 // ✅ Notifikasi
 import { ToastContainer } from 'react-toastify';
@@ -30,29 +31,37 @@ import 'react-toastify/dist/ReactToastify.css';
 function LayoutWrapper() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { loading, setLoading } = useLoading(); // ✅ tambahkan setLoading
+  const { loading, setLoading } = useLoading();
   const user = JSON.parse(localStorage.getItem('user'));
-  const hideHeaderFooter = ['/login', '/unauthorized'].includes(location.pathname);
   const isLoggedIn = !!user;
+  const hideHeaderFooter = ['/login', '/unauthorized'].includes(location.pathname);
 
   const [showSignup, setShowSignup] = useState(false);
 
+  // ✅ Cegah logout saat refresh, hanya logout jika browser/tab ditutup
+  useEffect(() => {
+    const wasRefreshed = sessionStorage.getItem('refreshed');
+    if (!wasRefreshed) {
+      // Browser baru / tab baru → anggap logout otomatis
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+    }
+    sessionStorage.setItem('refreshed', 'yes');
+
+    return () => {
+      // Hapus saat keluar tab / browser
+      sessionStorage.removeItem('refreshed');
+    };
+  }, []);
+
+  // ⏳ Loading saat buka halaman pertama kali
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 500); // ⏳ simulasi loading saat awal buka
+    const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
   }, [setLoading]);
 
-  // ✅ Logout otomatis saat browser ditutup
-  useEffect(() => {
-    const handleUnload = () => {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, []);
-
+  // ⏱ Logout otomatis jika idle (misalnya 10 menit)
   const handleIdle = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
@@ -68,15 +77,12 @@ function LayoutWrapper() {
         <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '1rem' }}>
           <Routes>
             <Route path="/login" element={<Login onSignupClick={() => setShowSignup(true)} />} />
-            <Route
-              path="/unauthorized"
-              element={
-                <div className="text-center mt-5">
-                  <h2>❌ Akses Ditolak</h2>
-                  <p>Anda tidak memiliki hak untuk mengakses halaman ini.</p>
-                </div>
-              }
-            />
+            <Route path="/unauthorized" element={
+              <div className="text-center mt-5">
+                <h2>❌ Akses Ditolak</h2>
+                <p>Anda tidak memiliki hak untuk mengakses halaman ini.</p>
+              </div>
+            } />
             <Route path="/" element={<ProtectedRoute requiredModules={[]}><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute requiredModules={[]}><Dashboard /></ProtectedRoute>} />
             <Route path="/daftar-pasien" element={<ProtectedRoute requiredModules={["Input Pasien"]}><DaftarPasien /></ProtectedRoute>} />
@@ -93,6 +99,7 @@ function LayoutWrapper() {
 
         {isLoggedIn && !hideHeaderFooter && <Footer />}
 
+        {/* ⬇️ Modal signup di halaman login */}
         {location.pathname === '/login' && (
           <SignupModal show={showSignup} onHide={() => setShowSignup(false)} />
         )}
