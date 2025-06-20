@@ -1,3 +1,4 @@
+// src/pages/KunjunganPasien.js
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -12,8 +13,7 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../components/LoadingContext';
-import api from '../api'; // ⬅️ Pastikan sudah pakai instance API
-// import axios from 'axios'; ⬅️ Sudah tidak digunakan
+import api from '../api'; // ✅ Gunakan instance API
 
 const KunjunganPasien = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ const KunjunganPasien = () => {
 
   useEffect(() => {
     const filtered = (Array.isArray(data) ? data : []).filter((item) =>
-      item.nama_lengkap?.toLowerCase().includes(search.toLowerCase())
+      (item.nama_lengkap || '').toLowerCase().includes((search || '').toLowerCase())
     );
     setFilteredData(filtered);
   }, [search, data]);
@@ -47,6 +47,7 @@ const KunjunganPasien = () => {
       const res = await api.get(`/api/pemeriksaan/kunjungan?role=${role}`);
       const hasil = Array.isArray(res.data) ? res.data : [];
       setData(hasil);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Gagal fetch data:', err);
       setData([]);
@@ -109,22 +110,19 @@ const KunjunganPasien = () => {
         </Row>
       </Form>
 
-      {loading || filteredData.length === 0 ? (
+      {loading ? (
         <div className="text-center text-muted">
-          {loading ? <Spinner animation="border" size="sm" /> : 'Tidak ada data ditemukan'}
+          <Spinner animation="border" size="sm" />
+          <div className="mt-2">Memuat data pasien...</div>
         </div>
+      ) : filteredData.length === 0 ? (
+        <div className="text-center text-muted">Tidak ada data ditemukan</div>
       ) : (
         filteredData.map((item) => (
           <Card key={item.id} className="mb-3 shadow-sm">
-            <Card.Body
-              style={{
-                fontSize: '0.85rem',
-                overflowX: 'auto',
-                minWidth: '280px',
-              }}
-            >
+            <Card.Body style={{ fontSize: '0.85rem', overflowX: 'auto', minWidth: '280px' }}>
               <Card.Title className="fw-bold">
-                {item.nama_lengkap?.toUpperCase()} - {item.jenis_kelamin}, {item.umur} th
+                {(item.nama_lengkap || '').toUpperCase()} - {item.jenis_kelamin}, {item.umur} th
               </Card.Title>
               <Card.Text>
                 <strong>Faskes Asal:</strong> {item.faskes_asal} <br />
