@@ -18,6 +18,11 @@ const ProtectedRoute = ({ children, requiredModules = [] }) => {
     return children;
   }
 
+  // Jika halaman tidak minta modul khusus (seperti Dashboard), semua user bisa akses
+  if (requiredModules.length === 0) {
+    return children;
+  }
+
   // Cek apakah user punya akses
   const punyaAkses = requiredModules.some(
     (mod) => modulAkses.includes(mod) || groupAkses.includes(mod)
