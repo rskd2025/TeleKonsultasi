@@ -13,7 +13,7 @@ function Login({ onSignupClick }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Reset input dan error setiap kali buka halaman login
+  // Reset input saat masuk halaman login
   useEffect(() => {
     setUsername('');
     setPassword('');
@@ -55,8 +55,7 @@ function Login({ onSignupClick }) {
       navigate('/dashboard');
     } catch (error) {
       if (error.response && error.response.data) {
-        const msg =
-          error.response.data.message || error.response.data.error || 'Login gagal';
+        const msg = error.response.data.message || error.response.data.error || 'Login gagal';
 
         if (msg.toLowerCase().includes('username')) {
           setUserError(msg);
@@ -80,16 +79,17 @@ function Login({ onSignupClick }) {
               <div className="login-content">
                 <Card className="login-card">
                   <Card.Body>
-                    <Form onSubmit={handleLogin} autoComplete="off">
+                    <Form onSubmit={handleLogin} autoComplete="off" key={location.key}>
                       <Form.Group className="mb-3" controlId="formUsername">
                         <Form.Label>Username</Form.Label>
                         <Form.Control
                           type="text"
+                          name="username"
                           placeholder="Masukkan username"
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           isInvalid={!!userError}
-                          autoComplete="username"
+                          autoComplete="new-username"
                           autoFocus
                         />
                         <Form.Control.Feedback type="invalid">
@@ -101,11 +101,12 @@ function Login({ onSignupClick }) {
                         <Form.Label>Password</Form.Label>
                         <Form.Control
                           type="password"
+                          name="password"
                           placeholder="Masukkan password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           isInvalid={!!passError}
-                          autoComplete="current-password"
+                          autoComplete="new-password"
                         />
                         <Form.Control.Feedback type="invalid">
                           {passError}
