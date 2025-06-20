@@ -34,6 +34,13 @@ const DaftarPasien = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validasi tambahan sebelum kirim
+    if (!data.nama_lengkap || !data.nik || !data.tanggal_lahir || !data.jenis_kelamin) {
+      toast.error('❌ Mohon lengkapi data wajib: Nama, NIK, Tanggal Lahir, dan Jenis Kelamin');
+      return;
+    }
+
     try {
       const res = await api.post('/api/pasien', data);
       toast.success('✅ Pasien berhasil didaftarkan');
@@ -51,7 +58,7 @@ const DaftarPasien = () => {
 
       navigate(`/input-pemeriksaan?id=${pasienId}`);
     } catch (err) {
-      console.error('❌ Gagal menyimpan data pasien:', err);
+      console.error('❌ Gagal menyimpan data pasien:', err.response?.data || err);
       toast.error('❌ Gagal menyimpan data pasien');
     }
   };
@@ -66,20 +73,20 @@ const DaftarPasien = () => {
       const res = await api.get(`/api/pasien/cari?query=${encodeURIComponent(cari)}`);
       setHasilCari(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('❌ Error saat cari pasien:', err.response?.data || err);
       toast.error('❌ Gagal mencari data pasien');
     }
   };
 
   return (
-    <Container className="mt-4" fluid>
+    <Container className="mt-4 mb-4" fluid>
       <Row>
         <Col xs={12} md={6} className="mb-3">
           <Card className="p-3 shadow-sm">
             <h5>📝 Form Pendaftaran Pasien</h5>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-2">
-                <Form.Label>Nama Lengkap</Form.Label>
+                <Form.Label>Nama Lengkap *</Form.Label>
                 <Form.Control
                   type="text"
                   name="nama_lengkap"
@@ -90,7 +97,7 @@ const DaftarPasien = () => {
               </Form.Group>
 
               <Form.Group className="mb-2">
-                <Form.Label>NIK</Form.Label>
+                <Form.Label>NIK *</Form.Label>
                 <Form.Control
                   type="text"
                   name="nik"
@@ -101,7 +108,7 @@ const DaftarPasien = () => {
               </Form.Group>
 
               <Form.Group className="mb-2">
-                <Form.Label>Tanggal Lahir</Form.Label>
+                <Form.Label>Tanggal Lahir *</Form.Label>
                 <Form.Control
                   type="date"
                   name="tanggal_lahir"
@@ -112,7 +119,7 @@ const DaftarPasien = () => {
               </Form.Group>
 
               <Form.Group className="mb-2">
-                <Form.Label>Jenis Kelamin</Form.Label>
+                <Form.Label>Jenis Kelamin *</Form.Label>
                 <Form.Select
                   name="jenis_kelamin"
                   value={data.jenis_kelamin}
@@ -160,7 +167,7 @@ const DaftarPasien = () => {
                 <Button variant="secondary" onClick={handleCancel}>
                   Batal
                 </Button>
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="submit" className="w-100 ms-2">
                   Simpan & Lanjut
                 </Button>
               </div>
@@ -194,24 +201,30 @@ const DaftarPasien = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {hasilCari.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.nama_lengkap}</td>
-                      <td>{item.nik}</td>
-                      <td>{item.tanggal_lahir}</td>
-                      <td>
-                        <Button
-                          variant="success"
-                          size="sm"
-                          onClick={() =>
-                            navigate(`/input-pemeriksaan?id=${item.id}`)
-                          }
-                        >
-                          Pilih
-                        </Button>
+                  {hasilCari.length > 0 ? (
+                    hasilCari.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.nama_lengkap}</td>
+                        <td>{item.nik}</td>
+                        <td>{item.tanggal_lahir}</td>
+                        <td>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            onClick={() => navigate(`/input-pemeriksaan?id=${item.id}`)}
+                          >
+                            Pilih
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" className="text-center text-muted">
+                        Belum ada hasil pencarian
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </Table>
             </div>
