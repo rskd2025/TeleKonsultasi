@@ -28,7 +28,7 @@ function Login({ onSignupClick }) {
     }
 
     try {
-      const response = await api.post('/users/login', {
+      const response = await api.post('/api/users/login', {
         username,
         password,
       });
