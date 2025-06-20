@@ -19,7 +19,7 @@ const Feedback = ({ userRole = 'admin' }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
   const [tanggal, setTanggal] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { loading, setLoading } = useLoading(); // ✅ gunakan loading global
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -38,12 +38,9 @@ const Feedback = ({ userRole = 'admin' }) => {
       }
     };
     fetchFeedback();
-  }, []);
+  }, [setLoading]);
 
   useEffect(() => {
-    setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
-
     let filtered = data;
 
     if (search) {
