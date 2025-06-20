@@ -48,7 +48,7 @@ const Footer = () => {
         {/* Kiri - Info Aplikasi */}
         <div style={{ width: '220px', textAlign: 'left', lineHeight: 1.2 }}>
           <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
-            Tele Konsultasi Kesehatan Mental
+            TeleKonsultasi Kesehatan Mental
           </div>
           <div style={{ fontSize: '10px', opacity: 0.85 }}>
             RSKD Provinsi Maluku · versi 0.1 · 2025
@@ -58,7 +58,7 @@ const Footer = () => {
         {/* Tengah - Marquee */}
         <div style={{ flexGrow: 1, padding: '0 12px' }}>
           <marquee behavior="scroll" direction="left" scrollamount="4">
-            Tele Konsultasi Kesehatan Mental RSKD Provinsi Maluku — Data anda bersifat rahasia
+            TeleKonsultasi Kesehatan Mental RSKD Provinsi Maluku — Data anda bersifat rahasia
           </marquee>
         </div>
 
