@@ -13,17 +13,21 @@ function Login({ onSignupClick }) {
   const [generalError, setGeneralError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
+  const { setLoading } = useLoading(); // ✅ FIXED
 
-  // Reset input saat masuk halaman login
   useEffect(() => {
     setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+    const timer = setTimeout(() => setLoading(false), 500); // ✅ loading selesai
+
+    // reset semua input saat load halaman login
     setUsername('');
     setPassword('');
     setUserError('');
     setPassError('');
     setGeneralError('');
-  }, [location.pathname]);
+
+    return () => clearTimeout(timer); // ✅ bersihkan timer
+  }, [location.pathname, setLoading]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,11 +45,7 @@ function Login({ onSignupClick }) {
     }
 
     try {
-      const response = await api.post('/api/users/login', {
-        username,
-        password,
-      });
-
+      const response = await api.post('/api/users/login', { username, password });
       const { user } = response.data;
 
       if (!user || !user.role) {
@@ -59,7 +59,6 @@ function Login({ onSignupClick }) {
     } catch (error) {
       if (error.response && error.response.data) {
         const msg = error.response.data.message || error.response.data.error || 'Login gagal';
-
         if (msg.toLowerCase().includes('username')) {
           setUserError(msg);
         } else if (msg.toLowerCase().includes('password')) {
@@ -95,9 +94,7 @@ function Login({ onSignupClick }) {
                           autoComplete="new-username"
                           autoFocus
                         />
-                        <Form.Control.Feedback type="invalid">
-                          {userError}
-                        </Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{userError}</Form.Control.Feedback>
                       </Form.Group>
 
                       <Form.Group className="mb-3" controlId="formPassword">
@@ -111,9 +108,7 @@ function Login({ onSignupClick }) {
                           isInvalid={!!passError}
                           autoComplete="new-password"
                         />
-                        <Form.Control.Feedback type="invalid">
-                          {passError}
-                        </Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{passError}</Form.Control.Feedback>
                       </Form.Group>
 
                       {generalError && (
