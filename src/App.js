@@ -21,7 +21,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import Loader from './components/Loader';
-import { useLoading } from '../components/LoadingContext';
+import { useLoading } from './components/LoadingContext';
 // ✅ Notifikasi
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
