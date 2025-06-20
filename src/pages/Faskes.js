@@ -46,6 +46,8 @@ const Faskes = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 500);
     fetchFaskes();
   }, []);
 
