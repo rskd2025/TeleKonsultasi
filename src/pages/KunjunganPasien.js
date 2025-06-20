@@ -30,21 +30,21 @@ const KunjunganPasien = () => {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
-
-    const filtered = data.filter((item) =>
-      item.nama_lengkap.toLowerCase().includes(search.toLowerCase())
+    const filtered = (Array.isArray(data) ? data : []).filter((item) =>
+      item.nama_lengkap?.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredData(filtered);
   }, [search, data]);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       const res = await axios.get('/api/pemeriksaan/kunjungan');
-      setData(res.data);
+      const hasil = Array.isArray(res.data) ? res.data : [];
+      setData(hasil);
     } catch (err) {
       console.error('Gagal fetch data:', err);
+      setData([]);
     } finally {
       setLoading(false);
     }
@@ -119,7 +119,7 @@ const KunjunganPasien = () => {
               }}
             >
               <Card.Title className="fw-bold">
-                {item.nama_lengkap.toUpperCase()} - {item.jenis_kelamin}, {item.umur} th
+                {item.nama_lengkap?.toUpperCase()} - {item.jenis_kelamin}, {item.umur} th
               </Card.Title>
               <Card.Text>
                 <strong>Faskes Asal:</strong> {item.faskes_asal} <br />
