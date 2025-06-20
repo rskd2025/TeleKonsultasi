@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../api'; // ✅ Ganti axios dengan api instance
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom'; // ⬅️ Tambahkan useLocation
+import api from '../api';
 import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
 
@@ -11,6 +11,16 @@ function Login({ onSignupClick }) {
   const [passError, setPassError] = useState('');
   const [generalError, setGeneralError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation(); // ⬅️ Ambil lokasi halaman
+
+  // ✅ Reset input dan error saat halaman login dibuka
+  useEffect(() => {
+    setUsername('');
+    setPassword('');
+    setUserError('');
+    setPassError('');
+    setGeneralError('');
+  }, [location.pathname]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
