@@ -38,28 +38,12 @@ function LayoutWrapper() {
 
   const [showSignup, setShowSignup] = useState(false);
 
-  // ✅ Cegah logout saat refresh, hanya logout jika browser/tab ditutup
-  useEffect(() => {
-    const wasRefreshed = sessionStorage.getItem('refreshed');
-    if (!wasRefreshed) {
-      // Browser baru / tab baru → anggap logout otomatis
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-    }
-    sessionStorage.setItem('refreshed', 'yes');
-
-    return () => {
-      // Hapus saat keluar tab / browser
-      sessionStorage.removeItem('refreshed');
-    };
-  }, []);
-
-  // ⏳ Loading saat buka halaman pertama kali
+  // ⏳ Tampilkan loading saat ganti halaman
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(timer);
-  }, [setLoading]);
+  }, [setLoading, location.pathname]);
 
   // ⏱ Logout otomatis jika idle (misalnya 10 menit)
   const handleIdle = () => {
