@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; // ⬅️ Tambahkan useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
 import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
@@ -11,9 +11,9 @@ function Login({ onSignupClick }) {
   const [passError, setPassError] = useState('');
   const [generalError, setGeneralError] = useState('');
   const navigate = useNavigate();
-  const location = useLocation(); // ⬅️ Ambil lokasi halaman
+  const location = useLocation();
 
-  // ✅ Reset input dan error saat halaman login dibuka
+  // Reset input dan error setiap kali buka halaman login
   useEffect(() => {
     setUsername('');
     setPassword('');
@@ -55,7 +55,8 @@ function Login({ onSignupClick }) {
       navigate('/dashboard');
     } catch (error) {
       if (error.response && error.response.data) {
-        const msg = error.response.data.message || error.response.data.error || 'Login gagal';
+        const msg =
+          error.response.data.message || error.response.data.error || 'Login gagal';
 
         if (msg.toLowerCase().includes('username')) {
           setUserError(msg);
@@ -79,7 +80,7 @@ function Login({ onSignupClick }) {
               <div className="login-content">
                 <Card className="login-card">
                   <Card.Body>
-                    <Form onSubmit={handleLogin}>
+                    <Form onSubmit={handleLogin} autoComplete="off">
                       <Form.Group className="mb-3" controlId="formUsername">
                         <Form.Label>Username</Form.Label>
                         <Form.Control
@@ -88,6 +89,7 @@ function Login({ onSignupClick }) {
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           isInvalid={!!userError}
+                          autoComplete="username"
                           autoFocus
                         />
                         <Form.Control.Feedback type="invalid">
@@ -103,6 +105,7 @@ function Login({ onSignupClick }) {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           isInvalid={!!passError}
+                          autoComplete="current-password"
                         />
                         <Form.Control.Feedback type="invalid">
                           {passError}
@@ -122,7 +125,11 @@ function Login({ onSignupClick }) {
                           Jika belum punya akun silakan{' '}
                           <span
                             onClick={onSignupClick}
-                            style={{ color: '#007bff', fontWeight: 'bold', cursor: 'pointer' }}
+                            style={{
+                              color: '#007bff',
+                              fontWeight: 'bold',
+                              cursor: 'pointer',
+                            }}
                           >
                             Signup
                           </span>
