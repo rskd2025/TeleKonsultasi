@@ -8,6 +8,7 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import api from 'api';
+import { useLoading } from '../components/LoadingContext';
 
 const HistoryPasien = () => {
   const navigate = useNavigate();

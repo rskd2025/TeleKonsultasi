@@ -13,6 +13,7 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useLoading } from '../components/LoadingContext';
 
 const KunjunganPasien = () => {
   const navigate = useNavigate();

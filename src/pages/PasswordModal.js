@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import api from '../api'; // pastikan path ini sesuai struktur project kamu
+import { useLoading } from '../components/LoadingContext';
 
 const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId = null }) => {
   const [username, setUsername] = useState('');

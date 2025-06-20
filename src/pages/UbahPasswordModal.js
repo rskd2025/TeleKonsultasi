@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Spinner, Container } from 'react-bootstrap';
 import api from 'api';
+import { useLoading } from '../components/LoadingContext';
 
 const UbahPasswordModal = ({ show, onHide }) => {
   const user = JSON.parse(localStorage.getItem('user'));

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
-import { useLoading } from '../contexts/LoadingContext'; // ⬅️ Import loading context
+import { useLoading } from '../components/LoadingContext'; // ⬅️ Import loading context
 
 const Dashboard = () => {
   const { setLoading } = useLoading(); // ⬅️ Gunakan loading context

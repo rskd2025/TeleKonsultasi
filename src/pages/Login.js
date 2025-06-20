@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
 import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
+import { useLoading } from '../components/LoadingContext';
 
 function Login({ onSignupClick }) {
   const [username, setUsername] = useState('');

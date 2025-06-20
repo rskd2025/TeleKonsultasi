@@ -3,6 +3,7 @@ import { Modal, Button, Form, Row, Col, Spinner } from 'react-bootstrap';
 import api from 'api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useLoading } from '../components/LoadingContext';
 
 const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
   const [formData, setFormData] = useState({

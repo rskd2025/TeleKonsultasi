@@ -10,6 +10,7 @@ import {
 } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { useLoading } from '../components/LoadingContext';
 
 const InputPemeriksaan = () => {
   const navigate = useNavigate();

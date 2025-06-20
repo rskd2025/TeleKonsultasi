@@ -11,6 +11,7 @@ import {
 import api from '../api';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useLoading } from '../components/LoadingContext';
 
 const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
   const grupAksesList = ['Admin', 'Psikiatri', 'Psikolog', 'Perawat Jiwa', 'Petugas Input'];
