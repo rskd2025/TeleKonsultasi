@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// src/pages/KunjunganPasien.js
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Container,
   Row,
@@ -16,7 +17,7 @@ import api from '../api';
 
 const KunjunganPasien = () => {
   const navigate = useNavigate();
-  const { loading, setLoading } = useLoading(); // gunakan loading global
+  const { loading, setLoading } = useLoading(); // loading global
   const user = JSON.parse(localStorage.getItem('user'));
   const role = user?.role?.toLowerCase();
 
@@ -27,18 +28,7 @@ const KunjunganPasien = () => {
   const [selectedPasien, setSelectedPasien] = useState(null);
   const [jawabanKonsul, setJawabanKonsul] = useState('');
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const filtered = (Array.isArray(data) ? data : []).filter((item) =>
-      (item.nama_lengkap || '').toLowerCase().includes((search || '').toLowerCase())
-    );
-    setFilteredData(filtered);
-  }, [search, data]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get(`/api/pemeriksaan/kunjungan?role=${role}`);
@@ -51,11 +41,22 @@ const KunjunganPasien = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [role, setLoading]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    const filtered = (Array.isArray(data) ? data : []).filter((item) =>
+      (item.nama_lengkap || '').toLowerCase().includes((search || '').toLowerCase())
+    );
+    setFilteredData(filtered);
+  }, [search, data]);
 
   const handleTerima = (pasien) => {
     setSelectedPasien(pasien);
-    setJawabanKonsul(''); // reset jawaban
+    setJawabanKonsul('');
     setShowModal(true);
   };
 
