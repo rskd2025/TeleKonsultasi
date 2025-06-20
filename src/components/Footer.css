@@ -1,20 +1,38 @@
-/* src/components/Footer.css */
 .footer {
   background-color: #0056b3;
   color: white;
   text-align: center;
-  padding: 10px 15px;
+  padding: 6px 14px;
   font-size: 0.95rem;
-  position: bottom;
-  margin-top: 30px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .marquee-text {
-  font-weight: 500;
-  margin-bottom: 5px;
-  color: #ffffff;
+  flex-grow: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 12px;
 }
 
-.datetime {
-  font-size: 0.85rem;
+.marquee-text p {
+  display: inline-block;
+  animation: scroll-left 20s linear infinite;
+  margin: 0;
+  font-size: 11px;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }

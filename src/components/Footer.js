@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import './Footer.css'; // pastikan ini sudah ada
 
 const Footer = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -29,22 +30,7 @@ const Footer = () => {
       </div>
 
       {/* Footer Fixed Modern */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          width: '100%',
-          background: 'linear-gradient(90deg, #6a11cb 0%, #2575fc 100%)',
-          color: 'white',
-          fontSize: '12px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '6px 14px',
-          zIndex: 1000,
-          boxShadow: '0 -2px 6px rgba(0,0,0,0.2)',
-        }}
-      >
+      <div className="footer">
         {/* Kiri - Info Aplikasi */}
         <div style={{ width: '220px', textAlign: 'left', lineHeight: 1.2 }}>
           <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
@@ -55,11 +41,11 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Tengah - Marquee */}
-        <div style={{ flexGrow: 1, padding: '0 12px' }}>
-          <marquee behavior="scroll" direction="left" scrollamount="4">
+        {/* Tengah - Scroll Text */}
+        <div className="marquee-text">
+          <p>
             TeleKonsultasi Kesehatan Mental RSKD Provinsi Maluku — Data anda bersifat rahasia
-          </marquee>
+          </p>
         </div>
 
         {/* Kanan - Tanggal dan Jam */}
