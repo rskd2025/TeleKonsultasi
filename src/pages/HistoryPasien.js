@@ -13,13 +13,11 @@ import { useLoading } from '../components/LoadingContext';
 const HistoryPasien = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { loading, setLoading } = useLoading(); // ✅ gunakan loading global
 
   useEffect(() => {
-    setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
-
     const fetchHistory = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/api/pemeriksaan/riwayat');
         setData(res.data);
@@ -30,7 +28,7 @@ const HistoryPasien = () => {
       }
     };
     fetchHistory();
-  }, []);
+  }, [setLoading]);
 
   const formatTanggal = (tanggal) => {
     return new Date(tanggal).toLocaleDateString('id-ID', {
@@ -56,9 +54,7 @@ const HistoryPasien = () => {
   return (
     <Container fluid className="mt-4 mb-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5 className="fw-bold text-dark">
-          📝 Riwayat Pemeriksaan Pasien
-        </h5>
+        <h5 className="fw-bold text-dark">📝 Riwayat Pemeriksaan Pasien</h5>
         <Button variant="outline-secondary" size="sm" onClick={() => navigate(-1)}>
           ⬅ Kembali
         </Button>

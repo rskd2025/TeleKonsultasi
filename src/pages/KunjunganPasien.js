@@ -1,4 +1,3 @@
-// src/pages/KunjunganPasien.js
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -13,18 +12,17 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../components/LoadingContext';
-import api from '../api'; // ✅ Gunakan instance API
+import api from '../api';
 
 const KunjunganPasien = () => {
   const navigate = useNavigate();
-  const { setLoading } = useLoading();
+  const { loading, setLoading } = useLoading(); // gunakan loading global
   const user = JSON.parse(localStorage.getItem('user'));
   const role = user?.role?.toLowerCase();
 
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
-  const [loading, setLocalLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedPasien, setSelectedPasien] = useState(null);
   const [jawabanKonsul, setJawabanKonsul] = useState('');
@@ -42,7 +40,6 @@ const KunjunganPasien = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    setLocalLoading(true);
     try {
       const res = await api.get(`/api/pemeriksaan/kunjungan?role=${role}`);
       const hasil = Array.isArray(res.data) ? res.data : [];
@@ -53,12 +50,12 @@ const KunjunganPasien = () => {
       setData([]);
     } finally {
       setLoading(false);
-      setLocalLoading(false);
     }
   };
 
   const handleTerima = (pasien) => {
     setSelectedPasien(pasien);
+    setJawabanKonsul(''); // reset jawaban
     setShowModal(true);
   };
 
@@ -144,6 +141,7 @@ const KunjunganPasien = () => {
         ))
       )}
 
+      {/* Modal Jawaban Konsul */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Form Jawaban Konsul</Modal.Title>
