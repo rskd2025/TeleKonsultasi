@@ -4,6 +4,7 @@ import api from '../api';
 import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
 import { useLoading } from '../components/LoadingContext';
+import Loader from '../components/Loader'; // ✅ Tambahkan import
 
 function Login({ onSignupClick }) {
   const [username, setUsername] = useState('');
@@ -13,22 +14,20 @@ function Login({ onSignupClick }) {
   const [generalError, setGeneralError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const { setLoading } = useLoading(); // ✅ FIXED
+  const { loading, setLoading } = useLoading(); // ✅ Tambah loading global
 
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 500); // ✅ loading selesai
+    setLoading(false); // Jangan tampilkan loading saat buka halaman ini
 
-    // reset semua input saat load halaman login
+    // Reset input saat masuk halaman login
     setUsername('');
     setPassword('');
     setUserError('');
     setPassError('');
     setGeneralError('');
+  }, [location.pathname]);
 
-    return () => clearTimeout(timer); // ✅ bersihkan timer
-  }, [location.pathname, setLoading]);
-
+  // ✅ Loading ditampilkan saat login diproses
   const handleLogin = async (e) => {
     e.preventDefault();
     setUserError('');
@@ -45,6 +44,7 @@ function Login({ onSignupClick }) {
     }
 
     try {
+      setLoading(true); // ✅ Tampilkan loading
       const response = await api.post('/api/users/login', { username, password });
       const { user } = response.data;
 
@@ -69,8 +69,13 @@ function Login({ onSignupClick }) {
       } else {
         setGeneralError('Tidak dapat terhubung ke server');
       }
+    } finally {
+      setLoading(false); // ✅ Sembunyikan loading setelah selesai
     }
   };
+
+  // ✅ Tampilkan loading jika sedang proses
+  if (loading) return <Loader />;
 
   return (
     <div className="login-container">
@@ -115,7 +120,7 @@ function Login({ onSignupClick }) {
                         <div className="text-danger mb-3">{generalError}</div>
                       )}
 
-                      <Button variant="primary" type="submit" className="login-btn">
+                      <Button variant="primary" type="submit" className="login-btn" block>
                         Login
                       </Button>
 
