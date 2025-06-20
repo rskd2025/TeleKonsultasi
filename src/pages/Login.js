@@ -15,6 +15,8 @@ function Login({ onSignupClick }) {
 
   // Reset input saat masuk halaman login
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
     setUsername('');
     setPassword('');
     setUserError('');

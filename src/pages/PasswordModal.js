@@ -11,6 +11,8 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
     if (show) {
       setUsername('');
       setPassword('');

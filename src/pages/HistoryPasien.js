@@ -15,6 +15,9 @@ const HistoryPasien = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+
     const fetchHistory = async () => {
       try {
         const res = await api.get('/api/pemeriksaan/riwayat');

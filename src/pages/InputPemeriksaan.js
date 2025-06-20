@@ -28,6 +28,9 @@ const InputPemeriksaan = () => {
   const [umur, setUmur] = useState(0);
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+
     if (pasien.tanggal_lahir) {
       const tgl = new Date(pasien.tanggal_lahir);
       setTanggalLahir(tgl.toLocaleDateString('id-ID'));

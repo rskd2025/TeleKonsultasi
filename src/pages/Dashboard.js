@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
+import { useLoading } from '../contexts/LoadingContext'; // ⬅️ Import loading context
 
 const Dashboard = () => {
+  const { setLoading } = useLoading(); // ⬅️ Gunakan loading context
   const user = JSON.parse(localStorage.getItem('user'));
   const isSuperAdmin = user?.role === 'superadmin';
   const groupAkses = user?.groupAkses || [];
@@ -31,6 +33,16 @@ const Dashboard = () => {
     { label: 'Kunjungan Pasien', to: '/kunjungan-pasien' },
     { label: 'History Pasien', to: '/history-pasien' },
   ];
+
+  // ⬇️ Tampilkan loading saat awal buka dashboard
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 600); // Bisa disesuaikan, atau diganti fetch API jika perlu
+
+    return () => clearTimeout(timer);
+  }, [setLoading]);
 
   return (
     <div

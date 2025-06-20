@@ -10,6 +10,8 @@ const UbahPasswordModal = ({ show, onHide }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
     if (show) {
       setPassword('');
       setConfirmPassword('');

@@ -40,6 +40,9 @@ const Feedback = ({ userRole = 'admin' }) => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+
     let filtered = data;
 
     if (search) {

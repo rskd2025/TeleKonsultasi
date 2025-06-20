@@ -42,6 +42,9 @@ const Faskes = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+
     fetchFaskes();
   }, []);
 

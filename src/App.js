@@ -20,6 +20,8 @@ import SignupModal from './pages/SignupModal';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import Loader from './components/Loader';
+import { useLoading } from './components/LoadingContext';
 
 // ✅ Notifikasi
 import { ToastContainer } from 'react-toastify';
@@ -28,6 +30,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function LayoutWrapper() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { loading } = useLoading();
   const user = JSON.parse(localStorage.getItem('user'));
   const hideHeaderFooter = ['/login', '/unauthorized'].includes(location.pathname);
   const isLoggedIn = !!user;
@@ -54,6 +57,7 @@ function LayoutWrapper() {
 
   return (
     <IdleTimerProvider timeout={10 * 60 * 1000} onIdle={handleIdle} debounce={500}>
+      {loading && <Loader text="Memuat halaman..." />}
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         {isLoggedIn && !hideHeaderFooter && <Header />}
 
@@ -71,15 +75,15 @@ function LayoutWrapper() {
             />
             <Route path="/" element={<ProtectedRoute requiredModules={[]}><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute requiredModules={[]}><Dashboard /></ProtectedRoute>} />
-            <Route path="/daftar-pasien" element={<ProtectedRoute requiredModules={['Input Pasien']}><DaftarPasien /></ProtectedRoute>} />
-            <Route path="/kunjungan-pasien" element={<ProtectedRoute requiredModules={['Kunjungan Pasien']}><KunjunganPasien /></ProtectedRoute>} />
-            <Route path="/pengguna" element={<ProtectedRoute requiredModules={['Pengguna']}><Pengguna /></ProtectedRoute>} />
-            <Route path="/faskes" element={<ProtectedRoute requiredModules={['Faskes']}><Faskes /></ProtectedRoute>} />
-            <Route path="/menu" element={<ProtectedRoute requiredModules={['admin']}><Menu /></ProtectedRoute>} />
-            <Route path="/manajemen-pengguna" element={<ProtectedRoute requiredModules={['admin']}><ManajemenPengguna /></ProtectedRoute>} />
-            <Route path="/history-pasien" element={<ProtectedRoute requiredModules={['History Pasien']}><HistoryPasien /></ProtectedRoute>} />
-            <Route path="/input-pemeriksaan" element={<ProtectedRoute requiredModules={['Input Pasien']}><InputPemeriksaan /></ProtectedRoute>} />
-            <Route path="/feedback" element={<ProtectedRoute requiredModules={['Feedback Konsul']}><Feedback /></ProtectedRoute>} />
+            <Route path="/daftar-pasien" element={<ProtectedRoute requiredModules={["Input Pasien"]}><DaftarPasien /></ProtectedRoute>} />
+            <Route path="/kunjungan-pasien" element={<ProtectedRoute requiredModules={["Kunjungan Pasien"]}><KunjunganPasien /></ProtectedRoute>} />
+            <Route path="/pengguna" element={<ProtectedRoute requiredModules={["Pengguna"]}><Pengguna /></ProtectedRoute>} />
+            <Route path="/faskes" element={<ProtectedRoute requiredModules={["Faskes"]}><Faskes /></ProtectedRoute>} />
+            <Route path="/menu" element={<ProtectedRoute requiredModules={["admin"]}><Menu /></ProtectedRoute>} />
+            <Route path="/manajemen-pengguna" element={<ProtectedRoute requiredModules={["admin"]}><ManajemenPengguna /></ProtectedRoute>} />
+            <Route path="/history-pasien" element={<ProtectedRoute requiredModules={["History Pasien"]}><HistoryPasien /></ProtectedRoute>} />
+            <Route path="/input-pemeriksaan" element={<ProtectedRoute requiredModules={["Input Pasien"]}><InputPemeriksaan /></ProtectedRoute>} />
+            <Route path="/feedback" element={<ProtectedRoute requiredModules={["Feedback Konsul"]}><Feedback /></ProtectedRoute>} />
           </Routes>
         </div>
 

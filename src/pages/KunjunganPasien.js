@@ -29,6 +29,9 @@ const KunjunganPasien = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+
     const filtered = data.filter((item) =>
       item.nama_lengkap.toLowerCase().includes(search.toLowerCase())
     );

@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 
+// ✅ Provider untuk global loading
+import { LoadingProvider } from './components/LoadingContext';
+
 // Global styles
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,7 +17,9 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <LoadingProvider>
+      <App />
+    </LoadingProvider>
   </React.StrictMode>
 );
 

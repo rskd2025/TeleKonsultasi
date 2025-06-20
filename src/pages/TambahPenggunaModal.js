@@ -29,6 +29,8 @@ const TambahPenggunaModal = ({ show, handleClose, fetchData, editingData }) => {
   ];
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
     if (editingData) {
       setFormData({
         nip: editingData.nip || '',

@@ -27,8 +27,12 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedModules, setSelectedModules] = useState([]);
   const [saving, setSaving] = useState(false);
+  const { setLoading } = useLoading();
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+
     if (user) {
       setSelectedGroups(user.groupAkses || []);
       setSelectedModules(user.modulAkses || []);

@@ -30,6 +30,9 @@ const ManajemenPengguna = () => {
   const itemsPerPage = 10;
 
   useEffect(() => {
+    setLoading(true);
+  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+
     fetchPengguna();
   }, []);
 
