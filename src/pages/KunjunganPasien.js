@@ -1,3 +1,4 @@
+// src/pages/KunjunganPasien.js
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -11,20 +12,15 @@ import {
   Badge,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { useLoading } from '../components/LoadingContext';
-import api from '../api'; // ⬅️ Pastikan sudah pakai instance API
-// import axios from 'axios'; ⬅️ Sudah tidak digunakan
 
 const KunjunganPasien = () => {
   const navigate = useNavigate();
-  const { setLoading } = useLoading();
-  const user = JSON.parse(localStorage.getItem('user'));
-  const role = user?.role?.toLowerCase();
-
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
-  const [loading, setLocalLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedPasien, setSelectedPasien] = useState(null);
   const [jawabanKonsul, setJawabanKonsul] = useState('');
@@ -42,9 +38,8 @@ const KunjunganPasien = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    setLocalLoading(true);
     try {
-      const res = await api.get(`/api/pemeriksaan/kunjungan?role=${role}`);
+      const res = await axios.get('/api/pemeriksaan/kunjungan');
       const hasil = Array.isArray(res.data) ? res.data : [];
       setData(hasil);
     } catch (err) {
@@ -52,7 +47,6 @@ const KunjunganPasien = () => {
       setData([]);
     } finally {
       setLoading(false);
-      setLocalLoading(false);
     }
   };
 
@@ -64,7 +58,7 @@ const KunjunganPasien = () => {
   const handleBatal = async (pasien) => {
     if (window.confirm('Yakin batal menerima pasien ini?')) {
       try {
-        await api.put(`/api/pemeriksaan/${pasien.id}/status`, { status: 'batal' });
+        await axios.delete(`/api/pemeriksaan/${pasien.id}`);
         fetchData();
       } catch (err) {
         console.error('Gagal membatalkan:', err);
@@ -74,8 +68,9 @@ const KunjunganPasien = () => {
 
   const simpanKonsul = async () => {
     try {
-      await api.put(`/api/pemeriksaan/${selectedPasien.id}/terima`, {
+      await axios.put(`/api/pemeriksaan/${selectedPasien.id}`, {
         jawaban_konsul: jawabanKonsul,
+        status: 'diterima',
       });
       setShowModal(false);
       fetchData();
@@ -109,9 +104,9 @@ const KunjunganPasien = () => {
         </Row>
       </Form>
 
-      {loading || filteredData.length === 0 ? (
-        <div className="text-center text-muted">
-          {loading ? <Spinner animation="border" size="sm" /> : 'Tidak ada data ditemukan'}
+      {loading ? (
+        <div className="text-center">
+          <Spinner animation="border" size="sm" />
         </div>
       ) : (
         filteredData.map((item) => (
