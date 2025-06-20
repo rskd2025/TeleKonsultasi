@@ -1,4 +1,3 @@
-// src/pages/InputPemeriksaan.js
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -15,6 +14,7 @@ import { useLoading } from '../components/LoadingContext';
 const InputPemeriksaan = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setLoading } = useLoading(); // ✅ loader global
   const pasien = location.state?.pasien || {};
 
   const [form, setForm] = useState({
@@ -29,8 +29,8 @@ const InputPemeriksaan = () => {
   const [umur, setUmur] = useState(0);
 
   useEffect(() => {
-    setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+    setLoading(true); // ⏳ mulai loading
+    const timer = setTimeout(() => setLoading(false), 500);
 
     if (pasien.tanggal_lahir) {
       const tgl = new Date(pasien.tanggal_lahir);
@@ -38,7 +38,9 @@ const InputPemeriksaan = () => {
       const age = new Date().getFullYear() - tgl.getFullYear();
       setUmur(age);
     }
-  }, [pasien.tanggal_lahir]);
+
+    return () => clearTimeout(timer);
+  }, [pasien.tanggal_lahir, setLoading]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -46,6 +48,7 @@ const InputPemeriksaan = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       await axios.post('/api/pemeriksaan', {
         ...form,
@@ -56,6 +59,8 @@ const InputPemeriksaan = () => {
     } catch (err) {
       console.error('❌ Gagal menyimpan:', err);
       alert('Terjadi kesalahan saat menyimpan data.');
+    } finally {
+      setLoading(false);
     }
   };
 

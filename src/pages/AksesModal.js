@@ -1,4 +1,3 @@
-// src/pages/AksesModal.js
 import React, { useEffect, useState } from 'react';
 import {
   Modal,
@@ -11,7 +10,7 @@ import {
 } from 'react-bootstrap';
 import api from '../api';
 import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useLoading } from '../components/LoadingContext'; // ✅ pastikan path benar
 
 const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
   const grupAksesList = ['Admin', 'Psikiatri', 'Psikolog', 'Perawat Jiwa', 'Petugas Input'];
@@ -27,17 +26,19 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedModules, setSelectedModules] = useState([]);
   const [saving, setSaving] = useState(false);
-  const { setLoading } = useLoading();
+  const { setLoading } = useLoading(); // ✅ loader global
 
   useEffect(() => {
     setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
+    const timer = setTimeout(() => setLoading(false), 500); // ⏳ simulasi load modal
 
     if (user) {
       setSelectedGroups(user.groupAkses || []);
       setSelectedModules(user.modulAkses || []);
     }
-  }, [user]);
+
+    return () => clearTimeout(timer);
+  }, [user, setLoading]);
 
   const handleGroupChange = (group) => {
     setSelectedGroups((prev) =>

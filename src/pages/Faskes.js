@@ -1,4 +1,3 @@
-// src/pages/Faskes.js
 import React, { useEffect, useState } from 'react';
 import {
   Container,
@@ -13,10 +12,11 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useLoading } from '../components/LoadingContext';
+import { useLoading } from '../components/LoadingContext'; // ✅
 
 const Faskes = () => {
   const navigate = useNavigate();
+  const { setLoading } = useLoading(); // ✅
   const [faskes, setFaskes] = useState([]);
   const [filteredFaskes, setFilteredFaskes] = useState([]);
   const [search, setSearch] = useState('');
@@ -33,19 +33,19 @@ const Faskes = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const fetchFaskes = async () => {
+    setLoading(true); // ⏳ mulai loading
     try {
       const res = await axios.get('/api/faskes');
       setFaskes(res.data);
       setFilteredFaskes(res.data);
     } catch (err) {
       console.error('Gagal mengambil data faskes:', err);
+    } finally {
+      setLoading(false); // ✅ selesai loading
     }
   };
 
   useEffect(() => {
-    setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
-
     fetchFaskes();
   }, []);
 
@@ -72,15 +72,19 @@ const Faskes = () => {
 
   const handleHapus = async (id) => {
     if (!window.confirm('Yakin hapus data ini?')) return;
+    setLoading(true);
     try {
       await axios.delete(`/api/faskes/${id}`);
       fetchFaskes();
     } catch (err) {
       console.error('Gagal menghapus faskes:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSimpan = async () => {
+    setLoading(true);
     try {
       if (editMode) {
         await axios.put(`/api/faskes/${formData.id}`, formData);
@@ -96,6 +100,8 @@ const Faskes = () => {
       }, 1000);
     } catch (err) {
       console.error('Gagal menyimpan data:', err);
+    } finally {
+      setLoading(false);
     }
   };
 

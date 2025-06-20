@@ -21,7 +21,8 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import Loader from './components/Loader';
-import { useLoading } from './components/LoadingContext';
+import { useLoading } from './components/LoadingContext'; // ✅ pastikan path ini benar
+
 // ✅ Notifikasi
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,19 +30,21 @@ import 'react-toastify/dist/ReactToastify.css';
 function LayoutWrapper() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { loading } = useLoading();
+  const { loading, setLoading } = useLoading(); // ✅ tambahkan setLoading
   const user = JSON.parse(localStorage.getItem('user'));
   const hideHeaderFooter = ['/login', '/unauthorized'].includes(location.pathname);
   const isLoggedIn = !!user;
 
-  // ✅ State Modal Signup
   const [showSignup, setShowSignup] = useState(false);
 
-  // ✅ Paksa logout jika browser ditutup/direfresh
   useEffect(() => {
     setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500);
-  return () => clearTimeout(timer);
+    const timer = setTimeout(() => setLoading(false), 500); // ⏳ simulasi loading saat awal buka
+    return () => clearTimeout(timer);
+  }, [setLoading]);
+
+  // ✅ Logout otomatis saat browser ditutup
+  useEffect(() => {
     const handleUnload = () => {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
@@ -50,7 +53,6 @@ function LayoutWrapper() {
     return () => window.removeEventListener('beforeunload', handleUnload);
   }, []);
 
-  // ✅ Fungsi logout jika idle terlalu lama
   const handleIdle = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
