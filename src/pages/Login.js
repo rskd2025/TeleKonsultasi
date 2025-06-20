@@ -120,7 +120,7 @@ function Login({ onSignupClick }) {
                         <div className="text-danger mb-3">{generalError}</div>
                       )}
 
-                      <Button variant="primary" type="submit" className="login-btn" block>
+                      <Button variant="primary" type="submit" className="login-btn w-100" block>
                         Login
                       </Button>
 
