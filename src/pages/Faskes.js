@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Container,
   Row,
@@ -12,11 +12,12 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useLoading } from '../components/LoadingContext'; // ✅
+import { useLoading } from '../components/LoadingContext';
 
 const Faskes = () => {
   const navigate = useNavigate();
-  const { setLoading } = useLoading(); // ✅
+  const { setLoading } = useLoading();
+
   const [faskes, setFaskes] = useState([]);
   const [filteredFaskes, setFilteredFaskes] = useState([]);
   const [search, setSearch] = useState('');
@@ -32,8 +33,8 @@ const Faskes = () => {
   });
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const fetchFaskes = async () => {
-    setLoading(true); // ⏳ mulai loading
+  const fetchFaskes = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await axios.get('/api/faskes');
       setFaskes(res.data);
@@ -41,15 +42,13 @@ const Faskes = () => {
     } catch (err) {
       console.error('Gagal mengambil data faskes:', err);
     } finally {
-      setLoading(false); // ✅ selesai loading
+      setLoading(false);
     }
-  };
+  }, [setLoading]);
 
   useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 500);
     fetchFaskes();
-  }, []);
+  }, [fetchFaskes]);
 
   useEffect(() => {
     const lower = search.toLowerCase();
