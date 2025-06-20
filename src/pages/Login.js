@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api'; // ✅ Ganti axios dengan api instance
 import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
 
@@ -28,7 +28,7 @@ function Login({ onSignupClick }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', {
+      const response = await api.post('/users/login', {
         username,
         password,
       });
