@@ -14,8 +14,11 @@ import { useLoading } from '../components/LoadingContext';
 const InputPemeriksaan = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setLoading } = useLoading(); // ✅ loader global
-  const pasien = location.state?.pasien || {};
+  const { setLoading } = useLoading();
+
+  const [pasien, setPasien] = useState(location.state?.pasien || {});
+  const [tanggalLahir, setTanggalLahir] = useState('');
+  const [umur, setUmur] = useState(0);
 
   const [form, setForm] = useState({
     faskes_asal: '',
@@ -25,22 +28,38 @@ const InputPemeriksaan = () => {
     tanggal: '',
   });
 
-  const [tanggalLahir, setTanggalLahir] = useState('');
-  const [umur, setUmur] = useState(0);
-
   useEffect(() => {
-    setLoading(true); // ⏳ mulai loading
-    const timer = setTimeout(() => setLoading(false), 500);
+    const getPasienById = async (id) => {
+      try {
+        const res = await axios.get(`/api/pasien/${id}`);
+        setPasien(res.data);
+        const tgl = new Date(res.data.tanggal_lahir);
+        setTanggalLahir(tgl.toLocaleDateString('id-ID'));
+        setUmur(new Date().getFullYear() - tgl.getFullYear());
+      } catch (err) {
+        console.error('❌ Gagal ambil data pasien:', err);
+      }
+    };
 
-    if (pasien.tanggal_lahir) {
-      const tgl = new Date(pasien.tanggal_lahir);
-      setTanggalLahir(tgl.toLocaleDateString('id-ID'));
-      const age = new Date().getFullYear() - tgl.getFullYear();
-      setUmur(age);
-    }
+    const init = () => {
+      setLoading(true);
+      const timer = setTimeout(() => setLoading(false), 500);
 
-    return () => clearTimeout(timer);
-  }, [pasien.tanggal_lahir, setLoading]);
+      if (!location.state?.pasien) {
+        const params = new URLSearchParams(location.search);
+        const id = params.get('id');
+        if (id) getPasienById(id);
+      } else {
+        const tgl = new Date(location.state.pasien.tanggal_lahir);
+        setTanggalLahir(tgl.toLocaleDateString('id-ID'));
+        setUmur(new Date().getFullYear() - tgl.getFullYear());
+      }
+
+      return () => clearTimeout(timer);
+    };
+
+    init();
+  }, [location.state, setLoading]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
