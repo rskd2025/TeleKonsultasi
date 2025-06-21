@@ -23,24 +23,25 @@ const Feedback = ({ userRole = 'admin' }) => {
   const { loading, setLoading } = useLoading();
   const navigate = useNavigate();
 
+  const fetchFeedback = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/api/feedback');
+      const hasil = Array.isArray(res.data) ? res.data : [];
+      setData(hasil);
+      setFilteredData(hasil);
+    } catch (err) {
+      console.error('Gagal mengambil data feedback:', err);
+      setData([]);
+      setFilteredData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchFeedback = async () => {
-      setLoading(true);
-      try {
-        const res = await api.get('/api/feedback');
-        const hasil = Array.isArray(res.data) ? res.data : [];
-        setData(hasil);
-        setFilteredData(hasil);
-      } catch (err) {
-        console.error('Gagal mengambil data feedback:', err);
-        setData([]);
-        setFilteredData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchFeedback();
-  }, [setLoading]);
+  }, []);
 
   useEffect(() => {
     let filtered = data;
@@ -52,7 +53,7 @@ const Feedback = ({ userRole = 'admin' }) => {
     }
 
     if (tanggal) {
-      filtered = filtered.filter((item) => item.tanggal === tanggal);
+      filtered = filtered.filter((item) => item.tanggal?.startsWith(tanggal));
     }
 
     setFilteredData(filtered);
@@ -107,12 +108,7 @@ const Feedback = ({ userRole = 'admin' }) => {
 
       <Row className="mb-3 g-2 align-items-center">
         <Col xs={12} md={2}>
-          <Button
-            size="sm"
-            variant="secondary"
-            className="w-100"
-            onClick={() => navigate('/dashboard')}
-          >
+          <Button size="sm" variant="secondary" className="w-100" onClick={() => navigate('/dashboard')}>
             ⬅️ Kembali
           </Button>
         </Col>
@@ -136,17 +132,20 @@ const Feedback = ({ userRole = 'admin' }) => {
         <Col xs={12} md={4}>
           <div className="d-flex flex-wrap gap-2">
             <Button size="sm" variant="success" onClick={exportToExcel}>
-              Export Excel
+              🟢 Excel
             </Button>
             <Button size="sm" variant="danger" onClick={exportToPDF}>
-              Export PDF
+              🔴 PDF
+            </Button>
+            <Button size="sm" variant="primary" onClick={fetchFeedback}>
+              🔁 Refresh
             </Button>
           </div>
         </Col>
       </Row>
 
       {loading ? (
-        <div className="text-center">
+        <div className="text-center text-muted">
           <Spinner animation="border" size="sm" />
         </div>
       ) : (
@@ -156,7 +155,6 @@ const Feedback = ({ userRole = 'admin' }) => {
             bordered
             hover
             size="sm"
-            id="feedback-table"
             className="text-nowrap"
             style={{ fontSize: '0.85rem', minWidth: '900px' }}
             responsive
@@ -174,7 +172,7 @@ const Feedback = ({ userRole = 'admin' }) => {
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(filteredData) && filteredData.length > 0 ? (
+              {filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <tr key={item.id}>
                     <td>{item.nama_lengkap}</td>
