@@ -69,7 +69,7 @@ const InputPemeriksaan = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/pemeriksaan', {
+      await api.post('/api/pemeriksaan', {
         ...form,
         pasien_id: pasien.id,
       });
