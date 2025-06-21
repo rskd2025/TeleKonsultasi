@@ -34,13 +34,12 @@ const InputPemeriksaan = () => {
   useEffect(() => {
     const fetchFaskes = async () => {
       try {
-        const res = await api.get('/api/faskes');
+        const res = await api.get('/api/faskes/dropdown'); // ✅ endpoint baru
         const options = res.data.map((f) => ({
-          value: f.nama_faskes,
-          label: f.nama_faskes,
+          value: f.label,
+          label: f.label,
         }));
         setFaskesOptions(options);
-        console.log('📡 Data faskes dari backend:', options);
       } catch (err) {
         console.error('❌ Gagal ambil faskes:', err);
       }
