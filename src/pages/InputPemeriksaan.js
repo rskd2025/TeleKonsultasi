@@ -20,7 +20,7 @@ const InputPemeriksaan = () => {
   const [pasien, setPasien] = useState(location.state?.pasien || {});
   const [tanggalLahir, setTanggalLahir] = useState('');
   const [umur, setUmur] = useState(0);
-  const [daftarFaskes, setDaftarFaskes] = useState([]);
+  const [faskesOptions, setFaskesOptions] = useState([]);
 
   const [form, setForm] = useState({
     faskes_asal: '',
@@ -31,6 +31,20 @@ const InputPemeriksaan = () => {
   });
 
   useEffect(() => {
+    const fetchFaskes = async () => {
+      try {
+        const res = await api.get('/api/faskes');
+        const options = res.data.map((f) => ({
+          value: f.nama,
+          label: f.nama,
+        }));
+        setFaskesOptions(options);
+        console.log('📡 Data faskes dari backend:', res.data);
+      } catch (err) {
+        console.error('❌ Gagal ambil faskes:', err);
+      }
+    };
+
     const getPasienById = async (id) => {
       try {
         const res = await api.get(`/api/pasien/${id}`);
@@ -43,24 +57,11 @@ const InputPemeriksaan = () => {
       }
     };
 
-    const getFaskes = async () => {
-      try {
-        const res = await api.get('/api/faskes');
-        console.log('📡 Data faskes dari backend:', res.data);
-        const options = res.data.map((f) => ({
-          value: f.nama_faskes,
-          label: f.nama_faskes,
-        }));
-        setDaftarFaskes(options);
-      } catch (err) {
-        console.error('❌ Gagal ambil data faskes:', err);
-      }
-    };
-
     const init = () => {
       setLoading(true);
-      getFaskes();
+      fetchFaskes();
 
+      const timer = setTimeout(() => setLoading(false), 500);
       if (!location.state?.pasien) {
         const params = new URLSearchParams(location.search);
         const id = params.get('id');
@@ -71,7 +72,6 @@ const InputPemeriksaan = () => {
         setUmur(new Date().getFullYear() - tgl.getFullYear());
       }
 
-      const timer = setTimeout(() => setLoading(false), 500);
       return () => clearTimeout(timer);
     };
 
@@ -101,8 +101,17 @@ const InputPemeriksaan = () => {
   };
 
   return (
-    <Container fluid className="mt-4 p-3 rounded" style={{ background: 'linear-gradient(to right, #D2B4DE, #E8DAEF)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-      <h5 className="mb-4 text-center" style={{ color: '#5B2C6F' }}>📝 Form Pemeriksaan Pasien</h5>
+    <Container
+      fluid
+      className="mt-4 p-3 rounded"
+      style={{
+        background: 'linear-gradient(to right, #D2B4DE, #E8DAEF)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+      }}
+    >
+      <h5 className="mb-4 text-center" style={{ color: '#5B2C6F' }}>
+        📝 Form Pemeriksaan Pasien
+      </h5>
 
       <Card className="mb-4 border-0 shadow-sm">
         <Card.Body className="small">
@@ -127,14 +136,15 @@ const InputPemeriksaan = () => {
             <Form.Group className="mb-3">
               <Form.Label>Faskes Asal</Form.Label>
               <Select
-                options={daftarFaskes}
-                value={daftarFaskes.find((opt) => opt.value === form.faskes_asal) || null}
+                options={faskesOptions}
+                value={faskesOptions.find(
+                  (opt) => opt.value === form.faskes_asal
+                )}
                 onChange={(selected) =>
-                  setForm({ ...form, faskes_asal: selected?.value || '' })
+                  setForm({ ...form, faskes_asal: selected ? selected.value : '' })
                 }
-                isClearable
                 placeholder="Pilih atau ketik faskes..."
-                noOptionsMessage={() => 'Faskes tidak ditemukan'}
+                isClearable
               />
             </Form.Group>
 
@@ -188,8 +198,15 @@ const InputPemeriksaan = () => {
             </Form.Group>
 
             <div className="d-flex gap-2 justify-content-end mt-4">
-              <Button type="submit" variant="success">💾 Simpan</Button>
-              <Button variant="outline-secondary" onClick={() => navigate('/dashboard')}>❌ Batal</Button>
+              <Button type="submit" variant="success">
+                💾 Simpan
+              </Button>
+              <Button
+                variant="outline-secondary"
+                onClick={() => navigate('/dashboard')}
+              >
+                ❌ Batal
+              </Button>
             </div>
           </Form>
         </Card.Body>
