@@ -27,7 +27,6 @@ function Login({ onSignupClick }) {
     setGeneralError('');
   }, [location.pathname]);
 
-  // ✅ Loading ditampilkan saat login diproses
   const handleLogin = async (e) => {
     e.preventDefault();
     setUserError('');
@@ -44,17 +43,29 @@ function Login({ onSignupClick }) {
     }
 
     try {
-      setLoading(true); // ✅ Tampilkan loading
+      setLoading(true);
       const response = await api.post('/api/users/login', { username, password });
       const { user } = response.data;
 
-      if (!user || !user.role) {
+      if (!user) {
         setGeneralError('Login gagal. Data pengguna tidak valid.');
         return;
       }
 
-      localStorage.setItem('user', JSON.stringify(user));
+      // Ambil data lengkap dari tabel pengguna berdasarkan username
+      const penggunaRes = await api.get(`/api/pengguna/by-username/${username}`);
+      const pengguna = penggunaRes.data;
+
+      // Simpan ke localStorage
+      localStorage.setItem('user', JSON.stringify({
+        id: pengguna.id,
+        nama: pengguna.nama_lengkap,
+        username: pengguna.username,
+        groupAkses: pengguna.groupAkses || [],
+        modulAkses: pengguna.modulAkses || [],
+      }));
       localStorage.setItem('token', 'loggedin');
+
       navigate('/dashboard');
     } catch (error) {
       if (error.response && error.response.data) {
@@ -70,11 +81,10 @@ function Login({ onSignupClick }) {
         setGeneralError('Tidak dapat terhubung ke server');
       }
     } finally {
-      setLoading(false); // ✅ Sembunyikan loading setelah selesai
+      setLoading(false);
     }
   };
 
-  // ✅ Tampilkan loading jika sedang proses
   if (loading) return <Loader />;
 
   return (

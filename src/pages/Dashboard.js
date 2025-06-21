@@ -3,27 +3,18 @@ import { Link } from 'react-router-dom';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
-import { useLoading } from '../components/LoadingContext'; // ⬅️ Import loading context
+import { useLoading } from '../components/LoadingContext';
 
 const Dashboard = () => {
-  const { setLoading } = useLoading(); // ⬅️ Gunakan loading context
-  const user = JSON.parse(localStorage.getItem('user'));
-  const isSuperAdmin = user?.role === 'superadmin';
-  const groupAkses = user?.groupAkses || [];
-  const modulAkses = user?.modulAkses || [];
+  const { setLoading } = useLoading();
+  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const groupAkses = user.groupAkses || [];
+  const modulAkses = user.modulAkses || [];
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
-  const fiturAkses = isSuperAdmin
-    ? ['Menu', 'Ubah Password', 'Daftar Pasien', 'Feedback Konsul', 'Kunjungan Pasien', 'History Pasien']
-    : [
-        ...(groupAkses.includes('admin') ? ['Menu'] : []),
-        'Ubah Password',
-        ...(modulAkses.includes('Input Pasien') ? ['Daftar Pasien'] : []),
-        ...(modulAkses.includes('Feedback Konsul') ? ['Feedback Konsul'] : []),
-        ...(modulAkses.includes('Kunjungan Pasien') ? ['Kunjungan Pasien'] : []),
-        ...(modulAkses.includes('History Pasien') ? ['History Pasien'] : []),
-      ];
+  // Admin bisa akses semua menu
+  const isAdmin = groupAkses.includes('Admin');
 
   const tombolNavigasi = [
     { label: 'Menu', to: '/menu' },
@@ -34,13 +25,17 @@ const Dashboard = () => {
     { label: 'History Pasien', to: '/history-pasien' },
   ];
 
-  // ⬇️ Tampilkan loading saat awal buka dashboard
+  const fiturAkses = isAdmin
+    ? tombolNavigasi.map((btn) => btn.label)
+    : ['Ubah Password', ...modulAkses.map((modul) =>
+        modul === 'Input Pasien' ? 'Daftar Pasien' : modul
+      )];
+
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 600); // Bisa disesuaikan, atau diganti fetch API jika perlu
-
+    }, 600);
     return () => clearTimeout(timer);
   }, [setLoading]);
 
@@ -118,6 +113,11 @@ const Dashboard = () => {
                 )}
               </Col>
             ))}
+          {fiturAkses.length <= 1 && (
+            <Col xs={12} className="text-center text-white mt-3">
+              Belum ada modul akses yang diberikan. Silakan hubungi administrator.
+            </Col>
+          )}
         </Row>
 
         <div className="mt-4 text-center">
@@ -142,7 +142,6 @@ const Dashboard = () => {
         </div>
       </Container>
 
-      {/* Modal Ubah Password */}
       <UbahPasswordModal show={showPasswordModal} onHide={() => setShowPasswordModal(false)} />
     </div>
   );

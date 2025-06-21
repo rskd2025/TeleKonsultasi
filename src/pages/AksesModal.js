@@ -10,10 +10,10 @@ import {
 } from 'react-bootstrap';
 import api from '../api';
 import { toast, ToastContainer } from 'react-toastify';
-import { useLoading } from '../components/LoadingContext'; // ✅ pastikan path benar
+import { useLoading } from '../components/LoadingContext';
 
 const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
-  const grupAksesList = ['Admin', 'Psikiatri', 'Psikolog', 'Perawat Jiwa', 'Petugas Input'];
+  const grupAksesList = ['Administrator', 'Psikiatri', 'Psikolog', 'Perawat Jiwa', 'Petugas Input'];
   const modulAksesList = [
     'Menu',
     'Ubah Password',
@@ -26,13 +26,14 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedModules, setSelectedModules] = useState([]);
   const [saving, setSaving] = useState(false);
-  const { setLoading } = useLoading(); // ✅ loader global
+  const { setLoading } = useLoading();
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 500); // ⏳ simulasi load modal
+    const timer = setTimeout(() => setLoading(false), 500);
 
     if (user) {
+      // Hak akses hanya dibaca dari tabel manajemen pengguna
       setSelectedGroups(user.groupAkses || []);
       setSelectedModules(user.modulAkses || []);
     }
@@ -56,7 +57,7 @@ const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
     if (!user) return;
     setSaving(true);
     try {
-      await api.put(`/api/users/${user.id}`, {
+      await api.put(`/api/pengguna/${user.id}/akses`, {
         groupAkses: selectedGroups,
         modulAkses: selectedModules,
       });
