@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import api from '../api';
 import { useLoading } from '../components/LoadingContext';
+import { toast } from 'react-toastify';
 
 const InputPemeriksaan = () => {
   const navigate = useNavigate();
@@ -90,10 +91,10 @@ const InputPemeriksaan = () => {
         ...form,
         pasien_id: pasien.id,
       });
-      alert('✅ Pemeriksaan berhasil disimpan.');
+      toast.success('✅ Pemeriksaan berhasil disimpan!');
       navigate('/dashboard');
     } catch (err) {
-      console.error('❌ Gagal menyimpan:', err);
+      toast.error('❌ Gagal menyimpan data pemeriksaan.');
       alert('Terjadi kesalahan saat menyimpan data.');
     } finally {
       setLoading(false);
