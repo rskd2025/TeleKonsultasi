@@ -21,7 +21,7 @@ const Feedback = ({ userRole = 'admin' }) => {
   const [search, setSearch] = useState('');
   const [tanggal, setTanggal] = useState('');
   const { loading, setLoading } = useLoading();
-  const navigate = useNavigate(); // ⬅️ Tambahan
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -106,7 +106,17 @@ const Feedback = ({ userRole = 'admin' }) => {
       <h5 className="mb-3 text-center fw-bold">📋 Feedback Konsul Pasien</h5>
 
       <Row className="mb-3 g-2 align-items-center">
-        <Col xs={12} md={4}>
+        <Col xs={12} md={2}>
+          <Button
+            size="sm"
+            variant="secondary"
+            className="w-100"
+            onClick={() => navigate('/dashboard')}
+          >
+            ⬅️ Kembali
+          </Button>
+        </Col>
+        <Col xs={12} md={3}>
           <Form.Control
             type="text"
             placeholder="Cari nama pasien..."
@@ -115,7 +125,7 @@ const Feedback = ({ userRole = 'admin' }) => {
             size="sm"
           />
         </Col>
-        <Col xs={12} md={4}>
+        <Col xs={12} md={3}>
           <Form.Control
             type="date"
             value={tanggal}
@@ -188,13 +198,6 @@ const Feedback = ({ userRole = 'admin' }) => {
           </Table>
         </div>
       )}
-
-      {/* 🔙 Tombol Kembali ke Dashboard */}
-      <div className="mt-4 text-end">
-        <Button variant="secondary" onClick={() => navigate('/dashboard')}>
-          ⬅️ Kembali ke Dashboard
-        </Button>
-      </div>
     </Container>
   );
 };
