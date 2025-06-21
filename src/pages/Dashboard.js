@@ -13,9 +13,9 @@ const Dashboard = () => {
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
-  // Admin bisa akses semua menu
   const isAdmin = groupAkses.includes('Admin');
 
+  // Menu yang tersedia
   const tombolNavigasi = [
     { label: 'Menu', to: '/menu' },
     { label: 'Ubah Password', to: '#' },
@@ -33,9 +33,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 600);
+    const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
   }, [setLoading]);
 
@@ -113,6 +111,7 @@ const Dashboard = () => {
                 )}
               </Col>
             ))}
+
           {fiturAkses.length <= 1 && (
             <Col xs={12} className="text-center text-white mt-3">
               Belum ada modul akses yang diberikan. Silakan hubungi administrator.
@@ -142,7 +141,10 @@ const Dashboard = () => {
         </div>
       </Container>
 
-      <UbahPasswordModal show={showPasswordModal} onHide={() => setShowPasswordModal(false)} />
+      <UbahPasswordModal
+        show={showPasswordModal}
+        onHide={() => setShowPasswordModal(false)}
+      />
     </div>
   );
 };

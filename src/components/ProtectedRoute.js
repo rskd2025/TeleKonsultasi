@@ -4,25 +4,32 @@ import { Navigate } from 'react-router-dom';
 const ProtectedRoute = ({ children, requiredModules = [] }) => {
   const user = JSON.parse(localStorage.getItem('user'));
 
-  // 🔒 Jika belum login, arahkan ke halaman login
+  // 🔒 Belum login
   if (!user) {
     return <Navigate to="/login" />;
   }
 
-  const modulAkses = user.modulAkses || [];
-  const groupAkses = user.groupAkses || [];
+  const { groupAkses = [], modulAkses = [] } = user;
 
-  // ✅ Jika halaman tidak mensyaratkan modul khusus, izinkan akses
+  // ✅ Admin selalu punya akses
+  if (groupAkses.includes('Admin')) {
+    return children;
+  }
+
+  // ✅ Jika tidak butuh modul khusus, izinkan akses
   if (requiredModules.length === 0) {
     return children;
   }
 
-  // ✅ Cek apakah user punya salah satu modul atau grup akses
+  // 🔐 Cek apakah user punya akses salah satu dari requiredModules
   const punyaAkses = requiredModules.some(
-    (mod) => modulAkses.includes(mod) || groupAkses.includes(mod)
+    (modul) => modulAkses.includes(modul)
   );
 
-  // ✅ Jika tidak punya akses, tetap tampilkan (biarkan halaman kosong)
+  if (!punyaAkses) {
+    return <Navigate to="/unauthorized" />;
+  }
+
   return children;
 };
 
