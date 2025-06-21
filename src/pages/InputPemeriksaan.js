@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { useLoading } from '../components/LoadingContext';
 
 const InputPemeriksaan = () => {
