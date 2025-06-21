@@ -1,4 +1,3 @@
-// src/pages/KunjunganPasien.js
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   Container,
@@ -17,7 +16,7 @@ import api from '../api';
 
 const KunjunganPasien = () => {
   const navigate = useNavigate();
-  const { loading, setLoading } = useLoading(); // loading global
+  const { loading, setLoading } = useLoading();
   const user = JSON.parse(localStorage.getItem('user'));
   const role = user?.role?.toLowerCase();
 
@@ -73,13 +72,23 @@ const KunjunganPasien = () => {
 
   const simpanKonsul = async () => {
     try {
+      // 1. Simpan jawaban_konsul ke pemeriksaan
       await api.put(`/api/pemeriksaan/${selectedPasien.id}/terima`, {
         jawaban_konsul: jawabanKonsul,
       });
+
+      // 2. Tambahkan data ke tabel feedback
+      await api.post('/api/feedback', {
+        pemeriksaan_id: selectedPasien.id,
+        user_id: user?.id,
+        jawaban: jawabanKonsul,
+        tanggal: new Date().toISOString().split('T')[0],
+      });
+
       setShowModal(false);
       fetchData();
     } catch (err) {
-      console.error('Gagal menyimpan konsul:', err);
+      console.error('❌ Gagal menyimpan feedback:', err);
     }
   };
 
