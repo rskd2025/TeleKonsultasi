@@ -92,7 +92,7 @@ const InputPemeriksaan = () => {
     }
 
     try {
-      await api.post('/pemeriksaan', {
+      await api.post('/api/pemeriksaan', {
         ...form,
         pasien_id: pasien.id,
       });
