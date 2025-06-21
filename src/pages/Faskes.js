@@ -10,7 +10,7 @@ import {
   Card,
   Alert,
 } from 'react-bootstrap';
-import api from 'api';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../components/LoadingContext';
 
