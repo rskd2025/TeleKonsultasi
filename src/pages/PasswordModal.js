@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import api from '../api'; // pastikan path ini sesuai struktur project kamu
-import { useLoading } from '../components/LoadingContext';
+import api from '../api';
 
 const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId = null }) => {
   const [username, setUsername] = useState('');
@@ -11,15 +10,16 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
   const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const resetForm = () => {
+    setUsername('');
+    setPassword('');
+    setConfirmPassword('');
+    setRole('');
+  };
+
   useEffect(() => {
-    setLoading(true);
-  const timer = setTimeout(() => setLoading(false), 500); // atau setelah fetch data
     if (show) {
-      setUsername('');
-      setPassword('');
-      setConfirmPassword('');
-      setRole('');
-      setLoading(false);
+      resetForm();
     }
   }, [show]);
 
@@ -63,6 +63,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
       });
       toast.success('✅ Password berhasil disimpan');
       handleClose();
+      resetForm();
     } catch (error) {
       console.error('Gagal menyimpan password:', error);
       toast.error(error.response?.data?.error || '❌ Gagal menyimpan password');
@@ -71,8 +72,13 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
     }
   };
 
+  const handleCancel = () => {
+    handleClose();
+    resetForm();
+  };
+
   return (
-    <Modal show={show} onHide={handleClose} centered scrollable size="md">
+    <Modal show={show} onHide={handleCancel} centered scrollable size="md">
       <Modal.Header closeButton style={{ backgroundColor: '#2196f3', color: 'white' }}>
         <Modal.Title style={{ fontSize: '1rem' }}>
           🔒 Atur Password - {namaLengkap}
@@ -137,7 +143,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
         <Button size="sm" variant="primary" onClick={handleSubmit} disabled={loading}>
           {loading ? 'Menyimpan...' : 'Simpan'}
         </Button>
-        <Button size="sm" variant="secondary" onClick={handleClose} disabled={loading}>
+        <Button size="sm" variant="secondary" onClick={handleCancel} disabled={loading}>
           Batal
         </Button>
       </Modal.Footer>
