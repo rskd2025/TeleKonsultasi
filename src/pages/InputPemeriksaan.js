@@ -27,7 +27,7 @@ const InputPemeriksaan = () => {
     tujuan_konsul: '',
     anamnesis: '',
     diagnosa: '',
-    tanggal: '',
+    tanggal: new Date().toISOString().split('T')[0],
   });
 
   useEffect(() => {
