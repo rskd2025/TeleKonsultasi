@@ -34,12 +34,8 @@ const InputPemeriksaan = () => {
   useEffect(() => {
     const fetchFaskes = async () => {
       try {
-        const res = await api.get('/api/faskes/dropdown'); // ✅ endpoint baru
-        const options = res.data.map((f) => ({
-          value: f.label,
-          label: f.label,
-        }));
-        setFaskesOptions(options);
+        const res = await api.get('/faskes/dropdown'); // ✅ endpoint sudah benar
+        setFaskesOptions(res.data); // langsung assign, karena format backend sudah { value, label }
       } catch (err) {
         console.error('❌ Gagal ambil faskes:', err);
       }
@@ -47,7 +43,7 @@ const InputPemeriksaan = () => {
 
     const getPasienById = async (id) => {
       try {
-        const res = await api.get(`/api/pasien/${id}`);
+        const res = await api.get(`/pasien/${id}`);
         setPasien(res.data);
         const tgl = new Date(res.data.tanggal_lahir);
         setTanggalLahir(tgl.toLocaleDateString('id-ID'));
@@ -94,7 +90,7 @@ const InputPemeriksaan = () => {
     }
 
     try {
-      await api.post('/api/pemeriksaan', {
+      await api.post('/pemeriksaan', {
         ...form,
         pasien_id: pasien.id,
       });
