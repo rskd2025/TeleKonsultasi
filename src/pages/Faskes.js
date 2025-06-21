@@ -36,7 +36,7 @@ const Faskes = () => {
   const fetchFaskes = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get('/api/faskes');
+      const res = await api.get('../api/faskes');
       setFaskes(res.data);
       setFilteredFaskes(res.data);
     } catch (err) {
