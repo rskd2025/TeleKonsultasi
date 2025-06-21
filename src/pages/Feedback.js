@@ -53,7 +53,7 @@ const Feedback = ({ userRole = 'admin' }) => {
     }
 
     if (tanggal) {
-      filtered = filtered.filter((item) => item.tanggal?.startsWith(tanggal));
+      filtered = filtered.filter((item) => item.tanggal === tanggal);
     }
 
     setFilteredData(filtered);
@@ -67,8 +67,9 @@ const Feedback = ({ userRole = 'admin' }) => {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Feedback Konsul Pasien', 14, 10);
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    doc.setFontSize(10);
+    doc.text('Feedback Konsul Pasien', 14, 15);
 
     const tableColumn = [
       'Nama',
@@ -96,20 +97,23 @@ const Feedback = ({ userRole = 'admin' }) => {
       head: [tableColumn],
       body: tableRows,
       startY: 20,
-      styles: { fontSize: 8 },
+      styles: { fontSize: 8, cellPadding: 2 },
+      margin: { top: 15, left: 10, right: 10 },
     });
 
-    doc.save('feedback_konsul.pdf');
+    const blob = doc.output('blob');
+    const blobURL = URL.createObjectURL(blob);
+    window.open(blobURL);
   };
 
   return (
     <Container fluid className="mt-4 mb-5">
-      <h5 className="mb-3 text-center fw-bold">📋 Feedback Konsul Pasien</h5>
+      <h5 className="mb-3 text-center fw-bold">\ud83d\udccb Feedback Konsul Pasien</h5>
 
       <Row className="mb-3 g-2 align-items-center">
         <Col xs={12} md={2}>
           <Button size="sm" variant="secondary" className="w-100" onClick={() => navigate('/dashboard')}>
-            ⬅️ Kembali
+            \u2b05\ufe0f Kembali
           </Button>
         </Col>
         <Col xs={12} md={3}>
@@ -131,21 +135,21 @@ const Feedback = ({ userRole = 'admin' }) => {
         </Col>
         <Col xs={12} md={4}>
           <div className="d-flex flex-wrap gap-2">
+            <Button size="sm" variant="primary" onClick={fetchFeedback}>
+              \u21bb Refresh
+            </Button>
             <Button size="sm" variant="success" onClick={exportToExcel}>
-              🟢 Excel
+              Export Excel
             </Button>
             <Button size="sm" variant="danger" onClick={exportToPDF}>
-              🔴 PDF
-            </Button>
-            <Button size="sm" variant="primary" onClick={fetchFeedback}>
-              🔁 Refresh
+              Export PDF
             </Button>
           </div>
         </Col>
       </Row>
 
       {loading ? (
-        <div className="text-center text-muted">
+        <div className="text-center">
           <Spinner animation="border" size="sm" />
         </div>
       ) : (
@@ -155,6 +159,7 @@ const Feedback = ({ userRole = 'admin' }) => {
             bordered
             hover
             size="sm"
+            id="feedback-table"
             className="text-nowrap"
             style={{ fontSize: '0.85rem', minWidth: '900px' }}
             responsive
@@ -172,7 +177,7 @@ const Feedback = ({ userRole = 'admin' }) => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.length > 0 ? (
+              {Array.isArray(filteredData) && filteredData.length > 0 ? (
                 filteredData.map((item) => (
                   <tr key={item.id}>
                     <td>{item.nama_lengkap}</td>
