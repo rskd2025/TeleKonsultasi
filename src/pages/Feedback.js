@@ -8,6 +8,7 @@ import {
   Table,
   Spinner,
 } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -19,7 +20,8 @@ const Feedback = ({ userRole = 'admin' }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
   const [tanggal, setTanggal] = useState('');
-  const { loading, setLoading } = useLoading(); // ✅ gunakan loading global
+  const { loading, setLoading } = useLoading();
+  const navigate = useNavigate(); // ⬅️ Tambahan
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -186,6 +188,13 @@ const Feedback = ({ userRole = 'admin' }) => {
           </Table>
         </div>
       )}
+
+      {/* 🔙 Tombol Kembali ke Dashboard */}
+      <div className="mt-4 text-end">
+        <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+          ⬅️ Kembali ke Dashboard
+        </Button>
+      </div>
     </Container>
   );
 };
