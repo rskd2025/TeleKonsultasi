@@ -10,7 +10,6 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
   const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 🔁 Reset form
   const resetForm = () => {
     setUsername('');
     setPassword('');
@@ -18,12 +17,40 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
     setRole('');
   };
 
-  // 🔄 Saat modal dibuka, form direset
+  // 🔁 Ambil data akun saat modal dibuka dan penggunaId berubah
   useEffect(() => {
-    if (show) resetForm();
+    const fetchData = async () => {
+      if (!show || !penggunaId) return;
+
+      setLoading(true);
+      try {
+        const res = await api.get(`/api/pengguna/${penggunaId}/akun`);
+        if (res.data) {
+          setUsername(res.data.username || '');
+          setRole(res.data.role || '');
+        } else {
+          resetForm();
+        }
+      } catch (err) {
+        resetForm();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [show, penggunaId]);
+
+  // 🔁 Reset form saat modal ditutup (dengan delay agar tidak bentrok)
+  useEffect(() => {
+    if (!show) {
+      const timer = setTimeout(() => {
+        resetForm();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
   }, [show]);
 
-  // ✅ Simpan password
   const handleSubmit = async () => {
     if (!penggunaId) {
       toast.error('❌ ID pengguna tidak ditemukan');
@@ -63,8 +90,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
         role,
       });
       toast.success('✅ Password berhasil disimpan');
-      resetForm();     // ⬅️ Reset form LANGSUNG setelah simpan
-      handleClose();   // ⬅️ Tutup modal
+      handleClose(); // Reset form dilakukan otomatis di useEffect saat show = false
     } catch (error) {
       console.error('Gagal menyimpan password:', error);
       toast.error(error.response?.data?.error || '❌ Gagal menyimpan password');
@@ -73,10 +99,8 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
     }
   };
 
-  // ❌ Batal / tutup modal
   const handleCancel = () => {
-    resetForm();
-    handleClose();
+    handleClose(); // Reset akan dilakukan otomatis
   };
 
   return (
@@ -135,6 +159,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
               <option value="">Pilih Role</option>
               <option value="Administrator">Administrator</option>
               <option value="Dokter">Dokter</option>
+              <option value="Psikiater">Psikiater</option>
               <option value="Perawat">Perawat</option>
               <option value="Petugas Input">Petugas Input</option>
             </Form.Select>
