@@ -36,8 +36,8 @@ const InputPemeriksaan = () => {
       try {
         const res = await api.get('/api/faskes');
         const options = res.data.map((f) => ({
-          value: f.nama_faskes || f.nama, // dukung kedua format
-          label: f.nama_faskes || f.nama,
+          value: f.nama_faskes,
+          label: f.nama_faskes,
         }));
         setFaskesOptions(options);
         console.log('📡 Data faskes dari backend:', options);
@@ -63,6 +63,7 @@ const InputPemeriksaan = () => {
       fetchFaskes();
 
       const timer = setTimeout(() => setLoading(false), 500);
+
       if (!location.state?.pasien) {
         const params = new URLSearchParams(location.search);
         const id = params.get('id');
