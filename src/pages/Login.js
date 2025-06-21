@@ -4,7 +4,7 @@ import api from '../api';
 import { Button, Form, Card, Container, Row, Col } from 'react-bootstrap';
 import './Login.css';
 import { useLoading } from '../components/LoadingContext';
-import Loader from '../components/Loader'; // ✅ Tambahkan import
+import Loader from '../components/Loader';
 
 function Login({ onSignupClick }) {
   const [username, setUsername] = useState('');
@@ -14,12 +14,10 @@ function Login({ onSignupClick }) {
   const [generalError, setGeneralError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const { loading, setLoading } = useLoading(); // ✅ Tambah loading global
+  const { loading, setLoading } = useLoading();
 
   useEffect(() => {
-    setLoading(false); // Jangan tampilkan loading saat buka halaman ini
-
-    // Reset input saat masuk halaman login
+    setLoading(false);
     setUsername('');
     setPassword('');
     setUserError('');
@@ -44,6 +42,7 @@ function Login({ onSignupClick }) {
 
     try {
       setLoading(true);
+
       const response = await api.post('/api/users/login', { username, password });
       const { user } = response.data;
 
@@ -52,17 +51,14 @@ function Login({ onSignupClick }) {
         return;
       }
 
-      // Ambil data lengkap dari tabel pengguna berdasarkan username
-      const penggunaRes = await api.get(`/api/pengguna/by-username/${username}`);
-      const pengguna = penggunaRes.data;
-
       // Simpan ke localStorage
       localStorage.setItem('user', JSON.stringify({
-        id: pengguna.id,
-        nama: pengguna.nama_lengkap,
-        username: pengguna.username,
-        groupAkses: pengguna.groupAkses || [],
-        modulAkses: pengguna.modulAkses || [],
+        id: user.pengguna_id,
+        nama: user.nama_lengkap,
+        username: user.username,
+        role: user.role,
+        groupAkses: user.groupAkses || [],
+        modulAkses: user.modulAkses || [],
       }));
       localStorage.setItem('token', 'loggedin');
 
@@ -101,13 +97,12 @@ function Login({ onSignupClick }) {
                         <Form.Label>Username</Form.Label>
                         <Form.Control
                           type="text"
-                          name="username"
                           placeholder="Masukkan username"
                           value={username}
                           onChange={(e) => setUsername(e.target.value)}
                           isInvalid={!!userError}
-                          autoComplete="new-username"
                           autoFocus
+                          autoComplete="new-username"
                         />
                         <Form.Control.Feedback type="invalid">{userError}</Form.Control.Feedback>
                       </Form.Group>
@@ -116,7 +111,6 @@ function Login({ onSignupClick }) {
                         <Form.Label>Password</Form.Label>
                         <Form.Control
                           type="password"
-                          name="password"
                           placeholder="Masukkan password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
