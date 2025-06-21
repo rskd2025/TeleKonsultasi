@@ -10,6 +10,7 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
   const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // 🔁 Reset form
   const resetForm = () => {
     setUsername('');
     setPassword('');
@@ -17,12 +18,12 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
     setRole('');
   };
 
+  // 🔄 Saat modal dibuka, form direset
   useEffect(() => {
-    if (show) {
-      resetForm();
-    }
+    if (show) resetForm();
   }, [show]);
 
+  // ✅ Simpan password
   const handleSubmit = async () => {
     if (!penggunaId) {
       toast.error('❌ ID pengguna tidak ditemukan');
@@ -62,8 +63,8 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
         role,
       });
       toast.success('✅ Password berhasil disimpan');
-      handleClose();
-      resetForm();
+      resetForm();     // ⬅️ Reset form LANGSUNG setelah simpan
+      handleClose();   // ⬅️ Tutup modal
     } catch (error) {
       console.error('Gagal menyimpan password:', error);
       toast.error(error.response?.data?.error || '❌ Gagal menyimpan password');
@@ -72,9 +73,10 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
     }
   };
 
+  // ❌ Batal / tutup modal
   const handleCancel = () => {
-    handleClose();
     resetForm();
+    handleClose();
   };
 
   return (
