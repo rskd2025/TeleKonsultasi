@@ -36,11 +36,11 @@ const InputPemeriksaan = () => {
       try {
         const res = await api.get('/api/faskes');
         const options = res.data.map((f) => ({
-          value: f.nama,
-          label: f.nama,
+          value: f.nama_faskes || f.nama, // dukung kedua format
+          label: f.nama_faskes || f.nama,
         }));
         setFaskesOptions(options);
-        console.log('📡 Data faskes dari backend:', res.data);
+        console.log('📡 Data faskes dari backend:', options);
       } catch (err) {
         console.error('❌ Gagal ambil faskes:', err);
       }
@@ -86,6 +86,13 @@ const InputPemeriksaan = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    if (!form.faskes_asal) {
+      toast.error('❌ Faskes asal wajib dipilih');
+      setLoading(false);
+      return;
+    }
+
     try {
       await api.post('/api/pemeriksaan', {
         ...form,
@@ -95,7 +102,7 @@ const InputPemeriksaan = () => {
       navigate('/dashboard');
     } catch (err) {
       toast.error('❌ Gagal menyimpan data pemeriksaan.');
-      alert('Terjadi kesalahan saat menyimpan data.');
+      console.error('🧨 Error simpan pemeriksaan:', err);
     } finally {
       setLoading(false);
     }
@@ -138,9 +145,7 @@ const InputPemeriksaan = () => {
               <Form.Label>Faskes Asal</Form.Label>
               <Select
                 options={faskesOptions}
-                value={faskesOptions.find(
-                  (opt) => opt.value === form.faskes_asal
-                )}
+                value={faskesOptions.find((opt) => opt.value === form.faskes_asal) || null}
                 onChange={(selected) =>
                   setForm({ ...form, faskes_asal: selected ? selected.value : '' })
                 }
