@@ -46,6 +46,7 @@ const InputPemeriksaan = () => {
     const getFaskes = async () => {
       try {
         const res = await api.get('/api/faskes');
+        console.log('📡 Data faskes dari backend:', res.data);
         const options = res.data.map((f) => ({
           value: f.nama_faskes,
           label: f.nama_faskes,
@@ -59,7 +60,6 @@ const InputPemeriksaan = () => {
     const init = () => {
       setLoading(true);
       getFaskes();
-      const timer = setTimeout(() => setLoading(false), 500);
 
       if (!location.state?.pasien) {
         const params = new URLSearchParams(location.search);
@@ -71,6 +71,7 @@ const InputPemeriksaan = () => {
         setUmur(new Date().getFullYear() - tgl.getFullYear());
       }
 
+      const timer = setTimeout(() => setLoading(false), 500);
       return () => clearTimeout(timer);
     };
 
@@ -100,17 +101,8 @@ const InputPemeriksaan = () => {
   };
 
   return (
-    <Container
-      fluid
-      className="mt-4 p-3 rounded"
-      style={{
-        background: 'linear-gradient(to right, #D2B4DE, #E8DAEF)',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-      }}
-    >
-      <h5 className="mb-4 text-center" style={{ color: '#5B2C6F' }}>
-        📝 Form Pemeriksaan Pasien
-      </h5>
+    <Container fluid className="mt-4 p-3 rounded" style={{ background: 'linear-gradient(to right, #D2B4DE, #E8DAEF)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+      <h5 className="mb-4 text-center" style={{ color: '#5B2C6F' }}>📝 Form Pemeriksaan Pasien</h5>
 
       <Card className="mb-4 border-0 shadow-sm">
         <Card.Body className="small">
@@ -142,6 +134,7 @@ const InputPemeriksaan = () => {
                 }
                 isClearable
                 placeholder="Pilih atau ketik faskes..."
+                noOptionsMessage={() => 'Faskes tidak ditemukan'}
               />
             </Form.Group>
 
@@ -195,15 +188,8 @@ const InputPemeriksaan = () => {
             </Form.Group>
 
             <div className="d-flex gap-2 justify-content-end mt-4">
-              <Button type="submit" variant="success">
-                💾 Simpan
-              </Button>
-              <Button
-                variant="outline-secondary"
-                onClick={() => navigate('/dashboard')}
-              >
-                ❌ Batal
-              </Button>
+              <Button type="submit" variant="success">💾 Simpan</Button>
+              <Button variant="outline-secondary" onClick={() => navigate('/dashboard')}>❌ Batal</Button>
             </div>
           </Form>
         </Card.Body>
