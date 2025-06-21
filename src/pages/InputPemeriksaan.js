@@ -44,7 +44,7 @@ const InputPemeriksaan = () => {
 
     const getPasienById = async (id) => {
       try {
-        const res = await api.get(`/pasien/${id}`);
+        const res = await api.get(`/api/pasien/${id}`);
         setPasien(res.data);
         const tgl = new Date(res.data.tanggal_lahir);
         setTanggalLahir(tgl.toLocaleDateString('id-ID'));
