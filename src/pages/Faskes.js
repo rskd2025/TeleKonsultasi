@@ -10,7 +10,7 @@ import {
   Card,
   Alert,
 } from 'react-bootstrap';
-import axios from 'axios';
+import api from 'api';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../components/LoadingContext';
 
@@ -36,7 +36,7 @@ const Faskes = () => {
   const fetchFaskes = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/faskes');
+      const res = await api.get('/api/faskes');
       setFaskes(res.data);
       setFilteredFaskes(res.data);
     } catch (err) {
@@ -75,7 +75,7 @@ const Faskes = () => {
     if (!window.confirm('Yakin hapus data ini?')) return;
     setLoading(true);
     try {
-      await axios.delete(`/api/faskes/${id}`);
+      await api.delete(`/api/faskes/${id}`);
       fetchFaskes();
     } catch (err) {
       console.error('Gagal menghapus faskes:', err);
@@ -88,9 +88,9 @@ const Faskes = () => {
     setLoading(true);
     try {
       if (editMode) {
-        await axios.put(`/api/faskes/${formData.id}`, formData);
+        await api.put(`/api/faskes/${formData.id}`, formData);
       } else {
-        await axios.post('/api/faskes', formData);
+        await api.post('/api/faskes', formData);
       }
       setShowSuccess(true);
       fetchFaskes();
