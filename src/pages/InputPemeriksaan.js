@@ -34,7 +34,7 @@ const InputPemeriksaan = () => {
   useEffect(() => {
     const fetchFaskes = async () => {
       try {
-        const res = await api.get('/faskes/dropdown');
+        const res = await api.get('/api/faskes/dropdown');
         setFaskesOptions(res.data); // diasumsikan sudah { value, label }
       } catch (err) {
         console.error('❌ Gagal ambil faskes:', err);
