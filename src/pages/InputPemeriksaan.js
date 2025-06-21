@@ -8,6 +8,7 @@ import {
   Button,
 } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Select from 'react-select';
 import api from '../api';
 import { useLoading } from '../components/LoadingContext';
 
@@ -19,6 +20,7 @@ const InputPemeriksaan = () => {
   const [pasien, setPasien] = useState(location.state?.pasien || {});
   const [tanggalLahir, setTanggalLahir] = useState('');
   const [umur, setUmur] = useState(0);
+  const [daftarFaskes, setDaftarFaskes] = useState([]);
 
   const [form, setForm] = useState({
     faskes_asal: '',
@@ -41,8 +43,22 @@ const InputPemeriksaan = () => {
       }
     };
 
+    const getFaskes = async () => {
+      try {
+        const res = await api.get('/api/faskes');
+        const options = res.data.map((f) => ({
+          value: f.nama_faskes,
+          label: f.nama_faskes,
+        }));
+        setDaftarFaskes(options);
+      } catch (err) {
+        console.error('❌ Gagal ambil data faskes:', err);
+      }
+    };
+
     const init = () => {
       setLoading(true);
+      getFaskes();
       const timer = setTimeout(() => setLoading(false), 500);
 
       if (!location.state?.pasien) {
@@ -118,11 +134,14 @@ const InputPemeriksaan = () => {
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Faskes Asal</Form.Label>
-              <Form.Control
-                name="faskes_asal"
-                value={form.faskes_asal}
-                onChange={handleChange}
-                required
+              <Select
+                options={daftarFaskes}
+                value={daftarFaskes.find((opt) => opt.value === form.faskes_asal) || null}
+                onChange={(selected) =>
+                  setForm({ ...form, faskes_asal: selected?.value || '' })
+                }
+                isClearable
+                placeholder="Pilih atau ketik faskes..."
               />
             </Form.Group>
 
