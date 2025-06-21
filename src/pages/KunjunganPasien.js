@@ -18,7 +18,7 @@ const KunjunganPasien = () => {
   const navigate = useNavigate();
   const { loading, setLoading } = useLoading();
   const user = JSON.parse(localStorage.getItem('user'));
-  const role = user?.role?.toLowerCase();
+  const role = user?.groupAkses?.[0]; // ✅ gunakan groupAkses sebagai role
 
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -72,12 +72,10 @@ const KunjunganPasien = () => {
 
   const simpanKonsul = async () => {
     try {
-      // 1. Simpan jawaban_konsul ke pemeriksaan
       await api.put(`/api/pemeriksaan/${selectedPasien.id}/terima`, {
         jawaban_konsul: jawabanKonsul,
       });
 
-      // 2. Tambahkan data ke tabel feedback
       await api.post('/api/feedback', {
         pemeriksaan_id: selectedPasien.id,
         user_id: user?.id,
