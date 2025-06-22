@@ -1,3 +1,4 @@
+// src/pages/Pengguna.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TambahPenggunaModal from './TambahPenggunaModal';
@@ -7,7 +8,7 @@ import {
   Table, Spinner, Modal, OverlayTrigger,
   Tooltip, Pagination, Badge
 } from 'react-bootstrap';
-import { FaEdit, FaTrash, FaKey } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaKey, FaSync } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import { useLoading } from '../components/LoadingContext';
 import api from '../api';
@@ -153,6 +154,7 @@ const Pengguna = () => {
                 <option value="Aktif">Aktif</option>
                 <option value="Tidak Aktif">Tidak Aktif</option>
               </Form.Select>
+
               <Form.Control
                 type="text"
                 size="sm"
@@ -161,6 +163,12 @@ const Pengguna = () => {
                 onChange={(e) => setCari(e.target.value)}
                 style={{ maxWidth: '240px' }}
               />
+
+              <Button size="sm" variant="outline-primary" onClick={fetchPengguna}>
+                <FaSync className="me-1" />
+                Refresh
+              </Button>
+
               <Button size="sm" variant="success" onClick={() => setShowTambahPenggunaModal(true)}>
                 + Tambah
               </Button>
