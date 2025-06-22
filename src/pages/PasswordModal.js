@@ -2,86 +2,47 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import api from '../api';
-import { useLoading } from '../components/LoadingContext';
+import { useLoading } from './LoadingContext';
 
-const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId = null }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('');
+const PasswordModal = ({
+  show,
+  handleClose,
+  penggunaId = null,
+  namaLengkap = 'Pengguna',
+  defaultUsername = '',
+  defaultRole = 'petugas input',
+  onSubmit,
+}) => {
   const { setLoading } = useLoading();
 
-  // Reset form setiap kali modal dibuka
+  const [username, setUsername] = useState(defaultUsername);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState(defaultRole);
+
   useEffect(() => {
-    const resetForm = () => {
-      setUsername('');
+    if (show) {
+      setUsername(defaultUsername || '');
+      setRole(defaultRole || 'petugas input');
       setPassword('');
       setConfirmPassword('');
-      setRole('');
-    };
-
-    const fetchAkun = async () => {
-      if (!penggunaId || !show) return;
-      try {
-        const res = await api.get(`/api/pengguna/${penggunaId}/akun`);
-        if (res.data && Object.keys(res.data).length > 0) {
-          setUsername(res.data.username || '');
-          setRole(res.data.role || '');
-        }
-      } catch (err) {
-        console.error('❌ Gagal ambil akun login:', err);
-      }
-    };
-
-    if (show) {
-      resetForm();                 // Kosongkan form terlebih dahulu
-      setTimeout(fetchAkun, 0);    // Ambil data akun (jika ada) setelah reset jalan
     }
-  }, [show, penggunaId]);
+  }, [show, defaultUsername, defaultRole]);
 
   const handleSubmit = async () => {
-    if (!penggunaId) {
-      toast.error('❌ ID pengguna tidak ditemukan');
-      return;
-    }
+    if (!penggunaId) return toast.error('❌ ID pengguna tidak tersedia');
 
-    if (!username.trim()) {
-      toast.error('❌ Username tidak boleh kosong');
-      return;
-    }
-
-    if (!password || !confirmPassword) {
-      toast.error('❌ Password tidak boleh kosong');
-      return;
-    }
-
-    if (password.length < 6) {
-      toast.error('❌ Password minimal 6 karakter');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      toast.error('❌ Password tidak sama');
-      return;
-    }
-
-    if (!role) {
-      toast.error('❌ Role belum dipilih');
-      return;
-    }
+    if (!username.trim()) return toast.error('❌ Username wajib diisi');
+    if (!password || !confirmPassword) return toast.error('❌ Password wajib diisi');
+    if (password.length < 6) return toast.error('❌ Password minimal 6 karakter');
+    if (password !== confirmPassword) return toast.error('❌ Password tidak sama');
+    if (!role) return toast.error('❌ Role wajib dipilih');
 
     try {
       setLoading(true);
-      await api.put(`/api/pengguna/${penggunaId}/password`, {
-        username: username.trim(),
-        password,
-        role,
-      });
-      toast.success('✅ Password berhasil disimpan');
-      handleClose();
-    } catch (error) {
-      console.error('Gagal menyimpan password:', error);
-      toast.error(error.response?.data?.error || '❌ Gagal menyimpan password');
+      await onSubmit(username.trim(), password, role);
+    } catch (err) {
+      toast.error('❌ Gagal menyimpan password');
     } finally {
       setLoading(false);
     }
