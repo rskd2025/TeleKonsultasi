@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import api from '../api';
-import { useLoading } from './LoadingContext';
+import { useLoading } from '../components/LoadingContext';
 
 const PasswordModal = ({
   show,
