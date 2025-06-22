@@ -114,7 +114,7 @@ const Dashboard = () => {
 
           {fiturAkses.length <= 1 && (
             <Col xs={12} className="text-center text-white mt-3">
-              Belum ada modul akses yang diberikan. Silakan hubungi administrator.
+              Belum ada modul akses yang diberikan. Silakan hubungi Administrator.
             </Col>
           )}
         </Row>
