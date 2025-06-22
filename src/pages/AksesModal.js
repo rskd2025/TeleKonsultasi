@@ -13,7 +13,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useLoading } from '../components/LoadingContext';
 
 const AksesModal = ({ isOpen, onClose, user, onSuccess }) => {
-  const grupAksesList = ['Administrator', 'Psikiatri', 'Psikolog', 'Perawat Jiwa', 'Petugas Input'];
+  const grupAksesList = ['Administrator', 'Psikiater', 'Psikolog', 'Perawat Jiwa', 'Petugas Input'];
   const modulAksesList = [
     'Menu',
     'Ubah Password',
