@@ -115,37 +115,42 @@ const Faskes = () => {
     <Container fluid className="py-4" style={{ minHeight: '100vh' }}>
       <Card className="shadow-sm border-0">
         <Card.Body>
-          <Row className="align-items-center mb-3 justify-content-between">
+          <Row className="align-items-center mb-3">
             <Col xs="auto">
               <Button variant="secondary" size="sm" onClick={() => navigate(-1)}>
                 ← Kembali
               </Button>
             </Col>
-            <Col xs="auto">
-              <div className="d-flex flex-wrap gap-2 align-items-center">
-                <Form.Control
-                  size="sm"
-                  type="text"
-                  placeholder="Cari Faskes / Kode / Kabupaten"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  style={{ maxWidth: '240px' }}
-                />
-                <Button size="sm" variant="outline-primary" onClick={fetchFaskes}>
-                  <FaSync className="me-1" /> Refresh
-                </Button>
-                <Button
-                  size="sm"
-                  variant="success"
-                  onClick={() => {
-                    setFormData({ nama: '', kode: '', jenis: '', kabupaten: '', provinsi: '', id: '' });
-                    setEditMode(false);
-                    setShowModal(true);
-                  }}
-                >
-                  + Tambah
-                </Button>
-              </div>
+            <Col className="d-flex flex-wrap justify-content-end gap-2">
+              <Form.Control
+                size="sm"
+                type="text"
+                placeholder="Cari Faskes / Kode / Kabupaten"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ maxWidth: '240px' }}
+              />
+              <Button size="sm" variant="outline-primary" onClick={fetchFaskes}>
+                <FaSync className="me-1" /> Refresh
+              </Button>
+              <Button
+                size="sm"
+                variant="success"
+                onClick={() => {
+                  setFormData({
+                    nama: '',
+                    kode: '',
+                    jenis: '',
+                    kabupaten: '',
+                    provinsi: '',
+                    id: '',
+                  });
+                  setEditMode(false);
+                  setShowModal(true);
+                }}
+              >
+                + Tambah
+              </Button>
             </Col>
           </Row>
 
@@ -177,10 +182,18 @@ const Faskes = () => {
                       <td>{item.provinsi}</td>
                       <td>{item.id}</td>
                       <td className="d-flex justify-content-center gap-1">
-                        <Button size="sm" variant="outline-primary" onClick={() => handleEdit(item)}>
+                        <Button
+                          size="sm"
+                          variant="outline-primary"
+                          onClick={() => handleEdit(item)}
+                        >
                           ✏️
                         </Button>
-                        <Button size="sm" variant="outline-danger" onClick={() => handleHapus(item.id)}>
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={() => handleHapus(item.id)}
+                        >
                           🗑️
                         </Button>
                       </td>
@@ -197,7 +210,15 @@ const Faskes = () => {
         </Card.Body>
       </Card>
 
-      <Modal show={showModal} onHide={() => { setShowModal(false); setEditMode(false); }} centered size="lg">
+      <Modal
+        show={showModal}
+        onHide={() => {
+          setShowModal(false);
+          setEditMode(false);
+        }}
+        centered
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title style={{ fontSize: '1rem' }}>
             {editMode ? 'Edit Faskes' : 'Tambah Faskes'}
@@ -261,12 +282,7 @@ const Faskes = () => {
                 </Form.Group>
                 <Form.Group className="mb-2">
                   <Form.Label>ID</Form.Label>
-                  <Form.Control
-                    size="sm"
-                    name="id"
-                    value={formData.id}
-                    disabled
-                  />
+                  <Form.Control size="sm" name="id" value={formData.id} disabled />
                 </Form.Group>
               </Col>
             </Row>
