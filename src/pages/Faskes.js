@@ -13,6 +13,7 @@ import {
 import api from 'api';
 import { useNavigate } from 'react-router-dom';
 import { useLoading } from '../components/LoadingContext';
+import { FaSync } from 'react-icons/fa';
 
 const Faskes = () => {
   const navigate = useNavigate();
@@ -37,7 +38,6 @@ const Faskes = () => {
     setLoading(true);
     try {
       const res = await api.get('/api/faskes');
-      console.log('📡 Data faskes dari backend:', res.data);
       setFaskes(res.data);
       setFilteredFaskes(res.data);
     } catch (err) {
@@ -112,44 +112,52 @@ const Faskes = () => {
   };
 
   return (
-    <Container fluid className="mt-4 mb-4">
-      <Card className="shadow">
-        <Card.Header style={{ background: 'linear-gradient(to right, #7b2ff7, #f107a3)', color: 'white' }}>
-          <Row className="align-items-center g-2">
-            <Col xs={12} md="auto" className="d-flex gap-2 flex-wrap">
-              <Button size="sm" variant="light" onClick={() => navigate(-1)}>
-                ←
-              </Button>
-              <Form.Control
-                size="sm"
-                type="text"
-                placeholder="Cari Faskes / Kabupaten / Kode"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                style={{ fontSize: '0.75rem', minWidth: '200px' }}
-              />
-              <Button
-                size="sm"
-                variant="light"
-                onClick={() => {
-                  setFormData({ nama: '', kode: '', jenis: '', kabupaten: '', provinsi: '', id: '' });
-                  setEditMode(false);
-                  setShowModal(true);
-                }}
-              >
-                +
-              </Button>
-              <Button size="sm" variant="outline-light" onClick={fetchFaskes}>
-                ↻
+    <Container fluid className="py-4" style={{ minHeight: '100vh' }}>
+      <Card className="shadow-sm border-0">
+        <Card.Body>
+          <Row className="align-items-center mb-3 justify-content-between">
+            <Col xs="auto">
+              <Button variant="secondary" size="sm" onClick={() => navigate(-1)}>
+                ← Kembali
               </Button>
             </Col>
+            <Col xs="auto">
+              <div className="d-flex flex-wrap gap-2">
+                <Form.Control
+                  size="sm"
+                  type="text"
+                  placeholder="Cari Faskes / Kode / Kabupaten"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  style={{ maxWidth: '240px' }}
+                />
+                <Button
+                  size="sm"
+                  variant="outline-primary"
+                  onClick={fetchFaskes}
+                >
+                  <FaSync className="me-1" /> Refresh
+                </Button>
+                <Button
+                  size="sm"
+                  variant="success"
+                  onClick={() => {
+                    setFormData({ nama: '', kode: '', jenis: '', kabupaten: '', provinsi: '', id: '' });
+                    setEditMode(false);
+                    setShowModal(true);
+                  }}
+                >
+                  + Tambah
+                </Button>
+              </div>
+            </Col>
           </Row>
-        </Card.Header>
 
-        <Card.Body>
+          <h5 className="mb-3">Daftar Fasilitas Kesehatan</h5>
+
           <div style={{ overflowX: 'auto' }}>
             <Table hover bordered size="sm" className="text-center align-middle" responsive>
-              <thead style={{ backgroundColor: '#f3f0ff', fontSize: '0.8rem' }}>
+              <thead className="table-light" style={{ fontSize: '0.85rem' }}>
                 <tr>
                   <th>No</th>
                   <th>Nama Faskes</th>
@@ -161,7 +169,7 @@ const Faskes = () => {
                   <th>Aksi</th>
                 </tr>
               </thead>
-              <tbody style={{ fontSize: '0.8rem' }}>
+              <tbody style={{ fontSize: '0.85rem' }}>
                 {filteredFaskes.length ? (
                   filteredFaskes.map((item, idx) => (
                     <tr key={item.id}>
