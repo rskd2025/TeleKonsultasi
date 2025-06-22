@@ -85,7 +85,7 @@ const ManajemenPengguna = () => {
               </Button>
             </Col>
             <Col xs="auto">
-              <div className="d-flex flex-wrap gap-2">
+              <div className="d-flex flex-wrap gap-2 align-items-center">
                 <Form.Control
                   type="text"
                   size="sm"
