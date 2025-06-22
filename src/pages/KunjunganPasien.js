@@ -18,7 +18,15 @@ const KunjunganPasien = () => {
   const navigate = useNavigate();
   const { loading, setLoading } = useLoading();
   const user = JSON.parse(localStorage.getItem('user'));
-  const role = user?.groupAkses?.[0]; // ✅ gunakan groupAkses sebagai role
+  const originalRole = user?.groupAkses?.[0];
+
+  // 🔁 Mapping untuk role yang dikenali backend
+  const roleMap = {
+    Psikiatri: 'Psikiater',
+    Psikologi: 'Psikolog',
+    Perawat: 'Perawat Jiwa',
+  };
+  const mappedRole = roleMap[originalRole] || originalRole;
 
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -30,7 +38,7 @@ const KunjunganPasien = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/api/pemeriksaan/kunjungan?role=${role}`);
+      const res = await api.get(`/api/pemeriksaan/kunjungan?role=${mappedRole}`);
       const hasil = Array.isArray(res.data) ? res.data : [];
       setData(hasil);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -40,7 +48,7 @@ const KunjunganPasien = () => {
     } finally {
       setLoading(false);
     }
-  }, [role, setLoading]);
+  }, [mappedRole, setLoading]);
 
   useEffect(() => {
     fetchData();
