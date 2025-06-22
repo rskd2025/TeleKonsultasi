@@ -10,14 +10,14 @@ const ProtectedRoute = ({ children, requiredModules = [] }) => {
     return <Navigate to="/login" replace />;
   }
 
-  const { groupAkses = [], modulAkses = [] } = user;
+  const { role = '', modulAkses = [] } = user;
 
-  // ✅ Admin boleh akses semua
-  if (groupAkses.includes('Admin')) {
+  // ✅ Admin/Administrator punya akses penuh
+  if (role.toLowerCase() === 'admin' || role.toLowerCase() === 'administrator') {
     return children;
   }
 
-  // ✅ Jika tidak butuh modul khusus, izinkan
+  // ✅ Tidak butuh modul khusus (public page setelah login)
   if (requiredModules.length === 0) {
     return children;
   }
