@@ -1,3 +1,4 @@
+// ...import tetap
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AksesModal from './AksesModal';
@@ -78,27 +79,25 @@ const ManajemenPengguna = () => {
 
       <Card className="shadow-lg border-0" style={{ borderRadius: '1rem', background: '#fff' }}>
         <Card.Body>
-          <Row className="align-items-center mb-3 justify-content-between">
+          <Row className="align-items-center mb-3">
             <Col xs="auto">
               <Button variant="secondary" size="sm" onClick={handleKembali}>
                 ← Kembali
               </Button>
             </Col>
-            <Col xs="auto">
-              <div className="d-flex flex-wrap gap-2 align-items-center">
-                <Form.Control
-                  type="text"
-                  size="sm"
-                  placeholder="Cari Nama / NIP"
-                  value={cari}
-                  onChange={(e) => setCari(e.target.value)}
-                  style={{ maxWidth: '240px' }}
-                />
-                <Button variant="outline-primary" size="sm" onClick={fetchPengguna}>
-                  <FaSync className="me-1" />
-                  Refresh
-                </Button>
-              </div>
+            <Col className="d-flex flex-wrap justify-content-end gap-2">
+              <Form.Control
+                type="text"
+                size="sm"
+                placeholder="Cari Nama / NIP"
+                value={cari}
+                onChange={(e) => setCari(e.target.value)}
+                style={{ maxWidth: '240px' }}
+              />
+              <Button variant="outline-primary" size="sm" onClick={fetchPengguna}>
+                <FaSync className="me-1" />
+                Refresh
+              </Button>
             </Col>
           </Row>
 
