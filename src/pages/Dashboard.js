@@ -4,16 +4,16 @@ import { Button, Container, Row, Col, Card, Form } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
 import { useLoading } from '../components/LoadingContext';
+import api from '../api';
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import api from '../api';
 
 const Dashboard = () => {
   const { setLoading } = useLoading();
@@ -22,8 +22,9 @@ const Dashboard = () => {
   const modulAkses = user.modulAkses || [];
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [mode, setMode] = useState('perbulan');
   const [statistik, setStatistik] = useState([]);
+  const [jenisStatistik, setJenisStatistik] = useState('perbulan');
+  const [total, setTotal] = useState({ pasien: '-', faskes: '-', user: '-' });
 
   const isAdmin = groupAkses.includes('Admin');
 
@@ -38,9 +39,7 @@ const Dashboard = () => {
 
   const fiturAkses = isAdmin
     ? tombolNavigasi.map((btn) => btn.label)
-    : ['Ubah Password', ...modulAkses.map((modul) =>
-        modul === 'Input Pasien' ? 'Daftar Pasien' : modul
-      )];
+    : ['Ubah Password', ...modulAkses.map((modul) => (modul === 'Input Pasien' ? 'Daftar Pasien' : modul))];
 
   useEffect(() => {
     setLoading(true);
@@ -49,27 +48,29 @@ const Dashboard = () => {
   }, [setLoading]);
 
   useEffect(() => {
-    const fetchStatistik = async () => {
+    const getStatistik = async () => {
       try {
-        const res = await api.get(`/api/statistik/${mode}`);
-        let result = res.data;
-
-        if (mode === 'perbulan') {
-          const bulan = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-          result = result.map(item => ({ name: bulan[item.bulan], total: item.total }));
-        } else if (mode === 'pertahun') {
-          result = result.map(item => ({ name: item.tahun.toString(), total: item.total }));
-        } else if (mode === 'perhari') {
-          result = result.map(item => ({ name: item.tanggal, total: item.total })).reverse();
-        }
-
-        setStatistik(result);
+        const res = await api.get(`/api/statistik/${jenisStatistik}`);
+        setStatistik(res.data);
       } catch (err) {
-        console.error('Gagal ambil data statistik:', err);
+        console.error('🚫 Gagal ambil data statistik:', err.message);
+        setStatistik([]);
       }
     };
-    fetchStatistik();
-  }, [mode]);
+    getStatistik();
+  }, [jenisStatistik]);
+
+  useEffect(() => {
+    const fetchTotal = async () => {
+      try {
+        const res = await api.get('/api/statistik/total');
+        setTotal(res.data);
+      } catch (err) {
+        console.error('🚫 Gagal ambil total statistik:', err.message);
+      }
+    };
+    fetchTotal();
+  }, []);
 
   return (
     <div
@@ -98,19 +99,27 @@ const Dashboard = () => {
         </div>
 
         <Row className="mb-4 g-3">
-          <Col xs={12} sm={6}>
+          <Col xs={12} sm={4}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
                 <Card.Title>Total Pasien</Card.Title>
-                <h3>-</h3>
+                <h3>{total.pasien}</h3>
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={12} sm={6}>
+          <Col xs={12} sm={4}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
                 <Card.Title>Total Faskes</Card.Title>
-                <h3>-</h3>
+                <h3>{total.faskes}</h3>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col xs={12} sm={4}>
+            <Card className="shadow-sm text-center text-dark">
+              <Card.Body>
+                <Card.Title>Total Pengguna</Card.Title>
+                <h3>{total.user}</h3>
               </Card.Body>
             </Card>
           </Col>
@@ -156,42 +165,47 @@ const Dashboard = () => {
         <div className="mt-4 text-center">
           <h5 className="mb-3">📊 Statistik Pasien</h5>
           <Form.Select
+            value={jenisStatistik}
+            onChange={(e) => setJenisStatistik(e.target.value)}
+            style={{ maxWidth: '200px', margin: '0 auto' }}
             size="sm"
-            value={mode}
-            onChange={(e) => setMode(e.target.value)}
-            className="mb-3"
-            style={{ maxWidth: 200, margin: '0 auto' }}
           >
-            <option value="perhari">📆 per Hari</option>
-            <option value="perbulan">📅 per Bulan</option>
-            <option value="pertahun">📊 per Tahun</option>
+            <option value="perhari">per Hari</option>
+            <option value="perbulan">per Bulan</option>
+            <option value="pertahun">per Tahun</option>
           </Form.Select>
+
           <div
             style={{
-              height: '300px',
+              height: '250px',
+              marginTop: '1rem',
               border: '2px dashed #ccc',
               borderRadius: '10px',
-              backgroundColor: 'rgba(255,255,255,0.2)',
-              padding: '1rem',
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              padding: '10px',
             }}
           >
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={statistik}>
+              <LineChart data={statistik}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey={jenisStatistik === 'perhari' ? 'tanggal' : jenisStatistik === 'perbulan' ? 'bulan' : 'tahun'} />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Bar dataKey="total" fill="#8884d8" />
-              </BarChart>
+                <Line
+                  type="monotone"
+                  dataKey="jumlah"
+                  stroke="#ffffff"
+                  strokeWidth={2}
+                  dot={{ r: 4, stroke: '#fff', fill: '#00f0ff', strokeWidth: 2 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
       </Container>
 
-      <UbahPasswordModal
-        show={showPasswordModal}
-        onHide={() => setShowPasswordModal(false)}
-      />
+      <UbahPasswordModal show={showPasswordModal} onHide={() => setShowPasswordModal(false)} />
     </div>
   );
 };
