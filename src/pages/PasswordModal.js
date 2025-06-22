@@ -139,8 +139,8 @@ const PasswordModal = ({ show, handleClose, namaLengkap = 'Pengguna', penggunaId
               <option value="">Pilih Role</option>
               <option value="Administrator">Administrator</option>
               <option value="Dokter">Dokter</option>
+              <option value="Psikolog">Psikolog</option>
               <option value="Perawat">Perawat</option>
-              <option value="Psikiater">Psikiater</option>
               <option value="Petugas Input">Petugas Input</option>
             </Form.Select>
           </Form.Group>
