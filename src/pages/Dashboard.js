@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Row, Col, Card } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Form } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
 import { useLoading } from '../components/LoadingContext';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+import api from '../api';
 
 const Dashboard = () => {
   const { setLoading } = useLoading();
@@ -12,10 +22,11 @@ const Dashboard = () => {
   const modulAkses = user.modulAkses || [];
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [mode, setMode] = useState('perbulan');
+  const [statistik, setStatistik] = useState([]);
 
   const isAdmin = groupAkses.includes('Admin');
 
-  // Menu yang tersedia
   const tombolNavigasi = [
     { label: 'Menu', to: '/menu' },
     { label: 'Ubah Password', to: '#' },
@@ -36,6 +47,29 @@ const Dashboard = () => {
     const timer = setTimeout(() => setLoading(false), 600);
     return () => clearTimeout(timer);
   }, [setLoading]);
+
+  useEffect(() => {
+    const fetchStatistik = async () => {
+      try {
+        const res = await api.get(`/api/statistik/${mode}`);
+        let result = res.data;
+
+        if (mode === 'perbulan') {
+          const bulan = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          result = result.map(item => ({ name: bulan[item.bulan], total: item.total }));
+        } else if (mode === 'pertahun') {
+          result = result.map(item => ({ name: item.tahun.toString(), total: item.total }));
+        } else if (mode === 'perhari') {
+          result = result.map(item => ({ name: item.tanggal, total: item.total })).reverse();
+        }
+
+        setStatistik(result);
+      } catch (err) {
+        console.error('Gagal ambil data statistik:', err);
+      }
+    };
+    fetchStatistik();
+  }, [mode]);
 
   return (
     <div
@@ -120,23 +154,36 @@ const Dashboard = () => {
         </Row>
 
         <div className="mt-4 text-center">
-          <h5 className="mb-3">📊 Statistik Pasien per Bulan</h5>
+          <h5 className="mb-3">📊 Statistik Pasien</h5>
+          <Form.Select
+            size="sm"
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+            className="mb-3"
+            style={{ maxWidth: 200, margin: '0 auto' }}
+          >
+            <option value="perhari">📆 per Hari</option>
+            <option value="perbulan">📅 per Bulan</option>
+            <option value="pertahun">📊 per Tahun</option>
+          </Form.Select>
           <div
             style={{
-              height: '200px',
+              height: '300px',
               border: '2px dashed #ccc',
               borderRadius: '10px',
               backgroundColor: 'rgba(255,255,255,0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#eee',
-              fontStyle: 'italic',
-              overflowX: 'auto',
               padding: '1rem',
             }}
           >
-            Statistik pasien dinonaktifkan sementara
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={statistik}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar dataKey="total" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </Container>
