@@ -18,15 +18,16 @@ const Header = () => {
     navigate('/login');
   };
 
-  // Fungsi bantu untuk kapitalisasi dan role-friendly
+  // Fungsi bantu kapitalisasi awal huruf
   const capitalize = (text) => {
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   };
 
-  const formatRole = (role) => {
-    if (!role) return '';
-    switch (role.toLowerCase()) {
+  // Fungsi untuk tampilkan role dari groupAkses
+  const formatRole = (rawRole) => {
+    if (!rawRole) return '';
+    switch (rawRole.toLowerCase()) {
       case 'superadmin':
         return 'Administrator';
       case 'psikolog':
@@ -38,9 +39,13 @@ const Header = () => {
       case 'dokter':
         return 'Dokter';
       default:
-        return capitalize(role);
+        return capitalize(rawRole);
     }
   };
+
+  // Ambil nama lengkap dan role dari data user
+  const namaLengkap = user?.nama_lengkap || 'Pengguna';
+  const roleLabel = formatRole(user?.groupAkses?.[0] || user?.role);
 
   return (
     <Navbar
@@ -59,7 +64,7 @@ const Header = () => {
           className="fw-semibold text-truncate"
           style={{ fontSize: '0.9rem', color: 'white', maxWidth: '70%' }}
         >
-          {capitalize(user?.nama_lengkap)} | {formatRole(user?.role)}
+          | {namaLengkap} | {roleLabel}
         </div>
 
         {/* Kanan: Tombol Logout */}
