@@ -108,7 +108,7 @@ const Feedback = ({ userRole = 'admin' }) => {
 
   return (
     <Container fluid className="mt-4 mb-5">
-      <h5 className="mb-3 text-center fw-bold">\ud83d\udccb Feedback Konsul Pasien</h5>
+      <h5 className="mb-3 text-center fw-bold">Feedback Konsul Pasien</h5>
 
       <Row className="mb-3 g-2 align-items-center">
         <Col xs={6} md={2}>
