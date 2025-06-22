@@ -44,7 +44,11 @@ const Header = () => {
   };
 
   // Ambil nama lengkap dan role dari data user
-  const namaLengkap = user?.nama_lengkap || 'Pengguna';
+  const namaLengkap =
+  user?.nama_lengkap ||
+  user?.nama ||
+  `${user?.gelar_depan || ''} ${user?.nama_depan || ''} ${user?.gelar_belakang || ''}`.trim() ||
+  'Pengguna';
   const roleLabel = formatRole(user?.groupAkses?.[0] || user?.role);
 
   return (
