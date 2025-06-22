@@ -111,7 +111,7 @@ const Feedback = ({ userRole = 'admin' }) => {
       <h5 className="mb-3 text-center fw-bold">\ud83d\udccb Feedback Konsul Pasien</h5>
 
       <Row className="mb-3 g-2 align-items-center">
-        <Col xs={12} md={2}>
+        <Col xs={6} md={2}>
           <Button size="sm" variant="secondary" className="w-100" onClick={() => navigate('/dashboard')}>
             Kembali
           </Button>
