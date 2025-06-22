@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children, requiredModules = [] }) => {
   const { groupAkses = [], modulAkses = [] } = user;
 
   // ✅ Admin boleh akses semua
-  if (groupAkses.includes('Admin')) {
+  if (groupAkses.includes('Administrator')) {
     return children;
   }
 
