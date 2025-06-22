@@ -1,22 +1,11 @@
-// src/pages/Pengguna.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TambahPenggunaModal from './TambahPenggunaModal';
 import PasswordModal from './PasswordModal';
 import {
-  Container,
-  Card,
-  Form,
-  Row,
-  Col,
-  Button,
-  Table,
-  Spinner,
-  Modal,
-  OverlayTrigger,
-  Tooltip,
-  Pagination,
-  Badge,
+  Container, Card, Form, Row, Col, Button,
+  Table, Spinner, Modal, OverlayTrigger,
+  Tooltip, Pagination, Badge
 } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaKey } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
@@ -91,19 +80,31 @@ const Pengguna = () => {
     }
   };
 
-  const handleSetPassword = (user) => {
-    setSelectedUser(user);
-    setShowPasswordModal(true);
+  const handleSetPassword = async (user) => {
+    try {
+      const res = await api.get(`/api/pengguna/${user.id}/akun`);
+      const akun = res.data || {};
+      setSelectedUser({
+        ...user,
+        username: akun.username || '',
+        role: akun.role || 'petugas input',
+      });
+      setShowPasswordModal(true);
+    } catch {
+      toast.error('❌ Gagal mengambil akun pengguna');
+    }
   };
 
-  const submitPassword = async (password, jenisPengguna) => {
-    if (!password) return;
+  const submitPassword = async (username, password, role = 'petugas input') => {
+    if (!username || !password) return;
     try {
       await api.put(`/api/pengguna/${selectedUser.id}/password`, {
+        username,
         password,
-        jenisPengguna,
+        role,
       });
       toast.success('✅ Password berhasil diperbarui');
+      fetchPengguna();
     } catch {
       toast.error('❌ Gagal memperbarui password');
     } finally {
@@ -190,10 +191,7 @@ const Pengguna = () => {
                   <td>{p.namaLengkap || '-'}</td>
                   <td>
                     {p.tempatLahir},&nbsp;
-                    <OverlayTrigger
-                      placement="top"
-                      overlay={<Tooltip>{p.tanggalLahir}</Tooltip>}
-                    >
+                    <OverlayTrigger placement="top" overlay={<Tooltip>{p.tanggalLahir}</Tooltip>}>
                       <span>
                         {new Date(p.tanggalLahir).toLocaleDateString('id-ID')}
                       </span>
@@ -275,6 +273,8 @@ const Pengguna = () => {
         onSubmit={submitPassword}
         penggunaId={selectedUser?.id}
         namaLengkap={selectedUser?.namaLengkap || ''}
+        defaultUsername={selectedUser?.username || ''}
+        defaultRole={selectedUser?.role || 'petugas input'}
       />
 
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered size="sm">
