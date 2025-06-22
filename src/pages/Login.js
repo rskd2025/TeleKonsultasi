@@ -6,7 +6,7 @@ import './Login.css';
 import { useLoading } from '../components/LoadingContext';
 import Loader from '../components/Loader';
 
-function Login({ onSignupClick }) {
+function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [userError, setUserError] = useState('');
@@ -16,6 +16,15 @@ function Login({ onSignupClick }) {
   const location = useLocation();
   const { loading, setLoading } = useLoading();
 
+  // Redirect ke dashboard kalau sudah login
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
+
+  // Reset form setiap buka halaman login
   useEffect(() => {
     setLoading(false);
     setUsername('');
@@ -23,7 +32,7 @@ function Login({ onSignupClick }) {
     setUserError('');
     setPassError('');
     setGeneralError('');
-  }, [location.pathname]);
+  }, [location.pathname, setLoading]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -42,7 +51,6 @@ function Login({ onSignupClick }) {
 
     try {
       setLoading(true);
-
       const response = await api.post('/api/users/login', { username, password });
       const { user } = response.data;
 
@@ -127,22 +135,6 @@ function Login({ onSignupClick }) {
                       <Button variant="primary" type="submit" className="login-btn w-100">
                         Login
                       </Button>
-
-                      <div className="text-center mt-3">
-                        <span style={{ color: '#ddd' }}>
-                          Jika belum punya akun silakan{' '}
-                          <span
-                            onClick={onSignupClick}
-                            style={{
-                              color: '#007bff',
-                              fontWeight: 'bold',
-                              cursor: 'pointer',
-                            }}
-                          >
-                            Signup
-                          </span>
-                        </span>
-                      </div>
                     </Form>
                   </Card.Body>
                 </Card>
