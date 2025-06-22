@@ -15,7 +15,6 @@ import Login from './pages/Login';
 import HistoryPasien from './pages/HistoryPasien';
 import InputPemeriksaan from './pages/InputPemeriksaan';
 import Feedback from './pages/Feedback';
-import SignupModal from './pages/SignupModal';
 
 // ✅ Komponen layout
 import Header from './components/Header';
@@ -36,8 +35,6 @@ function LayoutWrapper() {
   const isLoggedIn = !!user;
   const hideHeaderFooter = ['/login', '/unauthorized'].includes(location.pathname);
 
-  const [showSignup, setShowSignup] = useState(false);
-
   // ⏳ Tampilkan loading saat ganti halaman
   useEffect(() => {
     setLoading(true);
@@ -45,7 +42,7 @@ function LayoutWrapper() {
     return () => clearTimeout(timer);
   }, [setLoading, location.pathname]);
 
-  // ⏱ Logout otomatis jika idle (misalnya 10 menit)
+  // ⏱ Logout otomatis jika idle (10 menit)
   const handleIdle = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
@@ -60,7 +57,7 @@ function LayoutWrapper() {
 
         <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '1rem' }}>
           <Routes>
-            <Route path="/login" element={<Login onSignupClick={() => setShowSignup(true)} />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/unauthorized" element={
               <div className="text-center mt-5">
                 <h2>❌ Akses Ditolak</h2>
@@ -82,11 +79,6 @@ function LayoutWrapper() {
         </div>
 
         {isLoggedIn && !hideHeaderFooter && <Footer />}
-
-        {/* ⬇️ Modal signup di halaman login */}
-        {location.pathname === '/login' && (
-          <SignupModal show={showSignup} onHide={() => setShowSignup(false)} />
-        )}
 
         <ToastContainer
           position="top-right"
