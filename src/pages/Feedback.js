@@ -113,7 +113,7 @@ const Feedback = ({ userRole = 'admin' }) => {
       <Row className="mb-3 g-2 align-items-center">
         <Col xs={12} md={2}>
           <Button size="sm" variant="secondary" className="w-100" onClick={() => navigate('/dashboard')}>
-            \u2b05\ufe0f Kembali
+            Kembali
           </Button>
         </Col>
         <Col xs={12} md={3}>
@@ -136,7 +136,7 @@ const Feedback = ({ userRole = 'admin' }) => {
         <Col xs={12} md={4}>
           <div className="d-flex flex-wrap gap-2">
             <Button size="sm" variant="primary" onClick={fetchFeedback}>
-              \u21bb Refresh
+              Refresh
             </Button>
             <Button size="sm" variant="success" onClick={exportToExcel}>
               Export Excel
