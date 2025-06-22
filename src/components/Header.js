@@ -31,6 +31,8 @@ const Header = () => {
         return 'Administrator';
       case 'psikolog':
         return 'Psikolog';
+      case 'psikiater':
+        return 'Psikiater';
       case 'perawat':
         return 'Perawat Jiwa';
       case 'dokter':
