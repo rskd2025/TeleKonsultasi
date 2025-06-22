@@ -122,7 +122,7 @@ const Faskes = () => {
               </Button>
             </Col>
             <Col xs="auto">
-              <div className="d-flex flex-wrap gap-2">
+              <div className="d-flex flex-wrap gap-2 align-items-center">
                 <Form.Control
                   size="sm"
                   type="text"
@@ -131,11 +131,7 @@ const Faskes = () => {
                   onChange={(e) => setSearch(e.target.value)}
                   style={{ maxWidth: '240px' }}
                 />
-                <Button
-                  size="sm"
-                  variant="outline-primary"
-                  onClick={fetchFaskes}
-                >
+                <Button size="sm" variant="outline-primary" onClick={fetchFaskes}>
                   <FaSync className="me-1" /> Refresh
                 </Button>
                 <Button
