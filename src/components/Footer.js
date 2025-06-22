@@ -26,7 +26,7 @@ const Footer = () => {
     <>
       {/* Footer Static */}
       <div className="text-center py-2 bg-light" style={{ marginBottom: '30px' }}>
-        <small>&copy; 2025 RSKD Provinsi Maluku</small>
+        <small></small>
       </div>
 
       {/* Footer Fixed Modern */}
@@ -44,7 +44,7 @@ const Footer = () => {
         {/* Tengah - Scroll Text */}
         <div className="marquee-text">
           <p>
-            TeleKonsultasi Kesehatan Mental RSKD Provinsi Maluku — Data anda bersifat rahasia
+            TeleKonsultasi Kesehatan Mental — Data anda bersifat rahasia &copy; 2025 RSKD Provinsi Maluku
           </p>
         </div>
 
