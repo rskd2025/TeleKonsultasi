@@ -20,7 +20,6 @@ const KunjunganPasien = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const originalRole = user?.groupAkses?.[0];
 
-  // 🔁 Mapping untuk role yang dikenali backend
   const roleMap = {
     Psikiatri: 'Psikiater',
     Psikologi: 'Psikolog',
@@ -142,7 +141,19 @@ const KunjunganPasien = () => {
                 <strong>Tujuan Konsul:</strong> {item.tujuan_konsul} <br />
                 <strong>Tanggal:</strong> {item.tanggal} <br />
                 <strong>Status:</strong>{' '}
-                <Badge bg="success">Pasien berada di ruangan / Sedang dilayani</Badge>
+                <Badge bg={
+                  item.status === 'selesai'
+                    ? 'secondary'
+                    : item.status === 'diterima'
+                    ? 'success'
+                    : 'warning'
+                }>
+                  {item.status === 'selesai'
+                    ? 'Selesai'
+                    : item.status === 'diterima'
+                    ? 'Pasien berada di ruangan / Sedang dilayani'
+                    : 'Menunggu Diterima'}
+                </Badge>
               </Card.Text>
               <div className="d-flex gap-2 flex-wrap">
                 <Button variant="success" size="sm" onClick={() => handleTerima(item)}>
