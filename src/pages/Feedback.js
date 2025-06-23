@@ -90,45 +90,60 @@ const Feedback = ({ userRole = 'admin' }) => {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-    doc.setFontSize(10);
-    doc.text('Feedback Konsul Pasien', 14, 15);
+    if (filteredData.length === 0) return alert('Tidak ada data untuk dicetak');
 
-    const tableColumn = [
-      'No',
-      'Nama',
-      'Umur',
-      'Faskes Asal',
-      'Tujuan Konsul',
-      'Tanggal',
-      'Diagnosa',
-      'Anamnesis',
-      'Jawaban Konsul',
-    ];
+    filteredData.forEach((item) => {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    const tableRows = filteredData.map((item, idx) => [
-      idx + 1,
-      item.nama_lengkap,
-      item.umur,
-      item.faskes_asal || '-',
-      item.tujuan_konsul || '-',
-      formatTanggal(item.tanggal_kunjungan),
-      item.diagnosa || '-',
-      item.anamnesis || '-',
-      item.jawaban_konsul || '-',
-    ]);
+      const logoImg = new Image();
+      logoImg.src = '/logo.png'; // logo harus di folder public
 
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      styles: { fontSize: 8, cellPadding: 2 },
-      margin: { top: 15, left: 10, right: 10 },
+      doc.addImage(logoImg, 'PNG', 10, 10, 25, 25);
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('RSKD PROVINSI MALUKU', 40, 15);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('Jl. Laksdya Leo Wattimena Ambon', 40, 20);
+      doc.text('AMBON - MALUKU', 40, 25);
+
+      doc.setFontSize(10);
+      doc.text(`RM 0.0`, 200, 10, { align: 'right' });
+
+      const jenisKelamin = item.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+      const detailPasien = [
+        [`No. RM`, `: 00-00-00-00`],
+        [`Nama Pasien`, `: ${item.nama_lengkap}`],
+        [`Tgl Lahir`, `: ${item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'}`],
+        [`Umur`, `: ${item.umur} th`, `Jenis Kelamin`, `: ${jenisKelamin}`],
+        [`No KTP`, `: -`],
+      ];
+
+      let y = 35;
+      detailPasien.forEach((row) => {
+        doc.text(row[0], 10, y);
+        doc.text(row[1], 45, y);
+        if (row[2]) doc.text(row[2], 120, y);
+        if (row[3]) doc.text(row[3], 155, y);
+        y += 6;
+      });
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text('JAWABAN KONSUL PASIEN', 105, y + 5, null, null, 'center');
+
+      doc.setDrawColor(0);
+      doc.setLineWidth(0.3);
+      doc.rect(10, y + 10, 190, 40);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(item.jawaban_konsul || '-', 15, y + 15, { maxWidth: 180 });
+
+      const blob = doc.output('blob');
+      const blobURL = URL.createObjectURL(blob);
+      window.open(blobURL);
     });
-
-    const blob = doc.output('blob');
-    const blobURL = URL.createObjectURL(blob);
-    window.open(blobURL);
   };
 
   return (
@@ -167,7 +182,7 @@ const Feedback = ({ userRole = 'admin' }) => {
               Export Excel
             </Button>
             <Button size="sm" variant="danger" onClick={exportToPDF}>
-              Export PDF
+              Cetak PDF
             </Button>
           </div>
         </Col>
@@ -179,15 +194,7 @@ const Feedback = ({ userRole = 'admin' }) => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <Table
-            striped
-            bordered
-            hover
-            size="sm"
-            className="text-nowrap"
-            style={{ fontSize: '0.85rem', minWidth: '1000px' }}
-            responsive
-          >
+          <Table striped bordered hover size="sm" className="text-nowrap" style={{ fontSize: '0.85rem', minWidth: '1000px' }} responsive>
             <thead className="text-center">
               <tr>
                 <th>No</th>
