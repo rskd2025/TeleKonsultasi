@@ -118,7 +118,7 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.addImage(logo, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
     const textX = logoX + logoWidth + 5;
-    const textY = 20;
+    const textY = 25;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text('RSKD Provinsi Maluku', textX, textY);
@@ -132,7 +132,7 @@ const Feedback = ({ userRole = 'admin' }) => {
 
     const labelX = midX + 4;
     const valueX = labelX + 30;
-    let identitasY = 18;
+    let identitasY = 25;
     const dataPasien = [
       ['No. RM', item.no_rm || '-'],
       ['Nama Pasien', item.nama_lengkap || '-'],
