@@ -43,6 +43,8 @@ const HistoryPasien = () => {
     switch (status) {
       case 'menunggu':
         return <Badge bg="warning">Menunggu</Badge>;
+      case 'diterima':
+        return <Badge bg="info" text="dark">Sedang Dilayani</Badge>;
       case 'selesai':
         return <Badge style={{ backgroundColor: '#8E44AD' }}>Selesai</Badge>;
       case 'batal':
