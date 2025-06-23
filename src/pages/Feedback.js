@@ -1,19 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Table,
-  Spinner,
-} from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import api from '../api';
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { useLoading } from '../components/LoadingContext';
+// ... (import tetap sama)
 
 const Feedback = ({ userRole = 'admin' }) => {
   const [data, setData] = useState([]);
@@ -53,14 +38,37 @@ const Feedback = ({ userRole = 'admin' }) => {
     }
 
     if (tanggal) {
-      filtered = filtered.filter((item) => item.tanggal === tanggal);
+      filtered = filtered.filter((item) =>
+        item.tanggal_kunjungan?.slice(0, 10) === tanggal
+      );
     }
 
     setFilteredData(filtered);
   }, [search, tanggal, data]);
 
+  const formatTanggal = (tgl) => {
+    if (!tgl) return '-';
+    return new Date(tgl).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const rows = filteredData.map((item, i) => ({
+      No: i + 1,
+      Nama: item.nama_lengkap,
+      Umur: item.umur,
+      'Faskes Asal': item.faskes_asal || '-',
+      'Tujuan Konsul': item.tujuan_konsul || '-',
+      Tanggal: formatTanggal(item.tanggal_kunjungan),
+      Diagnosa: item.diagnosa || '-',
+      Anamnesis: item.anamnesis || '-',
+      'Jawaban Konsul': item.jawaban_konsul || '-',
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Feedback');
     XLSX.writeFile(workbook, 'feedback_konsul.xlsx');
@@ -72,6 +80,7 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.text('Feedback Konsul Pasien', 14, 15);
 
     const tableColumn = [
+      'No',
       'Nama',
       'Umur',
       'Faskes Asal',
@@ -82,12 +91,13 @@ const Feedback = ({ userRole = 'admin' }) => {
       'Jawaban Konsul',
     ];
 
-    const tableRows = filteredData.map((item) => [
+    const tableRows = filteredData.map((item, idx) => [
+      idx + 1,
       item.nama_lengkap,
       item.umur,
       item.faskes_asal || '-',
       item.tujuan_konsul || '-',
-      item.tanggal,
+      formatTanggal(item.tanggal_kunjungan),
       item.diagnosa || '-',
       item.anamnesis || '-',
       item.jawaban_konsul || '-',
@@ -159,13 +169,13 @@ const Feedback = ({ userRole = 'admin' }) => {
             bordered
             hover
             size="sm"
-            id="feedback-table"
             className="text-nowrap"
-            style={{ fontSize: '0.85rem', minWidth: '900px' }}
+            style={{ fontSize: '0.85rem', minWidth: '1000px' }}
             responsive
           >
             <thead className="text-center">
               <tr>
+                <th>No</th>
                 <th>Nama</th>
                 <th>Umur</th>
                 <th>Faskes Asal</th>
@@ -177,14 +187,15 @@ const Feedback = ({ userRole = 'admin' }) => {
               </tr>
             </thead>
             <tbody>
-              {Array.isArray(filteredData) && filteredData.length > 0 ? (
-                filteredData.map((item) => (
+              {filteredData.length > 0 ? (
+                filteredData.map((item, index) => (
                   <tr key={item.id}>
+                    <td>{index + 1}</td>
                     <td>{item.nama_lengkap}</td>
                     <td>{item.umur}</td>
                     <td>{item.faskes_asal || '-'}</td>
                     <td>{item.tujuan_konsul || '-'}</td>
-                    <td>{item.tanggal}</td>
+                    <td>{formatTanggal(item.tanggal_kunjungan)}</td>
                     <td>{item.diagnosa || '-'}</td>
                     <td>{item.anamnesis || '-'}</td>
                     <td>{item.jawaban_konsul || '-'}</td>
@@ -192,7 +203,7 @@ const Feedback = ({ userRole = 'admin' }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="text-center text-muted">
+                  <td colSpan="9" className="text-center text-muted">
                     Tidak ada data ditampilkan
                   </td>
                 </tr>
