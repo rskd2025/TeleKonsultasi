@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Table,
-  Spinner,
+  Container, Row, Col, Form, Button, Table, Spinner,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
@@ -45,28 +39,23 @@ const Feedback = ({ userRole = 'admin' }) => {
 
   useEffect(() => {
     let filtered = data;
-
     if (search) {
-      filtered = filtered.filter((item) =>
+      filtered = filtered.filter(item =>
         item.nama_lengkap?.toLowerCase().includes(search.toLowerCase())
       );
     }
-
     if (tanggal) {
-      filtered = filtered.filter((item) =>
+      filtered = filtered.filter(item =>
         item.tanggal_kunjungan?.slice(0, 10) === tanggal
       );
     }
-
     setFilteredData(filtered);
   }, [search, tanggal, data]);
 
   const formatTanggal = (tgl) => {
     if (!tgl) return '-';
     return new Date(tgl).toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+      day: 'numeric', month: 'long', year: 'numeric',
     });
   };
 
@@ -83,7 +72,6 @@ const Feedback = ({ userRole = 'admin' }) => {
       Anamnesis: item.anamnesis || '-',
       'Jawaban Konsul': item.jawaban_konsul || '-',
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Feedback');
@@ -92,7 +80,6 @@ const Feedback = ({ userRole = 'admin' }) => {
 
   const exportSinglePDF = (item) => {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
     const logoImg = new Image();
     logoImg.src = '/logo.png';
 
@@ -105,35 +92,40 @@ const Feedback = ({ userRole = 'admin' }) => {
       doc.setFontSize(10);
       doc.text('Jl. Laksdya Leo Wattimena Ambon', 40, 20);
       doc.text('AMBON - MALUKU', 40, 25);
-      doc.setFontSize(10);
 
-      const jenisKelamin = item.jenis_kelamin === 'Laki-laki' ? 'Laki-laki' : 'Perempuan';
+      let y = 38;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text('JAWABAN KONSUL PASIEN', 105, y, null, null, 'center');
+
+      const jenisKelamin = item.jenis_kelamin === 'L' ? 'Laki-laki' : item.jenis_kelamin;
       const detailPasien = [
-        [`No. RM`, `: ${item.no_rm || '-'}`],
-        [`Nama Pasien`, `: ${item.nama_lengkap}`],
-        [`Tgl Lahir`, `: ${item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'}`],
-        [`Umur`, `: ${item.umur} th`, `Jenis Kelamin`, `: ${jenisKelamin}`],
+        [`No. RM`, item.no_rm || '-'],
+        [`Nama`, item.nama_lengkap || '-'],
+        [`Tanggal Lahir`, item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'],
+        [`Umur`, item.umur ? `${item.umur} tahun` : '-'],
+        [`Jenis Kelamin`, jenisKelamin || '-']
       ];
 
-      let y = 35;
-      detailPasien.forEach((row) => {
-        doc.text(row[0], 10, y);
-        doc.text(row[1], 45, y);
-        if (row[2]) doc.text(row[2], 120, y);
-        if (row[3]) doc.text(row[3], 155, y);
+      y += 10;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      detailPasien.forEach(([label, value]) => {
+        doc.text(`${label}: ${value}`, 15, y);
         y += 6;
       });
 
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      doc.text('JAWABAN KONSUL PASIEN', 105, y + 5, null, null, 'center');
-
+      doc.text('Jawaban Konsul:', 15, y + 4);
       doc.setDrawColor(0);
       doc.setLineWidth(0.3);
-      doc.rect(10, y + 10, 190, 40);
+      doc.rect(15, y + 6, 180, 60);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
-      doc.text(item.jawaban_konsul || '-', 15, y + 15, { maxWidth: 180 });
+      doc.text(item.jawaban_konsul || '-', 18, y + 12, {
+        maxWidth: 175,
+        lineHeightFactor: 1.5,
+      });
 
       const blob = doc.output('blob');
       const blobURL = URL.createObjectURL(blob);
@@ -144,7 +136,6 @@ const Feedback = ({ userRole = 'admin' }) => {
   return (
     <Container fluid className="mt-4 mb-5">
       <h5 className="mb-3 text-center fw-bold">Feedback Konsul Pasien</h5>
-
       <Row className="mb-3 g-2 align-items-center">
         <Col xs={6} md={2}>
           <Button size="sm" variant="secondary" className="w-100" onClick={() => navigate('/dashboard')}>
@@ -186,15 +177,7 @@ const Feedback = ({ userRole = 'admin' }) => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <Table
-            striped
-            bordered
-            hover
-            size="sm"
-            className="text-nowrap"
-            style={{ fontSize: '0.85rem', minWidth: '1100px' }}
-            responsive
-          >
+          <Table striped bordered hover size="sm" className="text-nowrap" style={{ fontSize: '0.85rem', minWidth: '1100px' }} responsive>
             <thead className="text-center">
               <tr>
                 <th>No</th>
