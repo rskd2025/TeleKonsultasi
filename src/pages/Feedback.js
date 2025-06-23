@@ -74,6 +74,7 @@ const Feedback = () => {
     const rows = filteredData.map((item, i) => ({
       No: i + 1,
       Nama: item.nama_lengkap,
+      'No. RM': item.no_rm || '-',
       Umur: item.umur,
       'Faskes Asal': item.faskes_asal || '-',
       'Tujuan Konsul': item.tujuan_konsul || '-',
@@ -101,20 +102,23 @@ const Feedback = () => {
 
       doc.setFontSize(10);
       doc.text(`Nama Pasien     : ${item.nama_lengkap}`, 20, 40);
-      doc.text(`Jenis Kelamin   : ${item.jenis_kelamin}`, 20, 47);
-      doc.text(`Umur            : ${item.umur} tahun`, 20, 54);
-      doc.text(`Tanggal Kunjungan : ${formatTanggal(item.tanggal_kunjungan)}`, 20, 61);
-      doc.text(`Faskes Asal     : ${item.faskes_asal || '-'}`, 20, 68);
-      doc.text(`Tujuan Konsul   : ${item.tujuan_konsul || '-'}`, 20, 75);
-      doc.text(`Diagnosa        : ${item.diagnosa || '-'}`, 20, 82);
-      doc.text(`Anamnesis       : ${item.anamnesis || '-'}`, 20, 89);
+      doc.text(`No. RM          : ${item.no_rm || '-'}`, 20, 47);
+      doc.text(`Jenis Kelamin   : ${item.jenis_kelamin}`, 20, 54);
+      doc.text(`Umur            : ${item.umur} tahun`, 20, 61);
+      doc.text(`Tanggal Kunjungan : ${formatTanggal(item.tanggal_kunjungan)}`, 20, 68);
+      doc.text(`Faskes Asal     : ${item.faskes_asal || '-'}`, 20, 75);
+      doc.text(`Tujuan Konsul   : ${item.tujuan_konsul || '-'}`, 20, 82);
+      doc.text(`Diagnosa        : ${item.diagnosa || '-'}`, 20, 89);
+      doc.text(`Anamnesis       : ${item.anamnesis || '-'}`, 20, 96);
 
-      doc.text('Jawaban Konsul:', 20, 100);
+      doc.text('Jawaban Konsul:', 20, 106);
       doc.setFont('times', 'italic');
       doc.setFontSize(11);
-      doc.text(doc.splitTextToSize(item.jawaban_konsul || '-', 170), 20, 108);
+      doc.text(doc.splitTextToSize(item.jawaban_konsul || '-', 170), 20, 114);
 
-      doc.save(`Jawaban_Konsul_${item.nama_lengkap}.pdf`);
+      const blob = doc.output('blob');
+      const blobURL = URL.createObjectURL(blob);
+      window.open(blobURL);
     };
   };
 
@@ -176,6 +180,7 @@ const Feedback = () => {
               <tr>
                 <th>No</th>
                 <th>Nama</th>
+                <th>No. RM</th>
                 <th>Umur</th>
                 <th>Faskes Asal</th>
                 <th>Tujuan Konsul</th>
@@ -192,6 +197,7 @@ const Feedback = () => {
                   <tr key={item.id}>
                     <td>{index + 1}</td>
                     <td>{item.nama_lengkap}</td>
+                    <td>{item.no_rm || '-'}</td>
                     <td>{item.umur}</td>
                     <td>{item.faskes_asal || '-'}</td>
                     <td>{item.tujuan_konsul || '-'}</td>
@@ -212,7 +218,7 @@ const Feedback = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className="text-center text-muted">
+                  <td colSpan="11" className="text-center text-muted">
                     Tidak ada data ditampilkan
                   </td>
                 </tr>
