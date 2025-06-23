@@ -90,55 +90,57 @@ const Feedback = ({ userRole = 'admin' }) => {
     XLSX.writeFile(workbook, 'feedback_konsul.xlsx');
   };
 
-  const exportSinglePDF = (item) => {
+  const exportSinglePDF = async (item) => {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const logoImg = new Image();
-    logoImg.src = '/logo.png';
+    const logo = new Image();
+    logo.src = `${window.location.origin}/logo.png`;
 
-    logoImg.onload = () => {
-      // Header layout: logo kiri, teks + identitas kanan
-      doc.addImage(logoImg, 'PNG', 10, 10, 20, 20); // logo lebih elegan
+    await new Promise((resolve) => {
+      logo.onload = resolve;
+    });
 
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      doc.text('RSKD Provinsi Maluku', 105, 13, null, null, 'center');
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.text('Jl. Laksdya Leo Wattimena Ambon', 105, 18, null, null, 'center');
-      doc.text('Kota Ambon - Provinsi Maluku', 105, 23, null, null, 'center');
+    doc.addImage(logo, 'PNG', 15, 10, 25, 25);
 
-      // Identitas Pasien di kanan logo
-      const jenisKelamin = item.jenis_kelamin;
-      const detailPasien = [
-        `No. RM        : ${item.no_rm || '-'}`,
-        `Nama Pasien   : ${item.nama_lengkap}`,
-        `Tgl Lahir     : ${item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'}`,
-        `Umur          : ${item.umur} tahun`,
-        `Jenis Kelamin : ${jenisKelamin}`,
-      ];
+    let xStart = 45;
+    let yStart = 12;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('RSKD Provinsi Maluku', xStart, yStart);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text('Jl. Laksdya Leo Wattimena Ambon', xStart, yStart + 6);
+    doc.text('Kota Ambon - Provinsi Maluku', xStart, yStart + 12);
 
-      let y = 30;
-      detailPasien.forEach((line) => {
-        doc.text(line, 120, y);
-        y += 6;
-      });
+    const pasien = [
+      `No. RM        : ${item.no_rm || '-'}`,
+      `Nama Pasien   : ${item.nama_lengkap}`,
+      `Tgl Lahir     : ${item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'}`,
+      `Umur          : ${item.umur} tahun`,
+      `Jenis Kelamin : ${item.jenis_kelamin || '-'}`,
+    ];
+    let yIdentitas = yStart + 20;
+    doc.setFont('helvetica', 'normal');
+    pasien.forEach((line) => {
+      doc.text(line, xStart, yIdentitas);
+      yIdentitas += 6;
+    });
 
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      doc.text('JAWABAN KONSUL PASIEN', 105, y + 10, null, null, 'center');
+    yIdentitas += 5;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('CATATAN PERKEMBANGAN PASIEN TERINTEGRASI', 105, yIdentitas, null, null, 'center');
 
-      // Kotak isi jawaban
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.3);
-      doc.rect(10, y + 15, 190, 40);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.text(item.jawaban_konsul || '-', 15, y + 20, { maxWidth: 180 });
+    yIdentitas += 8;
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.3);
+    doc.rect(15, yIdentitas, 180, 50);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(item.jawaban_konsul || '-', 18, yIdentitas + 5, { maxWidth: 175 });
 
-      const blob = doc.output('blob');
-      const blobURL = URL.createObjectURL(blob);
-      window.open(blobURL);
-    };
+    const blob = doc.output('blob');
+    const blobURL = URL.createObjectURL(blob);
+    window.open(blobURL);
   };
 
   return (
