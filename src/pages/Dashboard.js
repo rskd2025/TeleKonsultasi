@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [statistik, setStatistik] = useState([]);
   const [jenisStatistik, setJenisStatistik] = useState('perbulan');
   const [total, setTotal] = useState({ pasien: '-', faskes: '-', user: '-' });
-  const [statPemeriksaan, setStatPemeriksaan] = useState({ totalPasien: 0, sudahDiperiksa: 0, belumDiperiksa: 0 });
+  const [pemeriksaan, setPemeriksaan] = useState({ total_pasien: 0, sudah_diperiksa: 0, belum_diperiksa: 0 });
 
   const isAdmin = groupAkses.includes('Admin');
 
@@ -70,19 +70,18 @@ const Dashboard = () => {
         console.error('🚫 Gagal ambil total statistik:', err.message);
       }
     };
-    fetchTotal();
-  }, []);
 
-  useEffect(() => {
-    const fetchStatPemeriksaan = async () => {
+    const fetchPemeriksaan = async () => {
       try {
-        const res = await api.get('/api/pemeriksaan/statistik');
-        setStatPemeriksaan(res.data);
+        const res = await api.get('/api/statistik/pemeriksaan');
+        setPemeriksaan(res.data);
       } catch (err) {
-        console.error('🚫 Gagal ambil statistik pemeriksaan:', err.message);
+        console.error('🚫 Gagal ambil data pemeriksaan:', err.message);
       }
     };
-    fetchStatPemeriksaan();
+
+    fetchTotal();
+    fetchPemeriksaan();
   }, []);
 
   return (
@@ -111,15 +110,39 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <Row className="mb-4 g-3">
+        <Row className="mb-3 text-center text-dark">
+          <Col xs={12}>
+            <Alert variant="warning" className="py-2">
+              Terdapat {pemeriksaan.belum_diperiksa} pasien yang belum menjalani pemeriksaan atau belum diisi form pemeriksaan sehingga tidak ditampilkan di history pasien.
+            </Alert>
+          </Col>
           <Col xs={12} sm={4}>
-            <Card className="shadow-sm text-center text-dark">
+            <Card className="shadow-sm text-dark">
               <Card.Body>
-                <Card.Title>Total Pasien</Card.Title>
-                <h3>{total.pasien}</h3>
+                <Card.Title>Total Pasien Terdaftar</Card.Title>
+                <h3>{pemeriksaan.total_pasien}</h3>
               </Card.Body>
             </Card>
           </Col>
+          <Col xs={12} sm={4}>
+            <Card className="shadow-sm text-dark">
+              <Card.Body>
+                <Card.Title>Sudah Diperiksa</Card.Title>
+                <h3>{pemeriksaan.sudah_diperiksa}</h3>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col xs={12} sm={4}>
+            <Card className="shadow-sm text-dark">
+              <Card.Body>
+                <Card.Title>Belum Diperiksa</Card.Title>
+                <h3>{pemeriksaan.belum_diperiksa}</h3>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        <Row className="mb-4 g-3">
           <Col xs={12} sm={4}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
@@ -133,22 +156,6 @@ const Dashboard = () => {
               <Card.Body>
                 <Card.Title>Total Pengguna</Card.Title>
                 <h3>{total.user}</h3>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row className="mb-4 g-3">
-          <Col xs={12}>
-            <Card className="shadow-sm text-dark">
-              <Card.Body>
-                <Card.Title>📌 Pemeriksaan Pasien</Card.Title>
-                <p>Total Pasien Terdaftar: <strong>{statPemeriksaan.totalPasien}</strong></p>
-                <p>Sudah Diperiksa: <strong>{statPemeriksaan.sudahDiperiksa}</strong></p>
-                <p>Belum Diperiksa: <strong>{statPemeriksaan.belumDiperiksa}</strong></p>
-                <Alert variant="warning" className="mt-2">
-                  ⚠️ Terdapat {statPemeriksaan.belumDiperiksa} pasien yang telah terdaftar namun belum menjalani pemeriksaan atau belum diisi form pemeriksaan.
-                </Alert>
               </Card.Body>
             </Card>
           </Col>
