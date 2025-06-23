@@ -127,6 +127,8 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.text('Kota Ambon - Provinsi Maluku', textX, textY + 12);
 
     // Garis pemisah vertikal di tengah
+    const totalWidth = 180;
+    const colWidth = totalWidth / 2;
     const midX = margin + colWidth;
     doc.line(midX, 10, midX, 10 + headerHeight);
 
