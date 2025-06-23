@@ -132,7 +132,7 @@ const Feedback = ({ userRole = 'admin' }) => {
 
     // Data pasien
     const identitasX = midX + 3;
-    let identitasY = 21; // dinaikkan sedikit
+    let identitasY = 22; // dinaikkan sedikit
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     // Ratakan titik dua dengan padding
