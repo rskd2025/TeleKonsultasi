@@ -1,4 +1,3 @@
-// src/pages/Feedback.js
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -16,7 +15,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useLoading } from '../components/LoadingContext';
 
-const Feedback = ({ userRole = 'admin' }) => {
+const Feedback = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
@@ -46,16 +45,19 @@ const Feedback = ({ userRole = 'admin' }) => {
 
   useEffect(() => {
     let filtered = data;
+
     if (search) {
       filtered = filtered.filter((item) =>
         item.nama_lengkap?.toLowerCase().includes(search.toLowerCase())
       );
     }
+
     if (tanggal) {
       filtered = filtered.filter((item) =>
         item.tanggal_kunjungan?.slice(0, 10) === tanggal
       );
     }
+
     setFilteredData(filtered);
   }, [search, tanggal, data]);
 
@@ -68,52 +70,51 @@ const Feedback = ({ userRole = 'admin' }) => {
     });
   };
 
-  const jenisKelaminLengkap = (jk) => {
-    return jk === 'L' || jk === 'Laki-laki' ? 'Laki-laki' : 'Perempuan';
+  const exportToExcel = () => {
+    const rows = filteredData.map((item, i) => ({
+      No: i + 1,
+      Nama: item.nama_lengkap,
+      Umur: item.umur,
+      'Faskes Asal': item.faskes_asal || '-',
+      'Tujuan Konsul': item.tujuan_konsul || '-',
+      Tanggal: formatTanggal(item.tanggal_kunjungan),
+      Diagnosa: item.diagnosa || '-',
+      Anamnesis: item.anamnesis || '-',
+      'Jawaban Konsul': item.jawaban_konsul || '-',
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Feedback');
+    XLSX.writeFile(workbook, 'feedback_konsul.xlsx');
   };
 
-  const handlePrint = (item) => {
-    const doc = new jsPDF();
-    doc.setFontSize(11);
-    const logo = new Image();
-    logo.src = `${window.location.origin}/logo.png`;
+  const exportSinglePDF = (item) => {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const img = new Image();
+    img.src = `${window.location.origin}/logo.png`;
 
-    logo.onload = () => {
-      doc.addImage(logo, 'PNG', 15, 10, 20, 20);
+    img.onload = () => {
+      doc.addImage(img, 'PNG', 10, 10, 20, 20);
       doc.setFontSize(12);
-      doc.text('JAWABAN KONSUL PASIEN', 105, 20, null, null, 'center');
+      doc.text('JAWABAN KONSUL PASIEN', 105, 20, { align: 'center' });
 
-      let y = 35;
-      const info = [
-        ['Nama Pasien', item.nama_lengkap],
-        ['No. Rekam Medis', item.no_rm || '-'],
-        ['Tanggal Lahir', formatTanggal(item.tanggal_lahir)],
-        ['Jenis Kelamin', jenisKelaminLengkap(item.jenis_kelamin)],
-        ['Umur', item.umur + ' tahun'],
-        ['Faskes Asal', item.faskes_asal || '-'],
-        ['Tanggal Konsul', formatTanggal(item.tanggal_kunjungan)],
-        ['Diagnosa', item.diagnosa || '-'],
-        ['Anamnesis', item.anamnesis || '-'],
-      ];
+      doc.setFontSize(10);
+      doc.text(`Nama Pasien     : ${item.nama_lengkap}`, 20, 40);
+      doc.text(`Jenis Kelamin   : ${item.jenis_kelamin}`, 20, 47);
+      doc.text(`Umur            : ${item.umur} tahun`, 20, 54);
+      doc.text(`Tanggal Kunjungan : ${formatTanggal(item.tanggal_kunjungan)}`, 20, 61);
+      doc.text(`Faskes Asal     : ${item.faskes_asal || '-'}`, 20, 68);
+      doc.text(`Tujuan Konsul   : ${item.tujuan_konsul || '-'}`, 20, 75);
+      doc.text(`Diagnosa        : ${item.diagnosa || '-'}`, 20, 82);
+      doc.text(`Anamnesis       : ${item.anamnesis || '-'}`, 20, 89);
 
-      info.forEach(([label, value]) => {
-        doc.text(`${label}`, 15, y);
-        doc.text(`: ${value}`, 60, y);
-        y += 7;
-      });
+      doc.text('Jawaban Konsul:', 20, 100);
+      doc.setFont('times', 'italic');
+      doc.setFontSize(11);
+      doc.text(doc.splitTextToSize(item.jawaban_konsul || '-', 170), 20, 108);
 
-      doc.autoTable({
-        head: [['Jawaban Konsul']],
-        body: [[item.jawaban_konsul || '-']],
-        startY: y + 5,
-        styles: { fontSize: 10, cellPadding: 5 },
-        theme: 'grid',
-        margin: { left: 15, right: 15 },
-      });
-
-      const blob = doc.output('blob');
-      const blobURL = URL.createObjectURL(blob);
-      window.open(blobURL);
+      doc.save(`Jawaban_Konsul_${item.nama_lengkap}.pdf`);
     };
   };
 
@@ -144,6 +145,16 @@ const Feedback = ({ userRole = 'admin' }) => {
             size="sm"
           />
         </Col>
+        <Col xs={12} md={4}>
+          <div className="d-flex flex-wrap gap-2">
+            <Button size="sm" variant="primary" onClick={fetchFeedback}>
+              Refresh
+            </Button>
+            <Button size="sm" variant="success" onClick={exportToExcel}>
+              Export Excel
+            </Button>
+          </div>
+        </Col>
       </Row>
 
       {loading ? (
@@ -152,7 +163,15 @@ const Feedback = ({ userRole = 'admin' }) => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <Table striped bordered hover size="sm" className="text-nowrap" style={{ fontSize: '0.85rem', minWidth: '1000px' }} responsive>
+          <Table
+            striped
+            bordered
+            hover
+            size="sm"
+            className="text-nowrap"
+            style={{ fontSize: '0.85rem', minWidth: '1100px' }}
+            responsive
+          >
             <thead className="text-center">
               <tr>
                 <th>No</th>
@@ -164,7 +183,7 @@ const Feedback = ({ userRole = 'admin' }) => {
                 <th>Diagnosa</th>
                 <th>Anamnesis</th>
                 <th>Jawaban Konsul</th>
-                <th>Cetak</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -182,9 +201,9 @@ const Feedback = ({ userRole = 'admin' }) => {
                     <td>{item.jawaban_konsul || '-'}</td>
                     <td className="text-center">
                       <Button
-                        variant="outline-primary"
                         size="sm"
-                        onClick={() => handlePrint(item)}
+                        variant="outline-danger"
+                        onClick={() => exportSinglePDF(item)}
                       >
                         Cetak
                       </Button>
