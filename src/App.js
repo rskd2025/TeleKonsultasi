@@ -42,6 +42,13 @@ function LayoutWrapper() {
     return () => clearTimeout(timer);
   }, [setLoading, location.pathname]);
 
+  // 🔐 Redirect ke login kalau belum login dan akses root "/"
+  useEffect(() => {
+    if (!isLoggedIn && location.pathname === '/') {
+      navigate('/login', { replace: true });
+    }
+  }, [isLoggedIn, location]);
+
   // ⏱ Logout otomatis jika idle (10 menit)
   const handleIdle = () => {
     localStorage.removeItem('user');
