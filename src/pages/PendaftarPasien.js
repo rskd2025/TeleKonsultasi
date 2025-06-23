@@ -12,7 +12,7 @@ import {
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
-const DaftarPasien = () => {
+const PendaftaranPasien = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
     nama_lengkap: '',
@@ -235,4 +235,4 @@ const DaftarPasien = () => {
   );
 };
 
-export default DaftarPasien;
+export default PendaftarPasien;

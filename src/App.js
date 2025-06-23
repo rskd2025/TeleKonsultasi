@@ -5,7 +5,7 @@ import { IdleTimerProvider } from 'react-idle-timer';
 
 // ✅ Halaman
 import Dashboard from './pages/Dashboard';
-import DaftarPasien from './pages/DaftarPasien';
+import DaftarPasien from './pages/PendaftaranPasien';
 import KunjunganPasien from './pages/KunjunganPasien';
 import Pengguna from './pages/Pengguna';
 import Faskes from './pages/Faskes';
