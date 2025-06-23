@@ -1,4 +1,19 @@
-// ... (import tetap sama)
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Table,
+  Spinner,
+} from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import api from '../api';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { useLoading } from '../components/LoadingContext';
 
 const Feedback = ({ userRole = 'admin' }) => {
   const [data, setData] = useState([]);
