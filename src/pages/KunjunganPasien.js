@@ -1,3 +1,4 @@
+// src/pages/KunjunganPasien.js
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   Container,
@@ -97,6 +98,21 @@ const KunjunganPasien = () => {
     }
   };
 
+  const renderStatus = (status) => {
+    switch (status) {
+      case 'menunggu':
+        return <Badge bg="warning">Menunggu Diterima</Badge>;
+      case 'diterima':
+        return <Badge bg="info" text="dark">Sedang Dilayani</Badge>;
+      case 'selesai':
+        return <Badge style={{ backgroundColor: '#8E44AD' }}>Selesai</Badge>;
+      case 'batal':
+        return <Badge bg="secondary">Batal</Badge>;
+      default:
+        return <Badge bg="dark">{status}</Badge>;
+    }
+  };
+
   return (
     <Container fluid className="mt-4 mb-4" style={{ fontSize: '0.9rem' }}>
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -140,20 +156,7 @@ const KunjunganPasien = () => {
                 <strong>Faskes Asal:</strong> {item.faskes_asal} <br />
                 <strong>Tujuan Konsul:</strong> {item.tujuan_konsul} <br />
                 <strong>Tanggal:</strong> {item.tanggal} <br />
-                <strong>Status:</strong>{' '}
-                <Badge bg={
-                  item.status === 'selesai'
-                    ? 'secondary'
-                    : item.status === 'diterima'
-                    ? 'success'
-                    : 'warning'
-                }>
-                  {item.status === 'selesai'
-                    ? 'Selesai'
-                    : item.status === 'diterima'
-                    ? 'Pasien berada di ruangan / Sedang dilayani'
-                    : 'Menunggu Diterima'}
-                </Badge>
+                <strong>Status:</strong> {renderStatus(item.status)}
               </Card.Text>
               <div className="d-flex gap-2 flex-wrap">
                 <Button variant="success" size="sm" onClick={() => handleTerima(item)}>
@@ -168,7 +171,6 @@ const KunjunganPasien = () => {
         ))
       )}
 
-      {/* Modal Jawaban Konsul */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Form Jawaban Konsul</Modal.Title>
