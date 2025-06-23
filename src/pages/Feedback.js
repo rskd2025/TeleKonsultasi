@@ -15,7 +15,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useLoading } from '../components/LoadingContext';
 
-const Feedback = () => {
+const Feedback = ({ userRole = 'admin' }) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
@@ -89,33 +89,61 @@ const Feedback = () => {
     XLSX.writeFile(workbook, 'feedback_konsul.xlsx');
   };
 
-  const exportSinglePDF = (item) => {
-    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const img = new Image();
-    img.src = `${window.location.origin}/logo.png`;
+  const exportToPDF = () => {
+    if (filteredData.length === 0) return alert('Tidak ada data untuk dicetak');
 
-    img.onload = () => {
-      doc.addImage(img, 'PNG', 10, 10, 20, 20);
+    filteredData.forEach((item) => {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const logoImg = new Image();
+      logoImg.src = '/logo.png'; // logo harus di folder public
+
+      doc.addImage(logoImg, 'PNG', 10, 10, 25, 25);
+
       doc.setFontSize(12);
-      doc.text('JAWABAN KONSUL PASIEN', 105, 20, { align: 'center' });
+      doc.setFont('helvetica', 'bold');
+      doc.text('RSKD PROVINSI MALUKU', 40, 15);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('Jl. Laksdya Leo Wattimena Ambon', 40, 20);
+      doc.text('AMBON - MALUKU', 40, 25);
 
       doc.setFontSize(10);
-      doc.text(`Nama Pasien     : ${item.nama_lengkap}`, 20, 40);
-      doc.text(`Jenis Kelamin   : ${item.jenis_kelamin}`, 20, 47);
-      doc.text(`Umur            : ${item.umur} tahun`, 20, 54);
-      doc.text(`Tanggal Kunjungan : ${formatTanggal(item.tanggal_kunjungan)}`, 20, 61);
-      doc.text(`Faskes Asal     : ${item.faskes_asal || '-'}`, 20, 68);
-      doc.text(`Tujuan Konsul   : ${item.tujuan_konsul || '-'}`, 20, 75);
-      doc.text(`Diagnosa        : ${item.diagnosa || '-'}`, 20, 82);
-      doc.text(`Anamnesis       : ${item.anamnesis || '-'}`, 20, 89);
+      doc.text(`RM 0.0`, 200, 10, { align: 'right' });
 
-      doc.text('Jawaban Konsul:', 20, 100);
-      doc.setFont('times', 'italic');
-      doc.setFontSize(11);
-      doc.text(doc.splitTextToSize(item.jawaban_konsul || '-', 170), 20, 108);
+      const jenisKelamin = item.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+      const detailPasien = [
+        [`No. RM`, `: 00-00-00-00`],
+        [`Nama Pasien`, `: ${item.nama_lengkap}`],
+        [`Tgl Lahir`, `: ${item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'}`],
+        [`Umur`, `: ${item.umur} th`, `Jenis Kelamin`, `: ${jenisKelamin}`],
+        [`No KTP`, `: -`],
+      ];
 
-      doc.save(`Jawaban_Konsul_${item.nama_lengkap}.pdf`);
-    };
+      let y = 35;
+      detailPasien.forEach((row) => {
+        doc.text(row[0], 10, y);
+        doc.text(row[1], 45, y);
+        if (row[2]) doc.text(row[2], 120, y);
+        if (row[3]) doc.text(row[3], 155, y);
+        y += 6;
+      });
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text('JAWABAN KONSUL PASIEN', 105, y + 5, null, null, 'center');
+
+      doc.setDrawColor(0);
+      doc.setLineWidth(0.3);
+      doc.rect(10, y + 10, 190, 40);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(item.jawaban_konsul || '-', 15, y + 15, { maxWidth: 180 });
+
+      const blob = doc.output('blob');
+      const blobURL = URL.createObjectURL(blob);
+      window.open(blobURL);
+    });
   };
 
   return (
@@ -153,6 +181,9 @@ const Feedback = () => {
             <Button size="sm" variant="success" onClick={exportToExcel}>
               Export Excel
             </Button>
+            <Button size="sm" variant="danger" onClick={exportToPDF}>
+              Cetak PDF
+            </Button>
           </div>
         </Col>
       </Row>
@@ -163,15 +194,7 @@ const Feedback = () => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <Table
-            striped
-            bordered
-            hover
-            size="sm"
-            className="text-nowrap"
-            style={{ fontSize: '0.85rem', minWidth: '1100px' }}
-            responsive
-          >
+          <Table striped bordered hover size="sm" className="text-nowrap" style={{ fontSize: '0.85rem', minWidth: '1000px' }} responsive>
             <thead className="text-center">
               <tr>
                 <th>No</th>
@@ -183,7 +206,6 @@ const Feedback = () => {
                 <th>Diagnosa</th>
                 <th>Anamnesis</th>
                 <th>Jawaban Konsul</th>
-                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -199,20 +221,11 @@ const Feedback = () => {
                     <td>{item.diagnosa || '-'}</td>
                     <td>{item.anamnesis || '-'}</td>
                     <td>{item.jawaban_konsul || '-'}</td>
-                    <td className="text-center">
-                      <Button
-                        size="sm"
-                        variant="outline-danger"
-                        onClick={() => exportSinglePDF(item)}
-                      >
-                        Cetak
-                      </Button>
-                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className="text-center text-muted">
+                  <td colSpan="9" className="text-center text-muted">
                     Tidak ada data ditampilkan
                   </td>
                 </tr>
