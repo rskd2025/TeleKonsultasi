@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import logo from '../assets/logo.png';
+import maluku from '../assets/maluku.png';
 import { useLoading } from '../components/LoadingContext';
 
 const Feedback = ({ userRole = 'admin' }) => {
