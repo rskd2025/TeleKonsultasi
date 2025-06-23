@@ -235,4 +235,4 @@ const PendaftaranPasien = () => {
   );
 };
 
-export default PendaftarPasien;
+export default PendaftaranPasien;
