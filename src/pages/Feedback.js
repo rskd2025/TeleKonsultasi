@@ -104,7 +104,7 @@ const Feedback = ({ userRole = 'admin' }) => {
     const margin = 15;
     const totalWidth = 180;
     const headerHeight = 45;
-    const logoWidth = 25;
+    const logoWidth = 40;
     const logoHeight = 25;
     const logoX = margin + 5;
     const logoY = 12;
