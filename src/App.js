@@ -5,7 +5,7 @@ import { IdleTimerProvider } from 'react-idle-timer';
 
 // ✅ Halaman
 import Dashboard from './pages/Dashboard';
-import DaftarPasien from './pages/PendaftaranPasien';
+import PendaftaranPasien from './pages/PendaftaranPasien';
 import KunjunganPasien from './pages/KunjunganPasien';
 import Pengguna from './pages/Pengguna';
 import Faskes from './pages/Faskes';
@@ -66,7 +66,7 @@ function LayoutWrapper() {
             } />
             <Route path="/" element={<ProtectedRoute requiredModules={[]}><Dashboard /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute requiredModules={[]}><Dashboard /></ProtectedRoute>} />
-            <Route path="/daftar-pasien" element={<ProtectedRoute requiredModules={["Input Pasien"]}><DaftarPasien /></ProtectedRoute>} />
+            <Route path="/pendaftaran-pasien" element={<ProtectedRoute requiredModules={["Input Pasien"]}><PendaftaranPasien /></ProtectedRoute>} />
             <Route path="/kunjungan-pasien" element={<ProtectedRoute requiredModules={["Kunjungan Pasien"]}><KunjunganPasien /></ProtectedRoute>} />
             <Route path="/pengguna" element={<ProtectedRoute requiredModules={["Pengguna"]}><Pengguna /></ProtectedRoute>} />
             <Route path="/faskes" element={<ProtectedRoute requiredModules={["Faskes"]}><Faskes /></ProtectedRoute>} />
