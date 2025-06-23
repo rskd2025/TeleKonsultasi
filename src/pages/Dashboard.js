@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Row, Col, Card, Form } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Form, Alert } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
 import { useLoading } from '../components/LoadingContext';
@@ -25,6 +25,7 @@ const Dashboard = () => {
   const [statistik, setStatistik] = useState([]);
   const [jenisStatistik, setJenisStatistik] = useState('perbulan');
   const [total, setTotal] = useState({ pasien: '-', faskes: '-', user: '-' });
+  const [statPemeriksaan, setStatPemeriksaan] = useState({ totalPasien: 0, sudahDiperiksa: 0, belumDiperiksa: 0 });
 
   const isAdmin = groupAkses.includes('Admin');
 
@@ -70,6 +71,18 @@ const Dashboard = () => {
       }
     };
     fetchTotal();
+  }, []);
+
+  useEffect(() => {
+    const fetchStatPemeriksaan = async () => {
+      try {
+        const res = await api.get('/api/pemeriksaan/statistik');
+        setStatPemeriksaan(res.data);
+      } catch (err) {
+        console.error('🚫 Gagal ambil statistik pemeriksaan:', err.message);
+      }
+    };
+    fetchStatPemeriksaan();
   }, []);
 
   return (
@@ -120,6 +133,22 @@ const Dashboard = () => {
               <Card.Body>
                 <Card.Title>Total Pengguna</Card.Title>
                 <h3>{total.user}</h3>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        <Row className="mb-4 g-3">
+          <Col xs={12}>
+            <Card className="shadow-sm text-dark">
+              <Card.Body>
+                <Card.Title>📌 Pemeriksaan Pasien</Card.Title>
+                <p>Total Pasien Terdaftar: <strong>{statPemeriksaan.totalPasien}</strong></p>
+                <p>Sudah Diperiksa: <strong>{statPemeriksaan.sudahDiperiksa}</strong></p>
+                <p>Belum Diperiksa: <strong>{statPemeriksaan.belumDiperiksa}</strong></p>
+                <Alert variant="warning" className="mt-2">
+                  ⚠️ Terdapat {statPemeriksaan.belumDiperiksa} pasien yang telah terdaftar namun belum menjalani pemeriksaan atau belum diisi form pemeriksaan.
+                </Alert>
               </Card.Body>
             </Card>
           </Col>
