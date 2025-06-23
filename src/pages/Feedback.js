@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -92,6 +93,7 @@ const Feedback = ({ userRole = 'admin' }) => {
 
   const exportSinglePDF = async (item) => {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
     const logo = new Image();
     logo.src = `${window.location.origin}/logo.png`;
 
@@ -99,18 +101,34 @@ const Feedback = ({ userRole = 'admin' }) => {
       logo.onload = resolve;
     });
 
-    doc.addImage(logo, 'PNG', 15, 10, 25, 25);
+    const margin = 15;
+    const totalWidth = 180;
+    const headerHeight = 45;
+    const logoWidth = 25;
+    const logoHeight = 25;
+    const logoX = margin + 5;
+    const logoY = 12;
 
-    let xStart = 45;
-    let yStart = 12;
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.2);
+    doc.rect(margin, 10, totalWidth, headerHeight);
+
+    doc.addImage(logo, 'PNG', logoX, logoY, logoWidth, logoHeight);
+
+    const textX = logoX + logoWidth + 5;
+    let textY = logoY + 2;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text('RSKD Provinsi Maluku', xStart, yStart);
+    doc.text('RSKD Provinsi Maluku', textX, textY);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text('Jl. Laksdya Leo Wattimena Ambon', xStart, yStart + 6);
-    doc.text('Kota Ambon - Provinsi Maluku', xStart, yStart + 12);
+    doc.text('Jl. Laksdya Leo Wattimena Ambon', textX, textY + 6);
+    doc.text('Kota Ambon - Provinsi Maluku', textX, textY + 12);
 
+    const identitasX = margin + totalWidth - 60;
+    let identitasY = logoY + 2;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
     const pasien = [
       `No. RM        : ${item.no_rm || '-'}`,
       `Nama Pasien   : ${item.nama_lengkap}`,
@@ -118,25 +136,26 @@ const Feedback = ({ userRole = 'admin' }) => {
       `Umur          : ${item.umur} tahun`,
       `Jenis Kelamin : ${item.jenis_kelamin || '-'}`,
     ];
-    let yIdentitas = yStart + 20;
-    doc.setFont('helvetica', 'normal');
     pasien.forEach((line) => {
-      doc.text(line, xStart, yIdentitas);
-      yIdentitas += 6;
+      doc.text(line, identitasX, identitasY);
+      identitasY += 5;
     });
 
-    yIdentitas += 5;
+    let yJudul = 10 + headerHeight + 10;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
-    doc.text('CATATAN PERKEMBANGAN PASIEN TERINTEGRASI', 105, yIdentitas, null, null, 'center');
+    doc.text('JAWABAN KONSUL', 105, yJudul, null, null, 'center');
 
-    yIdentitas += 8;
+    yJudul += 8;
+    const boxHeight = 50;
     doc.setDrawColor(0);
     doc.setLineWidth(0.3);
-    doc.rect(15, yIdentitas, 180, 50);
+    doc.rect(margin, yJudul, totalWidth, boxHeight);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text(item.jawaban_konsul || '-', 18, yIdentitas + 5, { maxWidth: 175 });
+    doc.text(item.jawaban_konsul || '-', margin + 3, yJudul + 5, {
+      maxWidth: totalWidth - 6,
+    });
 
     const blob = doc.output('blob');
     const blobURL = URL.createObjectURL(blob);
