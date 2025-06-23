@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Row, Col, Card, Form, Alert } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Form } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
 import { useLoading } from '../components/LoadingContext';
@@ -25,7 +25,6 @@ const Dashboard = () => {
   const [statistik, setStatistik] = useState([]);
   const [jenisStatistik, setJenisStatistik] = useState('perbulan');
   const [total, setTotal] = useState({ pasien: '-', faskes: '-', user: '-' });
-  const [pemeriksaan, setPemeriksaan] = useState({ total_pasien: 0, sudah_diperiksa: 0, belum_diperiksa: 0 });
 
   const isAdmin = groupAkses.includes('Admin');
 
@@ -70,18 +69,7 @@ const Dashboard = () => {
         console.error('🚫 Gagal ambil total statistik:', err.message);
       }
     };
-
-    const fetchPemeriksaan = async () => {
-      try {
-        const res = await api.get('/api/statistik/pemeriksaan');
-        setPemeriksaan(res.data);
-      } catch (err) {
-        console.error('🚫 Gagal ambil data pemeriksaan:', err.message);
-      }
-    };
-
     fetchTotal();
-    fetchPemeriksaan();
   }, []);
 
   return (
@@ -110,39 +98,15 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <Row className="mb-3 text-center text-dark">
-          <Col xs={12}>
-            <Alert variant="warning" className="py-2">
-              Terdapat {pemeriksaan.belum_diperiksa} pasien yang belum menjalani pemeriksaan atau belum diisi form pemeriksaan sehingga tidak ditampilkan di history pasien.
-            </Alert>
-          </Col>
-          <Col xs={12} sm={4}>
-            <Card className="shadow-sm text-dark">
-              <Card.Body>
-                <Card.Title>Total Pasien Terdaftar</Card.Title>
-                <h3>{pemeriksaan.total_pasien}</h3>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col xs={12} sm={4}>
-            <Card className="shadow-sm text-dark">
-              <Card.Body>
-                <Card.Title>Sudah Diperiksa</Card.Title>
-                <h3>{pemeriksaan.sudah_diperiksa}</h3>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col xs={12} sm={4}>
-            <Card className="shadow-sm text-dark">
-              <Card.Body>
-                <Card.Title>Belum Diperiksa</Card.Title>
-                <h3>{pemeriksaan.belum_diperiksa}</h3>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
         <Row className="mb-4 g-3">
+          <Col xs={12} sm={4}>
+            <Card className="shadow-sm text-center text-dark">
+              <Card.Body>
+                <Card.Title>Total Pasien</Card.Title>
+                <h3>{total.pasien}</h3>
+              </Card.Body>
+            </Card>
+          </Col>
           <Col xs={12} sm={4}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
@@ -224,7 +188,13 @@ const Dashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={statistik}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey={jenisStatistik === 'perhari' ? 'tanggal' : jenisStatistik === 'perbulan' ? 'bulan' : 'tahun'} />
+                <XAxis dataKey={
+                  jenisStatistik === 'perhari'
+                    ? 'tanggal'
+                    : jenisStatistik === 'perbulan'
+                    ? 'bulan'
+                    : 'tahun'
+                } />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
                 <Line
