@@ -108,13 +108,16 @@ const Feedback = ({ userRole = 'admin' }) => {
     const logoX = margin + 5;
     const logoY = 17;
 
+    // Kotak besar untuk header
     doc.setDrawColor(0);
     doc.setLineWidth(0.2);
     doc.rect(margin, 10, totalWidth, headerHeight);
+    // Logo
     doc.addImage(logo, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
+    // Teks institusi
     const textX = logoX + logoWidth + 5;
-    const textY = 26;
+    const textY = 22;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text('RSKD Provinsi Maluku', textX, textY);
@@ -123,22 +126,26 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.text('Jl. Laksdya Leo Wattimena Ambon', textX, textY + 6);
     doc.text('Kota Ambon - Provinsi Maluku', textX, textY + 12);
 
-    const pemisahX = margin + totalWidth - 65;
-    doc.line(pemisahX, 10, pemisahX, 10 + headerHeight);
+    // Garis pemisah vertikal di tengah
+    const midX = margin + colWidth;
+    doc.line(midX, 10, midX, 10 + headerHeight);
 
-    const identitasX = pemisahX + 3;
-    let identitasY = 26;
+    // Data pasien
+    const identitasX = midX + 3;
+    let identitasY = 21; // dinaikkan sedikit
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
+    // Ratakan titik dua dengan padding
     const pasien = [
-      `No. RM        : ${item.no_rm || '-'}`,
-      `Nama Pasien   : ${item.nama_lengkap}`,
-      `Tgl Lahir     : ${item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'}`,
-      `Umur          : ${item.umur} tahun`,
-      `Jenis Kelamin : ${item.jenis_kelamin || '-'}`,
+      ['No. RM', item.no_rm || '-'],
+      ['Nama Pasien', item.nama_lengkap || '-'],
+      ['Tgl Lahir', item.tanggal_lahir ? new Date(item.tanggal_lahir).toLocaleDateString('id-ID') : '-'],
+      ['Umur', item.umur ? `${item.umur} tahun` : '-'],
+      ['Jenis Kelamin', item.jenis_kelamin || '-'],
     ];
-    pasien.forEach((line) => {
-      doc.text(line, identitasX, identitasY);
+    pasien.forEach(([label, value]) => {
+      const paddedLabel = label.padEnd(16, ' ');
+      doc.text(`${paddedLabel}: ${value}`, identitasX, identitasY);
       identitasY += 5;
     });
 
