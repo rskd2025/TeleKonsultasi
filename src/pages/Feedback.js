@@ -10,12 +10,12 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import maluku from '../assets/maluku.png';
 import { useLoading } from '../components/LoadingContext';
 
-const Feedback = ({ userRole = 'admin' }) => {
+const Feedback = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
@@ -70,37 +70,51 @@ const Feedback = ({ userRole = 'admin' }) => {
     });
   };
 
-  const cetakPDF = (item) => {
-    const doc = new jsPDF();
-    const logoImg = new Image();
-    logoImg.src = logo;
+  const exportToExcel = () => {
+    const rows = filteredData.map((item, i) => ({
+      No: i + 1,
+      Nama: item.nama_lengkap,
+      Umur: item.umur,
+      'Faskes Asal': item.faskes_asal || '-',
+      'Tujuan Konsul': item.tujuan_konsul || '-',
+      Tanggal: formatTanggal(item.tanggal_kunjungan),
+      Diagnosa: item.diagnosa || '-',
+      Anamnesis: item.anamnesis || '-',
+      'Jawaban Konsul': item.jawaban_konsul || '-',
+    }));
 
-    logoImg.onload = () => {
-      doc.addImage(logoImg, 'PNG', 10, 10, 20, 20);
-      doc.setFontSize(14);
-      doc.text('JAWABAN KONSUL PASIEN', 105, 18, { align: 'center' });
+    const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Feedback');
+    XLSX.writeFile(workbook, 'feedback_konsul.xlsx');
+  };
+
+  const exportSinglePDF = (item) => {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const img = new Image();
+    img.src = `${window.location.origin}/logo.png`;
+
+    img.onload = () => {
+      doc.addImage(img, 'PNG', 10, 10, 20, 20);
+      doc.setFontSize(12);
+      doc.text('JAWABAN KONSUL PASIEN', 105, 20, { align: 'center' });
 
       doc.setFontSize(10);
-      doc.text(`Nama Pasien : ${item.nama_lengkap}`, 15, 40);
-      doc.text(`No. RM      : ${item.no_rm || '-'}`, 15, 46);
-      doc.text(`Jenis Kelamin : ${item.jenis_kelamin || '-'}`, 15, 52);
-      doc.text(`Umur        : ${item.umur} tahun`, 15, 58);
-      doc.text(`Faskes Asal : ${item.faskes_asal || '-'}`, 15, 64);
-      doc.text(`Tanggal     : ${formatTanggal(item.tanggal_kunjungan)}`, 15, 70);
+      doc.text(`Nama Pasien     : ${item.nama_lengkap}`, 20, 40);
+      doc.text(`Jenis Kelamin   : ${item.jenis_kelamin}`, 20, 47);
+      doc.text(`Umur            : ${item.umur} tahun`, 20, 54);
+      doc.text(`Tanggal Kunjungan : ${formatTanggal(item.tanggal_kunjungan)}`, 20, 61);
+      doc.text(`Faskes Asal     : ${item.faskes_asal || '-'}`, 20, 68);
+      doc.text(`Tujuan Konsul   : ${item.tujuan_konsul || '-'}`, 20, 75);
+      doc.text(`Diagnosa        : ${item.diagnosa || '-'}`, 20, 82);
+      doc.text(`Anamnesis       : ${item.anamnesis || '-'}`, 20, 89);
 
+      doc.text('Jawaban Konsul:', 20, 100);
+      doc.setFont('times', 'italic');
       doc.setFontSize(11);
-      doc.text('Jawaban Konsul:', 15, 82);
+      doc.text(doc.splitTextToSize(item.jawaban_konsul || '-', 170), 20, 108);
 
-      doc.autoTable({
-        startY: 86,
-        head: [['Jawaban']],
-        body: [[item.jawaban_konsul || '-']],
-        theme: 'grid',
-        styles: { fontSize: 10, cellPadding: 3 },
-        headStyles: { fillColor: [200, 200, 200] },
-      });
-
-      doc.save(`jawaban_konsul_${item.nama_lengkap}.pdf`);
+      doc.save(`Jawaban_Konsul_${item.nama_lengkap}.pdf`);
     };
   };
 
@@ -131,6 +145,16 @@ const Feedback = ({ userRole = 'admin' }) => {
             size="sm"
           />
         </Col>
+        <Col xs={12} md={4}>
+          <div className="d-flex flex-wrap gap-2">
+            <Button size="sm" variant="primary" onClick={fetchFeedback}>
+              Refresh
+            </Button>
+            <Button size="sm" variant="success" onClick={exportToExcel}>
+              Export Excel
+            </Button>
+          </div>
+        </Col>
       </Row>
 
       {loading ? (
@@ -145,15 +169,13 @@ const Feedback = ({ userRole = 'admin' }) => {
             hover
             size="sm"
             className="text-nowrap"
-            style={{ fontSize: '0.85rem', minWidth: '1000px' }}
+            style={{ fontSize: '0.85rem', minWidth: '1100px' }}
             responsive
           >
             <thead className="text-center">
               <tr>
                 <th>No</th>
                 <th>Nama</th>
-                <th>No RM</th>
-                <th>Jenis Kelamin</th>
                 <th>Umur</th>
                 <th>Faskes Asal</th>
                 <th>Tujuan Konsul</th>
@@ -170,8 +192,6 @@ const Feedback = ({ userRole = 'admin' }) => {
                   <tr key={item.id}>
                     <td>{index + 1}</td>
                     <td>{item.nama_lengkap}</td>
-                    <td>{item.no_rm || '-'}</td>
-                    <td>{item.jenis_kelamin || '-'}</td>
                     <td>{item.umur}</td>
                     <td>{item.faskes_asal || '-'}</td>
                     <td>{item.tujuan_konsul || '-'}</td>
@@ -179,8 +199,12 @@ const Feedback = ({ userRole = 'admin' }) => {
                     <td>{item.diagnosa || '-'}</td>
                     <td>{item.anamnesis || '-'}</td>
                     <td>{item.jawaban_konsul || '-'}</td>
-                    <td>
-                      <Button size="sm" variant="danger" onClick={() => cetakPDF(item)}>
+                    <td className="text-center">
+                      <Button
+                        size="sm"
+                        variant="outline-danger"
+                        onClick={() => exportSinglePDF(item)}
+                      >
                         Cetak
                       </Button>
                     </td>
@@ -188,7 +212,7 @@ const Feedback = ({ userRole = 'admin' }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="12" className="text-center text-muted">
+                  <td colSpan="10" className="text-center text-muted">
                     Tidak ada data ditampilkan
                   </td>
                 </tr>
