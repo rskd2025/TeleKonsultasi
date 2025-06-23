@@ -1,3 +1,4 @@
+// src/pages/HistoryPasien.js
 import React, { useEffect, useState } from 'react';
 import {
   Table,
@@ -13,7 +14,7 @@ import { useLoading } from '../components/LoadingContext';
 const HistoryPasien = () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const { loading, setLoading } = useLoading(); // ✅ gunakan loading global
+  const { loading, setLoading } = useLoading();
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -115,7 +116,7 @@ const HistoryPasien = () => {
                     <td>{item.jenis_kelamin}</td>
                     <td>{item.umur} th</td>
                     <td>{formatTanggal(item.tanggal)}</td>
-                    <td>{item.faskes_asal}</td>
+                    <td>{item.nama_faskes || item.faskes_asal}</td>
                     <td>{item.tujuan_konsul}</td>
                     <td>{item.diagnosa}</td>
                     <td>{item.anamnesis}</td>
