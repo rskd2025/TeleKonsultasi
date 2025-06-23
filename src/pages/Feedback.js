@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -45,19 +46,16 @@ const Feedback = ({ userRole = 'admin' }) => {
 
   useEffect(() => {
     let filtered = data;
-
     if (search) {
       filtered = filtered.filter((item) =>
         item.nama_lengkap?.toLowerCase().includes(search.toLowerCase())
       );
     }
-
     if (tanggal) {
       filtered = filtered.filter((item) =>
         item.tanggal_kunjungan?.slice(0, 10) === tanggal
       );
     }
-
     setFilteredData(filtered);
   }, [search, tanggal, data]);
 
@@ -83,7 +81,6 @@ const Feedback = ({ userRole = 'admin' }) => {
       Anamnesis: item.anamnesis || '-',
       'Jawaban Konsul': item.jawaban_konsul || '-',
     }));
-
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Feedback');
@@ -92,30 +89,24 @@ const Feedback = ({ userRole = 'admin' }) => {
 
   const exportSinglePDF = async (item) => {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
     const logo = new Image();
     logo.src = `${window.location.origin}/logo.png`;
-
-    await new Promise((resolve) => {
-      logo.onload = resolve;
-    });
+    await new Promise((resolve) => { logo.onload = resolve; });
 
     const margin = 15;
     const totalWidth = 180;
     const headerHeight = 45;
+    const colWidth = totalWidth / 2;
     const logoWidth = 25;
     const logoHeight = 25;
     const logoX = margin + 5;
     const logoY = 17;
 
-    // Kotak besar untuk header
     doc.setDrawColor(0);
     doc.setLineWidth(0.2);
     doc.rect(margin, 10, totalWidth, headerHeight);
-    // Logo
     doc.addImage(logo, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
-    // Teks institusi
     const textX = logoX + logoWidth + 5;
     const textY = 22;
     doc.setFont('helvetica', 'bold');
@@ -126,18 +117,13 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.text('Jl. Laksdya Leo Wattimena Ambon', textX, textY + 6);
     doc.text('Kota Ambon - Provinsi Maluku', textX, textY + 12);
 
-    // Garis pemisah vertikal di tengah
-    const totalWidth = 180;
-    const colWidth = totalWidth / 2;
     const midX = margin + colWidth;
     doc.line(midX, 10, midX, 10 + headerHeight);
 
-    // Data pasien
     const identitasX = midX + 3;
-    let identitasY = 22; // dinaikkan sedikit
+    let identitasY = 21;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    // Ratakan titik dua dengan padding
     const pasien = [
       ['No. RM', item.no_rm || '-'],
       ['Nama Pasien', item.nama_lengkap || '-'],
@@ -145,9 +131,10 @@ const Feedback = ({ userRole = 'admin' }) => {
       ['Umur', item.umur ? `${item.umur} tahun` : '-'],
       ['Jenis Kelamin', item.jenis_kelamin || '-'],
     ];
+    const maxLabelLength = Math.max(...pasien.map(([label]) => label.length));
     pasien.forEach(([label, value]) => {
-      const paddedLabel = label.padEnd(16, ' ');
-      doc.text(`${paddedLabel}: ${value}`, identitasX, identitasY);
+      const paddedLabel = label.padEnd(maxLabelLength, ' ');
+      doc.text(`${paddedLabel} : ${value}`, identitasX, identitasY);
       identitasY += 5;
     });
 
@@ -163,9 +150,7 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.rect(margin, yJudul, totalWidth, boxHeight);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
-    doc.text(item.jawaban_konsul || '-', margin + 3, yJudul + 5, {
-      maxWidth: totalWidth - 6,
-    });
+    doc.text(item.jawaban_konsul || '-', margin + 3, yJudul + 5, { maxWidth: totalWidth - 6 });
 
     const blob = doc.output('blob');
     const blobURL = URL.createObjectURL(blob);
@@ -175,7 +160,6 @@ const Feedback = ({ userRole = 'admin' }) => {
   return (
     <Container fluid className="mt-4 mb-5">
       <h5 className="mb-3 text-center fw-bold">Feedback Konsul Pasien</h5>
-
       <Row className="mb-3 g-2 align-items-center">
         <Col xs={6} md={2}>
           <Button size="sm" variant="secondary" className="w-100" onClick={() => navigate('/dashboard')}>
@@ -201,12 +185,8 @@ const Feedback = ({ userRole = 'admin' }) => {
         </Col>
         <Col xs={12} md={4}>
           <div className="d-flex flex-wrap gap-2">
-            <Button size="sm" variant="primary" onClick={fetchFeedback}>
-              Refresh
-            </Button>
-            <Button size="sm" variant="success" onClick={exportToExcel}>
-              Export Excel
-            </Button>
+            <Button size="sm" variant="primary" onClick={fetchFeedback}>Refresh</Button>
+            <Button size="sm" variant="success" onClick={exportToExcel}>Export Excel</Button>
           </div>
         </Col>
       </Row>
@@ -217,15 +197,7 @@ const Feedback = ({ userRole = 'admin' }) => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <Table
-            striped
-            bordered
-            hover
-            size="sm"
-            className="text-nowrap"
-            style={{ fontSize: '0.85rem', minWidth: '1100px' }}
-            responsive
-          >
+          <Table striped bordered hover size="sm" className="text-nowrap" style={{ fontSize: '0.85rem', minWidth: '1100px' }} responsive>
             <thead className="text-center">
               <tr>
                 <th>No</th>
@@ -256,9 +228,7 @@ const Feedback = ({ userRole = 'admin' }) => {
                     <td>{item.anamnesis || '-'}</td>
                     <td>{item.jawaban_konsul || '-'}</td>
                     <td className="text-center">
-                      <Button size="sm" variant="danger" onClick={() => exportSinglePDF(item)}>
-                        Cetak
-                      </Button>
+                      <Button size="sm" variant="danger" onClick={() => exportSinglePDF(item)}>Cetak</Button>
                     </td>
                   </tr>
                 ))
