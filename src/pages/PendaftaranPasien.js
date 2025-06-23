@@ -35,7 +35,6 @@ const PendaftaranPasien = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi tambahan sebelum kirim
     if (!data.nama_lengkap || !data.nik || !data.tanggal_lahir || !data.jenis_kelamin) {
       toast.error('❌ Mohon lengkapi data wajib: Nama, NIK, Tanggal Lahir, dan Jenis Kelamin');
       return;
@@ -181,7 +180,7 @@ const PendaftaranPasien = () => {
             <Form.Group className="mb-2 d-flex">
               <Form.Control
                 type="text"
-                placeholder="Masukkan nama / NIK"
+                placeholder="Masukkan nama / No. RM"
                 value={cari}
                 onChange={(e) => setCari(e.target.value)}
               />
@@ -194,6 +193,7 @@ const PendaftaranPasien = () => {
               <Table responsive striped bordered hover size="sm">
                 <thead>
                   <tr>
+                    <th>No. RM</th>
                     <th>Nama</th>
                     <th>NIK</th>
                     <th>Lahir</th>
@@ -204,6 +204,7 @@ const PendaftaranPasien = () => {
                   {hasilCari.length > 0 ? (
                     hasilCari.map((item) => (
                       <tr key={item.id}>
+                        <td>{item.no_rm}</td>
                         <td>{item.nama_lengkap}</td>
                         <td>{item.nik}</td>
                         <td>{item.tanggal_lahir}</td>
@@ -220,7 +221,7 @@ const PendaftaranPasien = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="4" className="text-center text-muted">
+                      <td colSpan="5" className="text-center text-muted">
                         Belum ada hasil pencarian
                       </td>
                     </tr>
