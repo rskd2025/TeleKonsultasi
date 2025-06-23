@@ -112,38 +112,24 @@ const Dashboard = () => {
 
         <Row className="mb-3 text-center text-dark">
           <Col xs={12}>
-            <Alert variant="warning" className="py-2">
-              Terdapat {pemeriksaan.belum_diperiksa} pasien yang belum menjalani pemeriksaan atau belum diisi form pemeriksaan sehingga tidak ditampilkan di history pasien.
-            </Alert>
-          </Col>
-          <Col xs={12} sm={4}>
-            <Card className="shadow-sm text-dark">
+            <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title>Total Pasien Terdaftar</Card.Title>
-                <h3>{pemeriksaan.total_pasien}</h3>
+                <Card.Title>Status Pemeriksaan Pasien</Card.Title>
+                <p className="mb-1">Total Terdaftar: <strong>{pemeriksaan.total_pasien}</strong></p>
+                <p className="mb-1 text-success">✅ Sudah Diperiksa: <strong>{pemeriksaan.sudah_diperiksa}</strong></p>
+                <p className="mb-1 text-danger">❌ Belum Diperiksa: <strong>{pemeriksaan.belum_diperiksa}</strong></p>
               </Card.Body>
             </Card>
-          </Col>
-          <Col xs={12} sm={4}>
-            <Card className="shadow-sm text-dark">
-              <Card.Body>
-                <Card.Title>Sudah Diperiksa</Card.Title>
-                <h3>{pemeriksaan.sudah_diperiksa}</h3>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col xs={12} sm={4}>
-            <Card className="shadow-sm text-dark">
-              <Card.Body>
-                <Card.Title>Belum Diperiksa</Card.Title>
-                <h3>{pemeriksaan.belum_diperiksa}</h3>
-              </Card.Body>
-            </Card>
+            {(pemeriksaan.belum_diperiksa > 0) && (
+              <Alert variant="warning" className="py-2 mt-3">
+                ⚠️ Terdapat {pemeriksaan.belum_diperiksa} pasien yang telah terdaftar namun belum menjalani pemeriksaan atau form pemeriksaannya belum diisi, sehingga tidak ditampilkan di halaman riwayat pemeriksaan.
+              </Alert>
+            )}
           </Col>
         </Row>
 
         <Row className="mb-4 g-3">
-          <Col xs={12} sm={4}>
+          <Col xs={12} sm={6} md={4}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
                 <Card.Title>Total Faskes</Card.Title>
@@ -151,7 +137,7 @@ const Dashboard = () => {
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={12} sm={4}>
+          <Col xs={12} sm={6} md={4}>
             <Card className="shadow-sm text-center text-dark">
               <Card.Body>
                 <Card.Title>Total Pengguna</Card.Title>
