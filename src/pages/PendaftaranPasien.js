@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import {
@@ -11,6 +11,8 @@ import {
   Card,
 } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+
+let timer;
 
 const PendaftaranPasien = () => {
   const navigate = useNavigate();
@@ -34,7 +36,6 @@ const PendaftaranPasien = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!data.nama_lengkap || !data.nik || !data.tanggal_lahir || !data.jenis_kelamin) {
       toast.error('❌ Mohon lengkapi data wajib: Nama, NIK, Tanggal Lahir, dan Jenis Kelamin');
       return;
@@ -66,16 +67,24 @@ const PendaftaranPasien = () => {
     navigate('/dashboard');
   };
 
-  const handleCari = async () => {
-    if (!cari.trim()) return;
+  const handleCari = async (query) => {
+    if (!query.trim()) return setHasilCari([]);
     try {
-      const res = await api.get(`/api/pasien/cari?query=${encodeURIComponent(cari)}`);
+      const res = await api.get(`/api/pasien/cari?query=${encodeURIComponent(query)}`);
       setHasilCari(res.data);
     } catch (err) {
       console.error('❌ Error saat cari pasien:', err.response?.data || err);
-      toast.error('❌ Gagal mencari data pasien');
+      setHasilCari([]);
     }
   };
+
+  useEffect(() => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      handleCari(cari);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [cari]);
 
   return (
     <Container className="mt-4 mb-4" fluid>
@@ -183,8 +192,14 @@ const PendaftaranPasien = () => {
                 placeholder="Masukkan nama / No. RM"
                 value={cari}
                 onChange={(e) => setCari(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleCari(cari);
+                  }
+                }}
               />
-              <Button onClick={handleCari} className="ms-2">
+              <Button onClick={() => handleCari(cari)} className="ms-2">
                 Cari
               </Button>
             </Form.Group>
