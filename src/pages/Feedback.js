@@ -89,15 +89,13 @@ const Feedback = ({ userRole = 'admin' }) => {
     XLSX.writeFile(workbook, 'feedback_konsul.xlsx');
   };
 
-  const exportToPDF = () => {
-    if (filteredData.length === 0) return alert('Tidak ada data untuk dicetak');
+  const exportSinglePDF = (item) => {
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    filteredData.forEach((item) => {
-      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const logoImg = new Image();
+    logoImg.src = '/logo.png'; // Logo di folder public
 
-      const logoImg = new Image();
-      logoImg.src = '/logo.png'; // logo harus di folder public
-
+    logoImg.onload = () => {
       doc.addImage(logoImg, 'PNG', 10, 10, 25, 25);
 
       doc.setFontSize(12);
@@ -143,7 +141,7 @@ const Feedback = ({ userRole = 'admin' }) => {
       const blob = doc.output('blob');
       const blobURL = URL.createObjectURL(blob);
       window.open(blobURL);
-    });
+    };
   };
 
   return (
@@ -181,9 +179,6 @@ const Feedback = ({ userRole = 'admin' }) => {
             <Button size="sm" variant="success" onClick={exportToExcel}>
               Export Excel
             </Button>
-            <Button size="sm" variant="danger" onClick={exportToPDF}>
-              Cetak PDF
-            </Button>
           </div>
         </Col>
       </Row>
@@ -194,7 +189,15 @@ const Feedback = ({ userRole = 'admin' }) => {
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <Table striped bordered hover size="sm" className="text-nowrap" style={{ fontSize: '0.85rem', minWidth: '1000px' }} responsive>
+          <Table
+            striped
+            bordered
+            hover
+            size="sm"
+            className="text-nowrap"
+            style={{ fontSize: '0.85rem', minWidth: '1050px' }}
+            responsive
+          >
             <thead className="text-center">
               <tr>
                 <th>No</th>
@@ -206,6 +209,7 @@ const Feedback = ({ userRole = 'admin' }) => {
                 <th>Diagnosa</th>
                 <th>Anamnesis</th>
                 <th>Jawaban Konsul</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -221,11 +225,20 @@ const Feedback = ({ userRole = 'admin' }) => {
                     <td>{item.diagnosa || '-'}</td>
                     <td>{item.anamnesis || '-'}</td>
                     <td>{item.jawaban_konsul || '-'}</td>
+                    <td className="text-center">
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => exportSinglePDF(item)}
+                      >
+                        Cetak
+                      </Button>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="text-center text-muted">
+                  <td colSpan="10" className="text-center text-muted">
                     Tidak ada data ditampilkan
                   </td>
                 </tr>
