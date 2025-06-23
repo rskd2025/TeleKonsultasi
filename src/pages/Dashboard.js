@@ -31,7 +31,7 @@ const Dashboard = () => {
   const tombolNavigasi = [
     { label: 'Menu', to: '/menu' },
     { label: 'Ubah Password', to: '#' },
-    { label: 'Daftar Pasien', to: '/daftar-pasien' },
+    { label: 'Pendaftaran Pasien', to: '/pendaftaran-pasien' },
     { label: 'Feedback Konsul', to: '/feedback' },
     { label: 'Kunjungan Pasien', to: '/kunjungan-pasien' },
     { label: 'History Pasien', to: '/history-pasien' },
@@ -39,7 +39,7 @@ const Dashboard = () => {
 
   const fiturAkses = isAdmin
     ? tombolNavigasi.map((btn) => btn.label)
-    : ['Ubah Password', ...modulAkses.map((modul) => (modul === 'Input Pasien' ? 'Daftar Pasien' : modul))];
+    : ['Ubah Password', ...modulAkses.map((modul) => (modul === 'Input Pasien' ? 'Pendaftaran Pasien' : modul))];
 
   useEffect(() => {
     setLoading(true);
