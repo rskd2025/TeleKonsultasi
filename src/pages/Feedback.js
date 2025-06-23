@@ -118,7 +118,7 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.addImage(logo, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
     const textX = logoX + logoWidth + 5;
-    const textY = 25;
+    const textY = 27;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text('RSKD Provinsi Maluku', textX, textY);
