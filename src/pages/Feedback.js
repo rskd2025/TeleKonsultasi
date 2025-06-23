@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -104,19 +103,18 @@ const Feedback = ({ userRole = 'admin' }) => {
     const margin = 15;
     const totalWidth = 180;
     const headerHeight = 45;
-    const logoWidth = 40;
+    const logoWidth = 25;
     const logoHeight = 25;
     const logoX = margin + 5;
-    const logoY = 12;
+    const logoY = 17;
 
     doc.setDrawColor(0);
     doc.setLineWidth(0.2);
     doc.rect(margin, 10, totalWidth, headerHeight);
-
     doc.addImage(logo, 'PNG', logoX, logoY, logoWidth, logoHeight);
 
     const textX = logoX + logoWidth + 5;
-    let textY = logoY + 2;
+    const textY = 26;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(12);
     doc.text('RSKD Provinsi Maluku', textX, textY);
@@ -125,8 +123,11 @@ const Feedback = ({ userRole = 'admin' }) => {
     doc.text('Jl. Laksdya Leo Wattimena Ambon', textX, textY + 6);
     doc.text('Kota Ambon - Provinsi Maluku', textX, textY + 12);
 
-    const identitasX = margin + totalWidth - 60;
-    let identitasY = logoY + 2;
+    const pemisahX = margin + totalWidth - 65;
+    doc.line(pemisahX, 10, pemisahX, 10 + headerHeight);
+
+    const identitasX = pemisahX + 3;
+    let identitasY = 26;
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     const pasien = [
