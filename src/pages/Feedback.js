@@ -172,38 +172,34 @@ const Feedback = ({ userRole = 'admin' }) => {
     <Container fluid className="mt-4 mb-5">
       <h5 className="mb-3 text-center fw-bold">Feedback Konsul Pasien</h5>
 
-      <Row className="mb-3 g-2 align-items-center">
-        <Col xs={6} md={2}>
-          <Button size="sm" variant="secondary" className="w-60" onClick={() => navigate('/dashboard')}>
-            Kembali
-          </Button>
-        </Col>
-        <Col xs={12} md={3}>
+      <Row className="mb-3 g-2 align-items-center justify-content-between">
+        <Col xs={12} md="auto" className="d-flex flex-wrap gap-2 align-items-center">
           <Form.Control
             type="text"
             placeholder="Cari nama pasien..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             size="sm"
+            style={{ maxWidth: '200px' }}
           />
-        </Col>
-        <Col xs={12} md={3}>
           <Form.Control
             type="date"
             value={tanggal}
             onChange={(e) => setTanggal(e.target.value)}
             size="sm"
+            style={{ maxWidth: '180px' }}
           />
+          <Button size="sm" variant="primary" onClick={fetchFeedback}>
+            Refresh
+          </Button>
+          <Button size="sm" variant="success" onClick={exportToExcel}>
+            Export Excel
+          </Button>
         </Col>
-        <Col xs={12} md={4}>
-          <div className="d-flex flex-wrap gap-2">
-            <Button size="sm" variant="primary" onClick={fetchFeedback}>
-              Refresh
-            </Button>
-            <Button size="sm" variant="success" onClick={exportToExcel}>
-              Export Excel
-            </Button>
-          </div>
+        <Col xs={12} md="auto">
+          <Button size="sm" variant="secondary" onClick={() => navigate('/dashboard')}>
+            Kembali
+          </Button>
         </Col>
       </Row>
 
