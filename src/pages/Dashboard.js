@@ -25,7 +25,11 @@ const Dashboard = () => {
   const [statistik, setStatistik] = useState([]);
   const [jenisStatistik, setJenisStatistik] = useState('perbulan');
   const [total, setTotal] = useState({ pasien: '-', faskes: '-', user: '-' });
-  const [pemeriksaan, setPemeriksaan] = useState({ total_pasien: 0, sudah_diperiksa: 0, belum_diperiksa: 0 });
+  const [pemeriksaan, setPemeriksaan] = useState({
+    total_pasien: 0,
+    sudah_diperiksa: 0,
+    belum_diperiksa: 0,
+  });
 
   const isAdmin = groupAkses.includes('Admin');
 
@@ -115,12 +119,7 @@ const Dashboard = () => {
             <Card className="shadow-sm">
               <Card.Body>
                 <Card.Title>Total Pasien</Card.Title>
-                <p className="mb-1">Total Terdaftar: {pemeriksaan.total_pasien}</p>
-                <p className="mb-1">Sudah Diperiksa: {pemeriksaan.sudah_diperiksa}</p>
-                <p className="mb-2">Belum Diperiksa: {pemeriksaan.belum_diperiksa}</p>
-                <small className="text-warning">
-                  ⚠️ Terdapat {pemeriksaan.belum_diperiksa} pasien yang belum menjalani pemeriksaan atau belum diisi form pemeriksaan sehingga tidak ditampilkan di halaman riwayat.
-                </small>
+                <h3>{pemeriksaan.total_pasien ?? 0}</h3>
               </Card.Body>
             </Card>
           </Col>
@@ -128,14 +127,51 @@ const Dashboard = () => {
           <Col xs={12} sm={4}>
             <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title>Total Faskes</Card.Title>
-                <h3>{total.faskes}</h3>
+                <Card.Title>Sudah Diperiksa</Card.Title>
+                <h3>{pemeriksaan.sudah_diperiksa ?? 0}</h3>
               </Card.Body>
             </Card>
           </Col>
 
           <Col xs={12} sm={4}>
             <Card className="shadow-sm">
+              <Card.Body>
+                <Card.Title>Belum Diperiksa</Card.Title>
+                <h3>{pemeriksaan.belum_diperiksa ?? 0}</h3>
+                <p className="text-warning mb-0" style={{ fontSize: '0.9rem' }}>
+                  ⚠️ {pemeriksaan.belum_diperiksa ?? 0} belum isi form
+                </p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        <Row className="mb-4 text-center text-dark">
+          <Col xs={12}>
+            <Card className="shadow-sm">
+              <Card.Body>
+                <Card.Title>Info Pasien</Card.Title>
+                <p className="mb-1">Sudah Diperiksa: {pemeriksaan.sudah_diperiksa ?? 0}</p>
+                <p className="mb-2">Belum Diperiksa: {pemeriksaan.belum_diperiksa ?? 0}</p>
+                <small className="text-warning">
+                  ⚠️ Terdapat {pemeriksaan.belum_diperiksa ?? 0} pasien yang belum isi form pemeriksaan sehingga tidak ditampilkan di halaman riwayat.
+                </small>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
+        <Row className="mb-4 g-3">
+          <Col xs={12} sm={6}>
+            <Card className="shadow-sm text-center text-dark">
+              <Card.Body>
+                <Card.Title>Total Faskes</Card.Title>
+                <h3>{total.faskes}</h3>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col xs={12} sm={6}>
+            <Card className="shadow-sm text-center text-dark">
               <Card.Body>
                 <Card.Title>Total Pengguna</Card.Title>
                 <h3>{total.user}</h3>
