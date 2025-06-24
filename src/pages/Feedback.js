@@ -174,7 +174,7 @@ const Feedback = ({ userRole = 'admin' }) => {
 
       <Row className="mb-3 g-2 align-items-center">
         <Col xs={6} md={2}>
-          <Button size="sm" variant="secondary" className="w-100" onClick={() => navigate('/dashboard')}>
+          <Button size="sm" variant="secondary" className="w-60" onClick={() => navigate('/dashboard')}>
             Kembali
           </Button>
         </Col>
