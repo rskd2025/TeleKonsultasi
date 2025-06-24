@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -172,36 +171,38 @@ const Feedback = ({ userRole = 'admin' }) => {
     <Container fluid className="mt-4 mb-5">
       <h5 className="mb-3 text-center fw-bold">Feedback Konsul Pasien</h5>
 
-      <Row className="mb-3 g-2 align-items-center">
-        <Col xs={6} md={2}>
-          <Button size="sm" variant="secondary" className="w-60" onClick={() => navigate('/dashboard')}>
-            Kembali
-          </Button>
-        </Col>
-        <Col xs={12} md={3}>
-          <Form.Control
-            type="text"
-            placeholder="Cari nama pasien..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            size="sm"
-          />
-        </Col>
-        <Col xs={12} md={3}>
-          <Form.Control
-            type="date"
-            value={tanggal}
-            onChange={(e) => setTanggal(e.target.value)}
-            size="sm"
-          />
-        </Col>
-        <Col xs={12} md={4}>
-          <div className="d-flex flex-wrap gap-2">
-            <Button size="sm" variant="primary" onClick={fetchFeedback}>
-              Refresh
-            </Button>
-            <Button size="sm" variant="success" onClick={exportToExcel}>
-              Export Excel
+      <Row className="mb-3">
+        <Col>
+          <div className="d-flex align-items-center flex-wrap justify-content-between gap-2">
+            <div className="d-flex align-items-center flex-wrap gap-2">
+              <Form.Control
+                type="text"
+                placeholder="Cari nama pasien..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                size="sm"
+                style={{ maxWidth: '200px' }}
+              />
+              <Form.Control
+                type="date"
+                value={tanggal}
+                onChange={(e) => setTanggal(e.target.value)}
+                size="sm"
+              />
+              <Button size="sm" variant="primary" onClick={fetchFeedback}>
+                Refresh
+              </Button>
+              <Button size="sm" variant="success" onClick={exportToExcel}>
+                Export Excel
+              </Button>
+            </div>
+            <Button
+              size="sm"
+              variant="secondary"
+              style={{ minWidth: '90px' }}
+              onClick={() => navigate('/dashboard')}
+            >
+              Kembali
             </Button>
           </div>
         </Col>
