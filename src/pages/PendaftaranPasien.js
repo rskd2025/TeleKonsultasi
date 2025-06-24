@@ -110,11 +110,22 @@ const PendaftaranPasien = () => {
                   type="text"
                   name="nik"
                   value={data.nik}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    // Hanya izinkan angka
+                    if (/^\d*$/.test(newValue)) {
+                      handleChange(e);
+                    }
+                  }}
+                  maxLength={16}
                   required
-                />
-              </Form.Group>
+                  isInvalid={data.nik.length > 0 && data.nik.length < 16}
+                  />
+              <Form.Control.Feedback type="invalid">
+                NIK belum lengkap (harus 16 digit)
+              </Form.Control.Feedback>
 
+              </Form.Group>
               <Form.Group className="mb-2">
                 <Form.Label>Tanggal Lahir *</Form.Label>
                 <Form.Control
