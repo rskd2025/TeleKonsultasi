@@ -127,8 +127,8 @@ const Dashboard = () => {
           <Col xs={12} sm={4}>
             <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title>Sudah Diperiksa</Card.Title>
-                <h3>{pemeriksaan.sudah_diperiksa ?? 0}</h3>
+                <Card.Title>Total Faskes</Card.Title>
+                <h3>{total.faskes}</h3>
               </Card.Body>
             </Card>
           </Col>
@@ -136,11 +136,8 @@ const Dashboard = () => {
           <Col xs={12} sm={4}>
             <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title>Belum Diperiksa</Card.Title>
-                <h3>{pemeriksaan.belum_diperiksa ?? 0}</h3>
-                <p className="text-warning mb-0" style={{ fontSize: '0.9rem' }}>
-                  ⚠️ {pemeriksaan.belum_diperiksa ?? 0} belum isi form
-                </p>
+                <Card.Title>Total Pengguna</Card.Title>
+                <h3>{total.user}</h3>
               </Card.Body>
             </Card>
           </Col>
@@ -156,25 +153,6 @@ const Dashboard = () => {
                 <small className="text-warning">
                   ⚠️ Terdapat {pemeriksaan.belum_diperiksa ?? 0} pasien yang belum isi form pemeriksaan sehingga tidak ditampilkan di halaman riwayat.
                 </small>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row className="mb-4 g-3">
-          <Col xs={12} sm={6}>
-            <Card className="shadow-sm text-center text-dark">
-              <Card.Body>
-                <Card.Title>Total Faskes</Card.Title>
-                <h3>{total.faskes}</h3>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col xs={12} sm={6}>
-            <Card className="shadow-sm text-center text-dark">
-              <Card.Body>
-                <Card.Title>Total Pengguna</Card.Title>
-                <h3>{total.user}</h3>
               </Card.Body>
             </Card>
           </Col>
@@ -243,13 +221,15 @@ const Dashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={statistik}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey={
-                  jenisStatistik === 'perhari'
-                    ? 'tanggal'
-                    : jenisStatistik === 'perbulan'
-                    ? 'bulan'
-                    : 'tahun'
-                } />
+                <XAxis
+                  dataKey={
+                    jenisStatistik === 'perhari'
+                      ? 'tanggal'
+                      : jenisStatistik === 'perbulan'
+                      ? 'bulan'
+                      : 'tahun'
+                  }
+                />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
                 <Line
