@@ -162,8 +162,8 @@ const Dashboard = () => {
                 <Card.Title className="fw-bold mb-3">Info Pasien</Card.Title>
                 <div className="fw-bold mb-2">
                   Total Terdaftar: {pemeriksaan.total_pasien}&nbsp;&nbsp;|&nbsp;&nbsp;
-                  Sudah Diperiksa: {pemeriksaan.sudah_diperiksa}&nbsp;&nbsp;|&nbsp;&nbsp;
-                  Belum Diperiksa: {pemeriksaan.belum_diperiksa}
+                  Terdaftar Lengkap: {pemeriksaan.sudah_diperiksa}&nbsp;&nbsp;|&nbsp;&nbsp;
+                  Terdaftar Tidak Lengkap: {pemeriksaan.belum_diperiksa}
                 </div>
                 <div className="text-warning d-flex align-items-start justify-content-center" style={{ fontSize: '0.9rem' }}>
                   <span className="me-2 blink">⚠️</span>
