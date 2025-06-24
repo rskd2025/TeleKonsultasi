@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -171,24 +172,31 @@ const Feedback = ({ userRole = 'admin' }) => {
     <Container fluid className="mt-4 mb-5">
       <h5 className="mb-3 text-center fw-bold">Feedback Konsul Pasien</h5>
 
-      <Row className="mb-3 align-items-center justify-content-between">
-        <Col xs="auto">
-          <div className="d-flex flex-wrap align-items-center gap-2">
-            <Form.Control
-              type="text"
-              placeholder="Cari nama pasien..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              size="sm"
-              style={{ maxWidth: '180px' }}
-            />
-            <Form.Control
-              type="date"
-              value={tanggal}
-              onChange={(e) => setTanggal(e.target.value)}
-              size="sm"
-              style={{ maxWidth: '160px' }}
-            />
+      <Row className="mb-3 g-2 align-items-center">
+        <Col xs={6} md={2}>
+          <Button size="sm" variant="secondary" className="w-60" onClick={() => navigate('/dashboard')}>
+            Kembali
+          </Button>
+        </Col>
+        <Col xs={12} md={3}>
+          <Form.Control
+            type="text"
+            placeholder="Cari nama pasien..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            size="sm"
+          />
+        </Col>
+        <Col xs={12} md={3}>
+          <Form.Control
+            type="date"
+            value={tanggal}
+            onChange={(e) => setTanggal(e.target.value)}
+            size="sm"
+          />
+        </Col>
+        <Col xs={12} md={4}>
+          <div className="d-flex flex-wrap gap-2">
             <Button size="sm" variant="primary" onClick={fetchFeedback}>
               Refresh
             </Button>
@@ -196,16 +204,6 @@ const Feedback = ({ userRole = 'admin' }) => {
               Export Excel
             </Button>
           </div>
-        </Col>
-
-        <Col xs="auto">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => navigate('/dashboard')}
-          >
-            Kembali
-          </Button>
         </Col>
       </Row>
 
