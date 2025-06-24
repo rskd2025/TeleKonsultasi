@@ -93,7 +93,7 @@ const HistoryPasien = () => {
               <tr>
                 <th>#</th>
                 <th>Nama</th>
-                <th>JK</th>
+                <th>Jenis Kelamin</th>
                 <th>Umur</th>
                 <th>Tanggal</th>
                 <th>Faskes Asal</th>
