@@ -168,7 +168,7 @@ const Dashboard = () => {
                 <div className="text-warning d-flex align-items-start justify-content-center" style={{ fontSize: '0.9rem' }}>
                   <span className="me-2 blink">⚠️</span>
                   <span>
-                    Terdapat {pemeriksaan.belum_diperiksa} pasien yang sudah terdaftar namun belum diperiksa karena pengisian form belum lengkap.
+                    Terdapat {pemeriksaan.belum_diperiksa} pasien yang sudah terdaftar namun belum diperiksa karena belum mengisi form pemeriksaan atau pengisian form belum lengkap.
                     <br />
                     <strong>
                       (Silakan ke menu <u>Daftar Pasien</u> dan cari Nama atau No. RM, lalu lanjutkan pendaftaran)
