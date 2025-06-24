@@ -178,7 +178,7 @@ const Feedback = ({ userRole = 'admin' }) => {
             Kembali
           </Button>
         </Col>
-        <Col xs= "Auto">
+        <Col xs={12} md={3}>
           <Form.Control
             type="text"
             placeholder="Cari nama pasien..."
@@ -187,7 +187,7 @@ const Feedback = ({ userRole = 'admin' }) => {
             size="sm"
           />
         </Col>
-        <Col xs= "Auto">
+        <Col xs={12} md={3}>
           <Form.Control
             type="date"
             value={tanggal}
@@ -195,7 +195,7 @@ const Feedback = ({ userRole = 'admin' }) => {
             size="sm"
           />
         </Col>
-        <Col xs= "auto">
+        <Col xs={12} md={4}>
           <div className="d-flex flex-wrap gap-2">
             <Button size="sm" variant="primary" onClick={fetchFeedback}>
               Refresh
