@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -173,42 +172,42 @@ const Feedback = ({ userRole = 'admin' }) => {
       <h5 className="mb-3 text-center fw-bold">Feedback Konsul Pasien</h5>
 
       <Row className="mb-3 align-items-center justify-content-between">
-  <Col xs="auto">
-    <div className="d-flex flex-wrap align-items-center gap-2">
-      <Form.Control
-        type="text"
-        placeholder="Cari nama pasien..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        size="sm"
-        style={{ maxWidth: '180px' }}
-      />
-      <Form.Control
-        type="date"
-        value={tanggal}
-        onChange={(e) => setTanggal(e.target.value)}
-        size="sm"
-        style={{ maxWidth: '160px' }}
-      />
-      <Button size="sm" variant="primary" onClick={fetchFeedback}>
-        Refresh
-      </Button>
-      <Button size="sm" variant="success" onClick={exportToExcel}>
-        Export Excel
-      </Button>
-    </div>
-  </Col>
+        <Col xs="auto">
+          <div className="d-flex flex-wrap align-items-center gap-2">
+            <Form.Control
+              type="text"
+              placeholder="Cari nama pasien..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              size="sm"
+              style={{ maxWidth: '180px' }}
+            />
+            <Form.Control
+              type="date"
+              value={tanggal}
+              onChange={(e) => setTanggal(e.target.value)}
+              size="sm"
+              style={{ maxWidth: '160px' }}
+            />
+            <Button size="sm" variant="primary" onClick={fetchFeedback}>
+              Refresh
+            </Button>
+            <Button size="sm" variant="success" onClick={exportToExcel}>
+              Export Excel
+            </Button>
+          </div>
+        </Col>
 
-  <Col className="text-end">
-    <Button
-      size="sm"
-      variant="secondary"
-      onClick={() => navigate('/dashboard')}
-    >
-      Kembali
-    </Button>
-  </Col>
-</Row>
+        <Col xs="auto">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => navigate('/dashboard')}
+          >
+            Kembali
+          </Button>
+        </Col>
+      </Row>
 
       {loading ? (
         <div className="text-center">
