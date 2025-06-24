@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Row, Col, Card, Form, Alert } from 'react-bootstrap';
+import { Button, Container, Row, Col, Card, Form } from 'react-bootstrap';
 import logo from '../assets/maluku.png';
 import UbahPasswordModal from './UbahPasswordModal';
 import { useLoading } from '../components/LoadingContext';
@@ -110,35 +110,32 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <Row className="mb-3 text-center text-dark">
-          <Col xs={12}>
+        <Row className="mb-4 g-3 text-center text-dark">
+          <Col xs={12} sm={4}>
             <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title>Status Pemeriksaan Pasien</Card.Title>
-                <p className="mb-1">Total Terdaftar: <strong>{pemeriksaan.total_pasien}</strong></p>
-                <p className="mb-1 text-success">✅ Sudah Diperiksa: <strong>{pemeriksaan.sudah_diperiksa}</strong></p>
-                <p className="mb-1 text-danger">❌ Belum Diperiksa: <strong>{pemeriksaan.belum_diperiksa}</strong></p>
+                <Card.Title>Total Pasien</Card.Title>
+                <p className="mb-1">Total Terdaftar: {pemeriksaan.total_pasien}</p>
+                <p className="mb-1">Sudah Diperiksa: {pemeriksaan.sudah_diperiksa}</p>
+                <p className="mb-2">Belum Diperiksa: {pemeriksaan.belum_diperiksa}</p>
+                <small className="text-warning">
+                  ⚠️ Terdapat {pemeriksaan.belum_diperiksa} pasien yang belum menjalani pemeriksaan atau belum diisi form pemeriksaan sehingga tidak ditampilkan di halaman riwayat.
+                </small>
               </Card.Body>
             </Card>
-            {(pemeriksaan.belum_diperiksa > 0) && (
-              <Alert variant="warning" className="py-2 mt-3">
-                ⚠️ Terdapat {pemeriksaan.belum_diperiksa} pasien yang telah terdaftar namun belum menjalani pemeriksaan atau form pemeriksaannya belum diisi, sehingga tidak ditampilkan di halaman riwayat pemeriksaan.
-              </Alert>
-            )}
           </Col>
-        </Row>
 
-        <Row className="mb-4 g-3">
-          <Col xs={12} sm={6} md={4}>
-            <Card className="shadow-sm text-center text-dark">
+          <Col xs={12} sm={4}>
+            <Card className="shadow-sm">
               <Card.Body>
                 <Card.Title>Total Faskes</Card.Title>
                 <h3>{total.faskes}</h3>
               </Card.Body>
             </Card>
           </Col>
-          <Col xs={12} sm={6} md={4}>
-            <Card className="shadow-sm text-center text-dark">
+
+          <Col xs={12} sm={4}>
+            <Card className="shadow-sm">
               <Card.Body>
                 <Card.Title>Total Pengguna</Card.Title>
                 <h3>{total.user}</h3>
@@ -210,7 +207,13 @@ const Dashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={statistik}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey={jenisStatistik === 'perhari' ? 'tanggal' : jenisStatistik === 'perbulan' ? 'bulan' : 'tahun'} />
+                <XAxis dataKey={
+                  jenisStatistik === 'perhari'
+                    ? 'tanggal'
+                    : jenisStatistik === 'perbulan'
+                    ? 'bulan'
+                    : 'tahun'
+                } />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
                 <Line
