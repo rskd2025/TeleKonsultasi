@@ -99,6 +99,17 @@ const Dashboard = () => {
         overflowX: 'hidden',
       }}
     >
+      <style>
+        {`
+          .blink {
+            animation: blink-animation 1s steps(5, start) infinite;
+          }
+          @keyframes blink-animation {
+            to { visibility: hidden; }
+          }
+        `}
+      </style>
+
       <Container>
         <div className="d-flex align-items-center justify-content-center mb-4 flex-wrap text-center">
           <img
@@ -143,16 +154,27 @@ const Dashboard = () => {
           </Col>
         </Row>
 
+        {/* ✅ Info Pasien */}
         <Row className="mb-4 text-center text-dark">
           <Col xs={12}>
             <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title>Info Pasien</Card.Title>
-                <p className="mb-1">Sudah Diperiksa: {pemeriksaan.sudah_diperiksa ?? 0}</p>
-                <p className="mb-2">Belum Diperiksa: {pemeriksaan.belum_diperiksa ?? 0}</p>
-                <small className="text-warning">
-                  ⚠️ Terdapat {pemeriksaan.belum_diperiksa ?? 0} pasien yang belum isi form pemeriksaan sehingga tidak ditampilkan di halaman riwayat.
-                </small>
+                <Card.Title className="fw-bold mb-3">Info Pasien</Card.Title>
+                <div className="fw-bold mb-2">
+                  Total Terdaftar: {pemeriksaan.total_pasien}&nbsp;&nbsp;|&nbsp;&nbsp;
+                  Sudah Diperiksa: {pemeriksaan.sudah_diperiksa}&nbsp;&nbsp;|&nbsp;&nbsp;
+                  Belum Diperiksa: {pemeriksaan.belum_diperiksa}
+                </div>
+                <div className="text-warning d-flex align-items-start justify-content-center" style={{ fontSize: '0.9rem' }}>
+                  <span className="me-2 blink">⚠️</span>
+                  <span>
+                    Terdapat {pemeriksaan.belum_diperiksa} pasien yang sudah terdaftar namun belum diperiksa karena pengisian form belum lengkap.
+                    <br />
+                    <strong>
+                      (Silakan ke menu <u>Daftar Pasien</u> dan cari Nama atau No. RM, lalu lanjutkan pendaftaran)
+                    </strong>
+                  </span>
+                </div>
               </Card.Body>
             </Card>
           </Col>
@@ -187,7 +209,6 @@ const Dashboard = () => {
                 )}
               </Col>
             ))}
-
           {fiturAkses.length <= 1 && (
             <Col xs={12} className="text-center text-white mt-3">
               Belum ada modul akses yang diberikan. Silakan hubungi Administrator.
@@ -195,6 +216,7 @@ const Dashboard = () => {
           )}
         </Row>
 
+        {/* Statistik Grafik */}
         <div className="mt-4 text-center">
           <h5 className="mb-3">📊 Statistik Pasien</h5>
           <Form.Select
