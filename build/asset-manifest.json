@@ -1,16 +1,23 @@
 {
   "files": {
-    "main.css": "/static/css/main.cfb1c7f5.css",
-    "main.js": "/static/js/main.114e01c5.js",
-    "static/js/453.670e15c7.chunk.js": "/static/js/453.670e15c7.chunk.js",
+    "main.css": "/static/css/main.a7010d8d.css",
+    "main.js": "/static/js/main.7f1d8e6a.js",
+    "static/js/239.ad40150f.chunk.js": "/static/js/239.ad40150f.chunk.js",
+    "static/js/977.b584b783.chunk.js": "/static/js/977.b584b783.chunk.js",
+    "static/js/455.eb8c67b8.chunk.js": "/static/js/455.eb8c67b8.chunk.js",
+    "static/js/453.54292a4b.chunk.js": "/static/js/453.54292a4b.chunk.js",
+    "static/media/banner-login.jpg": "/static/media/banner-login.e25c40a52ef426583706.jpg",
     "static/media/maluku.png": "/static/media/maluku.047c3aa51885c5d0eafb.png",
     "index.html": "/index.html",
-    "main.cfb1c7f5.css.map": "/static/css/main.cfb1c7f5.css.map",
-    "main.114e01c5.js.map": "/static/js/main.114e01c5.js.map",
-    "453.670e15c7.chunk.js.map": "/static/js/453.670e15c7.chunk.js.map"
+    "main.a7010d8d.css.map": "/static/css/main.a7010d8d.css.map",
+    "main.7f1d8e6a.js.map": "/static/js/main.7f1d8e6a.js.map",
+    "239.ad40150f.chunk.js.map": "/static/js/239.ad40150f.chunk.js.map",
+    "977.b584b783.chunk.js.map": "/static/js/977.b584b783.chunk.js.map",
+    "455.eb8c67b8.chunk.js.map": "/static/js/455.eb8c67b8.chunk.js.map",
+    "453.54292a4b.chunk.js.map": "/static/js/453.54292a4b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.cfb1c7f5.css",
-    "static/js/main.114e01c5.js"
+    "static/css/main.a7010d8d.css",
+    "static/js/main.7f1d8e6a.js"
   ]
 }
